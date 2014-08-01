@@ -38,10 +38,15 @@ import java.util.Map.Entry;
 
 public class TestCodeGenerator {
 
+	private final JUnitGenerator generator;
 	private Class<?> targetClass;
 	private Map<Method, List<TestCaseData>> cases;
 	private String testPackageName;
 	private CompilationUnit unit;
+	
+	public TestCodeGenerator(JUnitGenerator generator) {
+		this.generator = generator;
+	}
 
 	public Class<?> getTargetClass() {
 		return targetClass;
@@ -112,7 +117,13 @@ public class TestCodeGenerator {
 				if (result.succeeded()) {
 					addResultAssertion(method, block, call, result);
 				} else {
-					addExceptionAssertion(block, call, result);
+					boolean whenDeclared = generator.getExceptionsStrategy() == ExceptionsStrategy.ASSERT_WHEN_DECLARED;
+					if (whenDeclared && !result.isExceptionDeclared()) {
+						// Add only a method call to force throw the exception:
+						ASTHelper.addStmt(block, call);
+					} else {
+						addExceptionAssertion(block, call, result);
+					}
 				}
 			}
 		}
@@ -131,7 +142,7 @@ public class TestCodeGenerator {
 			unit.addImport(new ImportDeclaration(targetClass.getName(), false, false));
 		}
 	}
-
+	
 	private void addResultAssertion(Method method, BlockStmt block, MethodCallExpr call, ExecutionResult result) {
 		String actualName = "actual";
 		Type type = javaTypeToParserType(method.getReturnType());
@@ -141,9 +152,9 @@ public class TestCodeGenerator {
 
 		NameExpr assertName = new NameExpr("Assert");
 		MethodCallExpr assertCall = new MethodCallExpr(assertName, "assertEquals");
-		ASTHelper.addArgument(assertCall, valueToExpression(result.result));
+		ASTHelper.addArgument(assertCall, valueToExpression(result.getResult()));
 		ASTHelper.addArgument(assertCall, new NameExpr(actualName));
-		if (result.result instanceof Double) {
+		if (result.getResult() instanceof Double) {
 			// TODO Parametrizar a precisão do double
 			ASTHelper.addArgument(assertCall, new DoubleLiteralExpr("0.00000001"));
 		}
@@ -164,10 +175,10 @@ public class TestCodeGenerator {
 		catchClause.setExcept(new Parameter(exceptionType, new VariableDeclaratorId(exceptionVarName)));
 
 		BlockStmt catchBlock = new BlockStmt();
-		if (result.exception.getMessage() != null) {
+		if (result.getException().getMessage() != null) {
 			NameExpr assertName2 = new NameExpr("Assert");
 			MethodCallExpr assertCall = new MethodCallExpr(assertName2, "assertEquals");
-			ASTHelper.addArgument(assertCall, new StringLiteralExpr(result.exception.getMessage()));
+			ASTHelper.addArgument(assertCall, new StringLiteralExpr(result.getException().getMessage()));
 			MethodCallExpr callGetMessage = new MethodCallExpr(new NameExpr(exceptionVarName), "getMessage");
 			ASTHelper.addArgument(assertCall, callGetMessage);
 			ASTHelper.addStmt(catchBlock, assertCall);

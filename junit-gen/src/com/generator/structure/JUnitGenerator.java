@@ -28,7 +28,7 @@ public class JUnitGenerator {
 	private List<Class<? extends Throwable>> bugExceptions = new ArrayList<>();
 	private double minCoverageRate; // Value between 0.0 and 1.0
 	private int eternalLoopTimetout; // Value in seconds.
-	private ExceptionsExpected expectionsStrategy;
+	private ExceptionsStrategy exceptionsStrategy;
 	private ValueGeneratorRegistry valueGenerators = new ValueGeneratorRegistry();
 	private String result;
 
@@ -39,6 +39,7 @@ public class JUnitGenerator {
 	private void loadDefaultConfig() {
 		loadDefaultBugExceptions();
 		loadDefaultParamGenerators();
+		exceptionsStrategy = ExceptionsStrategy.ASSERT_WHEN_DECLARED;
 	}
 
 	private void loadDefaultBugExceptions() {
@@ -124,7 +125,7 @@ public class JUnitGenerator {
 	}
 
 	private CompilationUnit generate(Class<?> targetClass, Method method) {
-		
+
 		Map<Method, List<TestCaseData>> cases = new LinkedHashMap<>();
 		if (method != null) {
 			cases.put(method, getTestCasesValues(targetClass, method));
@@ -142,8 +143,8 @@ public class JUnitGenerator {
 				cases.put(m, getTestCasesValues(targetClass, m));
 			}
 		}
-		
-		TestCodeGenerator codeGen = new TestCodeGenerator();
+
+		TestCodeGenerator codeGen = new TestCodeGenerator(this);
 		codeGen.setTargetClass(targetClass);
 		codeGen.setCases(cases);
 		codeGen.setTestPackageName(testPackageName);
@@ -220,12 +221,12 @@ public class JUnitGenerator {
 		this.eternalLoopTimetout = eternalLoopTimetout;
 	}
 
-	public ExceptionsExpected getExpectionsStrategy() {
-		return expectionsStrategy;
+	public ExceptionsStrategy getExceptionsStrategy() {
+		return exceptionsStrategy;
 	}
 
-	public void setExpectionsStrategy(ExceptionsExpected expectionsStrategy) {
-		this.expectionsStrategy = expectionsStrategy;
+	public void setExceptionsStrategy(ExceptionsStrategy exceptionsStrategy) {
+		this.exceptionsStrategy = exceptionsStrategy;
 	}
 
 	public String getResult() {

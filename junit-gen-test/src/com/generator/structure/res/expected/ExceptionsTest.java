@@ -8,51 +8,6 @@ import java.io.IOException;
 public class ExceptionsTest {
 
     @Test
-    public void testalwaysThrowsException_1() {
-        try {
-            Exceptions.alwaysThrowsException(0, 0);
-            Assert.fail("A NullPointerException must have been thrown.");
-        } catch (NullPointerException ex) {
-        }
-    }
-
-    @Test
-    public void testalwaysThrowsException_2() {
-        try {
-            Exceptions.alwaysThrowsException(1, 0);
-            Assert.fail("A NullPointerException must have been thrown.");
-        } catch (NullPointerException ex) {
-        }
-    }
-
-    @Test
-    public void testalwaysThrowsException_3() {
-        try {
-            Exceptions.alwaysThrowsException(0, 1);
-            Assert.fail("A NullPointerException must have been thrown.");
-        } catch (NullPointerException ex) {
-        }
-    }
-
-    @Test
-    public void testalwaysThrowsException_4() {
-        try {
-            Exceptions.alwaysThrowsException(1, 1);
-            Assert.fail("A NullPointerException must have been thrown.");
-        } catch (NullPointerException ex) {
-        }
-    }
-
-    @Test
-    public void testalwaysThrowsException_5() {
-        try {
-            Exceptions.alwaysThrowsException(-1, 0);
-            Assert.fail("A NullPointerException must have been thrown.");
-        } catch (NullPointerException ex) {
-        }
-    }
-
-    @Test
     public void testsquareRoot_1() {
         double actual = Exceptions.squareRoot(0);
         Assert.assertEquals(0.0, actual, 0.00000001);
@@ -66,12 +21,7 @@ public class ExceptionsTest {
 
     @Test
     public void testsquareRoot_3() {
-        try {
-            Exceptions.squareRoot(-1);
-            Assert.fail("An IllegalArgumentException must have been thrown.");
-        } catch (IllegalArgumentException ex) {
-            Assert.assertEquals("A cannot be negative!", ex.getMessage());
-        }
+        Exceptions.squareRoot(-1);
     }
 
     @Test
@@ -82,8 +32,25 @@ public class ExceptionsTest {
 
     @Test
     public void testsquareRoot_5() {
+        Exceptions.squareRoot(-2);
+    }
+
+    @Test
+    public void testsquareRootDeclared_1() {
+        double actual = Exceptions.squareRootDeclared(0);
+        Assert.assertEquals(0.0, actual, 0.00000001);
+    }
+
+    @Test
+    public void testsquareRootDeclared_2() {
+        double actual = Exceptions.squareRootDeclared(1);
+        Assert.assertEquals(1.0, actual, 0.00000001);
+    }
+
+    @Test
+    public void testsquareRootDeclared_3() {
         try {
-            Exceptions.squareRoot(-2);
+            Exceptions.squareRootDeclared(-1);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
             Assert.assertEquals("A cannot be negative!", ex.getMessage());
@@ -91,92 +58,133 @@ public class ExceptionsTest {
     }
 
     @Test
-    public void testthowsCheckedException_1() {
+    public void testsquareRootDeclared_4() {
+        double actual = Exceptions.squareRootDeclared(2);
+        Assert.assertEquals(1.4142135623730951, actual, 0.00000001);
+    }
+
+    @Test
+    public void testsquareRootDeclared_5() {
         try {
-            Exceptions.thowsCheckedException(0, 0);
+            Exceptions.squareRootDeclared(-2);
+            Assert.fail("An IllegalArgumentException must have been thrown.");
+        } catch (IllegalArgumentException ex) {
+            Assert.assertEquals("A cannot be negative!", ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testthrowDeclaredCheckedException_1() {
+        try {
+            Exceptions.throwDeclaredCheckedException(0, 0);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
     }
 
     @Test
-    public void testthowsCheckedException_2() {
+    public void testthrowDeclaredCheckedException_2() {
         try {
-            Exceptions.thowsCheckedException(1, 0);
+            Exceptions.throwDeclaredCheckedException(1, 0);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
     }
 
     @Test
-    public void testthowsCheckedException_3() {
+    public void testthrowDeclaredCheckedException_3() {
         try {
-            Exceptions.thowsCheckedException(0, 1);
+            Exceptions.throwDeclaredCheckedException(0, 1);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
     }
 
     @Test
-    public void testthowsCheckedException_4() {
+    public void testthrowDeclaredCheckedException_4() {
         try {
-            Exceptions.thowsCheckedException(1, 1);
+            Exceptions.throwDeclaredCheckedException(1, 1);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
     }
 
     @Test
-    public void testthowsCheckedException_5() {
+    public void testthrowDeclaredCheckedException_5() {
         try {
-            Exceptions.thowsCheckedException(-1, 0);
+            Exceptions.throwDeclaredCheckedException(-1, 0);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
     }
 
     @Test
-    public void testthrowsWarnedUncheckedException_1() {
+    public void testthrowDeclaredUncheckedException_1() {
         try {
-            Exceptions.throwsWarnedUncheckedException(0, 0);
+            Exceptions.throwDeclaredUncheckedException(0, 0);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
     }
 
     @Test
-    public void testthrowsWarnedUncheckedException_2() {
+    public void testthrowDeclaredUncheckedException_2() {
         try {
-            Exceptions.throwsWarnedUncheckedException(1, 0);
+            Exceptions.throwDeclaredUncheckedException(1, 0);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
     }
 
     @Test
-    public void testthrowsWarnedUncheckedException_3() {
+    public void testthrowDeclaredUncheckedException_3() {
         try {
-            Exceptions.throwsWarnedUncheckedException(0, 1);
+            Exceptions.throwDeclaredUncheckedException(0, 1);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
     }
 
     @Test
-    public void testthrowsWarnedUncheckedException_4() {
+    public void testthrowDeclaredUncheckedException_4() {
         try {
-            Exceptions.throwsWarnedUncheckedException(1, 1);
+            Exceptions.throwDeclaredUncheckedException(1, 1);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
     }
 
     @Test
-    public void testthrowsWarnedUncheckedException_5() {
+    public void testthrowDeclaredUncheckedException_5() {
         try {
-            Exceptions.throwsWarnedUncheckedException(-1, 0);
+            Exceptions.throwDeclaredUncheckedException(-1, 0);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
+    }
+
+    @Test
+    public void testthrowException_1() {
+        Exceptions.throwException(0, 0);
+    }
+
+    @Test
+    public void testthrowException_2() {
+        Exceptions.throwException(1, 0);
+    }
+
+    @Test
+    public void testthrowException_3() {
+        Exceptions.throwException(0, 1);
+    }
+
+    @Test
+    public void testthrowException_4() {
+        Exceptions.throwException(1, 1);
+    }
+
+    @Test
+    public void testthrowException_5() {
+        Exceptions.throwException(-1, 0);
     }
 }

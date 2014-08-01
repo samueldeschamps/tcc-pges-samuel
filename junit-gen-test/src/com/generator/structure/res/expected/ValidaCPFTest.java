@@ -8,11 +8,8 @@ public class ValidaCPFTest {
 
     @Test
     public void testformatarCPF_1() {
-        try {
-            ValidaCPF.formatarCPF(null);
-            Assert.fail("A NullPointerException must have been thrown.");
-        } catch (NullPointerException ex) {
-        }
+        String actual = ValidaCPF.formatarCPF(null);
+        Assert.assertEquals(null, actual);
     }
 
     @Test
@@ -57,11 +54,8 @@ public class ValidaCPFTest {
 
     @Test
     public void testisCpfValido_1() {
-        try {
-            ValidaCPF.isCpfValido(null);
-            Assert.fail("A NullPointerException must have been thrown.");
-        } catch (NullPointerException ex) {
-        }
+        boolean actual = ValidaCPF.isCpfValido(null);
+        Assert.assertEquals(false, actual);
     }
 
     @Test
