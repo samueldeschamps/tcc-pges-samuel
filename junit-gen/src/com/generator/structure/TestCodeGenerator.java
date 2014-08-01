@@ -155,8 +155,8 @@ public class TestCodeGenerator {
 		ASTHelper.addArgument(assertCall, valueToExpression(result.getResult()));
 		ASTHelper.addArgument(assertCall, new NameExpr(actualName));
 		if (result.getResult() instanceof Double) {
-			// TODO Parametrizar a precisão do double
-			ASTHelper.addArgument(assertCall, new DoubleLiteralExpr("0.00000001"));
+			String precision = String.valueOf(generator.getDoubleAssertPrecision());
+			ASTHelper.addArgument(assertCall, new DoubleLiteralExpr(precision));
 		}
 		ASTHelper.addStmt(block, assertCall);
 	}
