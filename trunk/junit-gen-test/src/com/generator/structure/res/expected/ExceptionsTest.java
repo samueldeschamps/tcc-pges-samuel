@@ -10,13 +10,13 @@ public class ExceptionsTest {
     @Test
     public void testsquareRoot_1() {
         double actual = Exceptions.squareRoot(0);
-        Assert.assertEquals(0.0, actual, 0.00000001);
+        Assert.assertEquals(0.0, actual, 1.0E-8);
     }
 
     @Test
     public void testsquareRoot_2() {
         double actual = Exceptions.squareRoot(1);
-        Assert.assertEquals(1.0, actual, 0.00000001);
+        Assert.assertEquals(1.0, actual, 1.0E-8);
     }
 
     @Test
@@ -27,7 +27,7 @@ public class ExceptionsTest {
     @Test
     public void testsquareRoot_4() {
         double actual = Exceptions.squareRoot(2);
-        Assert.assertEquals(1.4142135623730951, actual, 0.00000001);
+        Assert.assertEquals(1.4142135623730951, actual, 1.0E-8);
     }
 
     @Test
@@ -38,13 +38,13 @@ public class ExceptionsTest {
     @Test
     public void testsquareRootDeclared_1() {
         double actual = Exceptions.squareRootDeclared(0);
-        Assert.assertEquals(0.0, actual, 0.00000001);
+        Assert.assertEquals(0.0, actual, 1.0E-8);
     }
 
     @Test
     public void testsquareRootDeclared_2() {
         double actual = Exceptions.squareRootDeclared(1);
-        Assert.assertEquals(1.0, actual, 0.00000001);
+        Assert.assertEquals(1.0, actual, 1.0E-8);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ExceptionsTest {
     @Test
     public void testsquareRootDeclared_4() {
         double actual = Exceptions.squareRootDeclared(2);
-        Assert.assertEquals(1.4142135623730951, actual, 0.00000001);
+        Assert.assertEquals(1.4142135623730951, actual, 1.0E-8);
     }
 
     @Test

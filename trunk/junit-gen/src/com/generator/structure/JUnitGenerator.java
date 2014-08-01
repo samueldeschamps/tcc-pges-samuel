@@ -27,7 +27,8 @@ public class JUnitGenerator {
 	private String testPackageName;
 	private List<Class<? extends Throwable>> bugExceptions = new ArrayList<>();
 	private double minCoverageRate; // Value between 0.0 and 1.0
-	private int eternalLoopTimetout; // Value in seconds.
+	private int eternalLoopTimeout; // Value in seconds.
+	private double doubleAssertPrecision; // Used in double assertives.
 	private ExceptionsStrategy exceptionsStrategy;
 	private ValueGeneratorRegistry valueGenerators = new ValueGeneratorRegistry();
 	private String result;
@@ -40,6 +41,7 @@ public class JUnitGenerator {
 		loadDefaultBugExceptions();
 		loadDefaultParamGenerators();
 		exceptionsStrategy = ExceptionsStrategy.ASSERT_WHEN_DECLARED;
+		doubleAssertPrecision = 0.00000001;
 	}
 
 	private void loadDefaultBugExceptions() {
@@ -213,12 +215,20 @@ public class JUnitGenerator {
 		this.minCoverageRate = minCoverageRate;
 	}
 
-	public int getEternalLoopTimetout() {
-		return eternalLoopTimetout;
+	public int getEternalLoopTimeout() {
+		return eternalLoopTimeout;
 	}
 
-	public void setEternalLoopTimetout(int eternalLoopTimetout) {
-		this.eternalLoopTimetout = eternalLoopTimetout;
+	public void setEternalLoopTimeout(int eternalLoopTimetout) {
+		this.eternalLoopTimeout = eternalLoopTimetout;
+	}
+
+	public double getDoubleAssertPrecision() {
+		return doubleAssertPrecision;
+	}
+
+	public void setDoubleAssertPrecision(double doubleAssertPrecision) {
+		this.doubleAssertPrecision = doubleAssertPrecision;
 	}
 
 	public ExceptionsStrategy getExceptionsStrategy() {
