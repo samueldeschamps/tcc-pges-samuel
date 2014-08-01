@@ -2,12 +2,12 @@ package com.target;
 
 import org.junit.*;
 
-import com.generator.structure.res.input.Calculator;
+import com.generator.structure.res.input.SimpleIntCalculator;
 
 import static org.junit.Assert.*;
 
 /**
- * The class <code>CalculatorTest</code> contains tests for the class <code>{@link Calculator}</code>.
+ * The class <code>CalculatorTest</code> contains tests for the class <code>{@link SimpleIntCalculator}</code>.
  *
  * @generatedBy CodePro at 17/07/14 20:51
  * @author Samuel
@@ -27,7 +27,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 0;
 
-		int result = Calculator.divide(a, b);
+		int result = SimpleIntCalculator.divide(a, b);
 
 		// add additional test code here
 		// An unexpected exception was thrown in user code while executing this test:
@@ -49,7 +49,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 1;
 
-		int result = Calculator.divide(a, b);
+		int result = SimpleIntCalculator.divide(a, b);
 
 		// add additional test code here
 		assertEquals(1, result);
@@ -68,7 +68,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 1;
 
-		int result = Calculator.divide(a, b);
+		int result = SimpleIntCalculator.divide(a, b);
 
 		// add additional test code here
 		assertEquals(7, result);
@@ -87,7 +87,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 0;
 
-		int result = Calculator.divide(a, b);
+		int result = SimpleIntCalculator.divide(a, b);
 
 		// add additional test code here
 		// An unexpected exception was thrown in user code while executing this test:
@@ -109,7 +109,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 0;
 
-		int result = Calculator.divide(a, b);
+		int result = SimpleIntCalculator.divide(a, b);
 
 		// add additional test code here
 		// An unexpected exception was thrown in user code while executing this test:
@@ -131,7 +131,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 1;
 
-		int result = Calculator.divide(a, b);
+		int result = SimpleIntCalculator.divide(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -149,7 +149,7 @@ public class CalculatorTest {
 		throws Exception {
 		int number = 0;
 
-		boolean result = Calculator.isPrime(number);
+		boolean result = SimpleIntCalculator.isPrime(number);
 
 		// add additional test code here
 		assertEquals(true, result);
@@ -167,7 +167,7 @@ public class CalculatorTest {
 		throws Exception {
 		int number = 1;
 
-		boolean result = Calculator.isPrime(number);
+		boolean result = SimpleIntCalculator.isPrime(number);
 
 		// add additional test code here
 		assertEquals(true, result);
@@ -185,7 +185,7 @@ public class CalculatorTest {
 		throws Exception {
 		int number = 7;
 
-		boolean result = Calculator.isPrime(number);
+		boolean result = SimpleIntCalculator.isPrime(number);
 
 		// add additional test code here
 		assertEquals(true, result);
@@ -195,7 +195,7 @@ public class CalculatorTest {
 	public void testIsPrime_4()
 		throws Exception {
 		int number = 10;
-		boolean result = Calculator.isPrime(number);
+		boolean result = SimpleIntCalculator.isPrime(number);
 		assertEquals(false, result);
 	}
 
@@ -212,7 +212,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 0;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -231,7 +231,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 1;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(1, result);
@@ -250,7 +250,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 7;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(49, result);
@@ -269,7 +269,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 0;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -288,7 +288,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 1;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(7, result);
@@ -307,7 +307,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 7;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -326,7 +326,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 0;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -345,7 +345,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 1;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -364,7 +364,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 7;
 
-		int result = Calculator.multiply(a, b);
+		int result = SimpleIntCalculator.multiply(a, b);
 
 		// add additional test code here
 		assertEquals(7, result);
@@ -383,7 +383,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 0;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -402,7 +402,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 1;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -421,7 +421,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 7;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -440,7 +440,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 0;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(1, result);
@@ -459,7 +459,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 1;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(6, result);
@@ -478,7 +478,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 7;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(-7, result);
@@ -497,7 +497,7 @@ public class CalculatorTest {
 		int a = 7;
 		int b = 0;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(7, result);
@@ -516,7 +516,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 1;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(-1, result);
@@ -535,7 +535,7 @@ public class CalculatorTest {
 		int a = 1;
 		int b = 7;
 
-		int result = Calculator.subtract(a, b);
+		int result = SimpleIntCalculator.subtract(a, b);
 
 		// add additional test code here
 		assertEquals(-6, result);
@@ -554,7 +554,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 1;
 
-		int result = Calculator.sum(a, b);
+		int result = SimpleIntCalculator.sum(a, b);
 
 		// add additional test code here
 		assertEquals(1, result);
@@ -573,7 +573,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 7;
 
-		int result = Calculator.sum(a, b);
+		int result = SimpleIntCalculator.sum(a, b);
 
 		// add additional test code here
 		assertEquals(7, result);
@@ -592,7 +592,7 @@ public class CalculatorTest {
 		int a = 0;
 		int b = 0;
 
-		int result = Calculator.sum(a, b);
+		int result = SimpleIntCalculator.sum(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -611,7 +611,7 @@ public class CalculatorTest {
 		int a = -1;
 		int b = 0;
 
-		int result = Calculator.sum(a, b);
+		int result = SimpleIntCalculator.sum(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -630,7 +630,7 @@ public class CalculatorTest {
 		int a = -1;
 		int b = 7;
 
-		int result = Calculator.sum(a, b);
+		int result = SimpleIntCalculator.sum(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -649,7 +649,7 @@ public class CalculatorTest {
 		int a = -1;
 		int b = 1;
 
-		int result = Calculator.sum(a, b);
+		int result = SimpleIntCalculator.sum(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
@@ -668,7 +668,7 @@ public class CalculatorTest {
 		int a = -1;
 		int b = 10;
 
-		int result = Calculator.sum(a, b);
+		int result = SimpleIntCalculator.sum(a, b);
 
 		// add additional test code here
 		assertEquals(0, result);
