@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.target.statik.ValidaCPF;
-
 /*
  * TODO Algumas estratégias que podem ser utilizadas:
  * 
@@ -39,11 +37,11 @@ public class StringCombinator {
 		int limit = 1000;
 		for (int i = 0; i < limit; ++i) {
 			String str = randomDigitString(11);
-			boolean valido = ValidaCPF.isCpfValido(str);
-			if (valido) {
-				countValid++;
-				System.out.println(str);
-			}
+//			boolean valido = ValidaCPF.isCpfValido(str);
+//			if (valido) {
+//				countValid++;
+//				System.out.println(str);
+//			}
 //			System.out.println(str + " >> " + valido);
 		}
 		System.out.println("Generated values: " + limit);

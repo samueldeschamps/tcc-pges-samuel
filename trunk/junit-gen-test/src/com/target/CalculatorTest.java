@@ -2,7 +2,7 @@ package com.target;
 
 import org.junit.*;
 
-import com.target.statik.Calculator;
+import com.generator.structure.res.input.Calculator;
 
 import static org.junit.Assert.*;
 
