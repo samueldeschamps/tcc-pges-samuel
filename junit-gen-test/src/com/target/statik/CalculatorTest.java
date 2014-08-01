@@ -3,6 +3,8 @@ package com.target.statik;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.generator.structure.res.input.Calculator;
+
 public class CalculatorTest {
 
     @Test

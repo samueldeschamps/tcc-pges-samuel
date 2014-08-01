@@ -1,4 +1,4 @@
-package com.target.statik;
+package com.generator.structure.res.input;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

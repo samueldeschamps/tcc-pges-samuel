@@ -7,7 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 
 import com.generator.structure.valuegenerators.common.IntegerCommonValues;
+import com.generator.structure.valuegenerators.common.StringCommonValues;
 
 public class JUnitGenerator {
 
@@ -52,6 +55,7 @@ public class JUnitGenerator {
 	private void loadDefaultParamGenerators() {
 		valueGenerators.register(Integer.class, IntegerCommonValues.class);
 		valueGenerators.register(int.class, IntegerCommonValues.class);
+		valueGenerators.register(String.class, StringCommonValues.class);
 	}
 
 	public void execute() {
@@ -104,8 +108,8 @@ public class JUnitGenerator {
 
 	private void writeResultAsFiles(List<CompilationUnit> testClasses) {
 		for (CompilationUnit unit : testClasses) {
-			String className = unit.getTypes().get(0).getName();
-			File file = new File(outputDir, className);
+			String fileName = unit.getTypes().get(0).getName() + ".java";
+			File file = new File(outputDir, fileName);
 			try {
 				FileWriter writer = new FileWriter(file);
 				try {
@@ -125,7 +129,16 @@ public class JUnitGenerator {
 		if (method != null) {
 			cases.put(method, getTestCasesValues(targetClass, method));
 		} else {
-			for (Method m : targetClass.getDeclaredMethods()) {
+			// TODO Alterar para obter a ordem original dos métodos na classe
+			Method[] methods = targetClass.getDeclaredMethods();
+			Arrays.sort(methods, new Comparator<Method>() {
+
+				@Override
+				public int compare(Method o1, Method o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+			for (Method m : methods) {
 				cases.put(m, getTestCasesValues(targetClass, m));
 			}
 		}
@@ -149,6 +162,7 @@ public class JUnitGenerator {
 		return Collections.unmodifiableList(targetClasses);
 	}
 
+	// TODO Passar o caminho completo do arquivo em vez do nome da classe
 	public void addTargetClass(String className) throws ClassNotFoundException {
 		Class<?> clazz = Class.forName(className);
 		addTargetClass(clazz);

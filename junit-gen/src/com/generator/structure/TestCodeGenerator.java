@@ -11,11 +11,13 @@ import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
+import japa.parser.ast.expr.BooleanLiteralExpr;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.expr.MarkerAnnotationExpr;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.NameExpr;
+import japa.parser.ast.expr.NullLiteralExpr;
 import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.expr.VariableDeclarationExpr;
 import japa.parser.ast.stmt.BlockStmt;
@@ -125,8 +127,7 @@ public class TestCodeGenerator {
 		unit.addImport(new ImportDeclaration("org.junit.Test", false, false));
 
 		if (!testPackageName.equals(targetClass.getPackage().getName())) {
-			String targetPkgName = targetClass.getPackage().getName();
-			unit.addImport(new ImportDeclaration(targetPkgName, false, false));
+			unit.addImport(new ImportDeclaration(targetClass.getName(), false, false));
 		}
 	}
 
@@ -188,7 +189,7 @@ public class TestCodeGenerator {
 		if (!type.isPrimitive() && !type.isArray() && !type.isAnnotation() && !type.isEnum()) {
 			String pkgName = type.getPackage().getName();
 			if (!pkgName.equals("java.lang") && !pkgName.equals(targetClass.getPackage().getName())) {
-				unit.addImport(new ImportDeclaration(pkgName, false, false));
+				unit.addImport(new ImportDeclaration(type.getName(), false, false));
 			}
 			return new ClassOrInterfaceType(type.getSimpleName());
 		}
@@ -196,9 +197,21 @@ public class TestCodeGenerator {
 		// TODO Suportar outros tipos
 	}
 
-	private Expression valueToExpression(Object paramValue) {
+	private Expression valueToExpression(Object value) {
+		if (value == null) {
+			return new NullLiteralExpr();
+		}
+		if (value instanceof String) {
+			return new StringLiteralExpr((String) value);
+		}
+		if (value instanceof Boolean) {
+			return new BooleanLiteralExpr((Boolean) value);
+		}
+		if (value instanceof Integer) {
+			return new IntegerLiteralExpr(value.toString());
+		}
 		// TODO Suportar outros tipos
-		return new IntegerLiteralExpr(paramValue.toString());
+		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + value.getClass().getSimpleName() + ").");
 	}
 
 }
