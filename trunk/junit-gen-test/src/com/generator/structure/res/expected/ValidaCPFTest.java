@@ -10,6 +10,7 @@ public class ValidaCPFTest {
     public void testformatarCPF_1() {
         try {
             ValidaCPF.formatarCPF(null);
+            Assert.fail("A NullPointerException must have been thrown.");
         } catch (NullPointerException ex) {
         }
     }
@@ -58,6 +59,7 @@ public class ValidaCPFTest {
     public void testisCpfValido_1() {
         try {
             ValidaCPF.isCpfValido(null);
+            Assert.fail("A NullPointerException must have been thrown.");
         } catch (NullPointerException ex) {
         }
     }

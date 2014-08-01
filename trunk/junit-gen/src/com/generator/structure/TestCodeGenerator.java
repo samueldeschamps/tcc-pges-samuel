@@ -151,6 +151,7 @@ public class TestCodeGenerator {
 		NameExpr assertName = new NameExpr("Assert");
 		MethodCallExpr failCall = new MethodCallExpr(assertName, "fail");
 		ASTHelper.addArgument(failCall, new StringLiteralExpr(getFailMessage(result)));
+		ASTHelper.addStmt(tryBlock, failCall);
 
 		CatchClause catchClause = new CatchClause();
 		Type exceptionType = javaTypeToParserType(result.getExceptionClass());
@@ -164,7 +165,6 @@ public class TestCodeGenerator {
 			ASTHelper.addArgument(assertCall, new StringLiteralExpr(result.exception.getMessage()));
 			MethodCallExpr callGetMessage = new MethodCallExpr(new NameExpr(exceptionVarName), "getMessage");
 			ASTHelper.addArgument(assertCall, callGetMessage);
-			ASTHelper.addStmt(tryBlock, failCall);
 			ASTHelper.addStmt(catchBlock, assertCall);
 		}
 		catchClause.setCatchBlock(catchBlock);
