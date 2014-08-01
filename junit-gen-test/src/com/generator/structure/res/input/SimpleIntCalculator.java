@@ -1,11 +1,8 @@
 package com.generator.structure.res.input;
 
-public class Calculator {
+public class SimpleIntCalculator {
 	
 	public static int sum(int a, int b) throws IllegalArgumentException {
-		if (a < 0) {
-			throw new IllegalArgumentException("A cannot be negative!");
-		}
 		return a + b;
 	}
 	

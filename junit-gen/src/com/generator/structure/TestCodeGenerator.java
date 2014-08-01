@@ -12,6 +12,7 @@ import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BooleanLiteralExpr;
+import japa.parser.ast.expr.DoubleLiteralExpr;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.IntegerLiteralExpr;
 import japa.parser.ast.expr.MarkerAnnotationExpr;
@@ -142,6 +143,10 @@ public class TestCodeGenerator {
 		MethodCallExpr assertCall = new MethodCallExpr(assertName, "assertEquals");
 		ASTHelper.addArgument(assertCall, valueToExpression(result.result));
 		ASTHelper.addArgument(assertCall, new NameExpr(actualName));
+		if (result.result instanceof Double) {
+			// TODO Parametrizar a precisão do double
+			ASTHelper.addArgument(assertCall, new DoubleLiteralExpr("0.00000001"));
+		}
 		ASTHelper.addStmt(block, assertCall);
 	}
 
@@ -186,15 +191,29 @@ public class TestCodeGenerator {
 		if (type.equals(boolean.class)) {
 			return new PrimitiveType(Primitive.Boolean);
 		}
+		if (type.equals(double.class)) {
+			return new PrimitiveType(Primitive.Double);
+		}
 		if (!type.isPrimitive() && !type.isArray() && !type.isAnnotation() && !type.isEnum()) {
 			String pkgName = type.getPackage().getName();
 			if (!pkgName.equals("java.lang") && !pkgName.equals(targetClass.getPackage().getName())) {
-				unit.addImport(new ImportDeclaration(type.getName(), false, false));
+				addImport(type);
 			}
 			return new ClassOrInterfaceType(type.getSimpleName());
 		}
 		throw new IllegalArgumentException("Type not supported: '" + type + "'.");
 		// TODO Suportar outros tipos
+	}
+
+	private void addImport(Class<?> type) {
+		String className = type.getName();
+		for (ImportDeclaration imp : unit.getImports()) {
+			if (imp.getName().getName().equals(className) && !imp.isAsterisk() && !imp.isStatic()) {
+				// Import already included
+				return;
+			}
+		}
+		unit.addImport(new ImportDeclaration(className, false, false));
 	}
 
 	private Expression valueToExpression(Object value) {
@@ -209,6 +228,9 @@ public class TestCodeGenerator {
 		}
 		if (value instanceof Integer) {
 			return new IntegerLiteralExpr(value.toString());
+		}
+		if (value instanceof Double) {
+			return new DoubleLiteralExpr(value.toString());
 		}
 		// TODO Suportar outros tipos
 		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + value.getClass().getSimpleName() + ").");

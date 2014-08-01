@@ -11,7 +11,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.generator.structure.res.input.Calculator;
+import com.generator.structure.res.input.Exceptions;
+import com.generator.structure.res.input.SimpleIntCalculator;
 import com.generator.structure.res.input.ValidaCPF;
 
 public class JUnitGeneratorTest {
@@ -77,8 +78,13 @@ public class JUnitGeneratorTest {
 	}
 
 	@Test
-	public void testCalculator() {
-		testGeneration(Calculator.class);
+	public void testSimpleIntCalculator() {
+		testGeneration(SimpleIntCalculator.class);
+	}
+	
+	@Test
+	public void testExceptions() {
+		testGeneration(Exceptions.class);
 	}
 	
 	@Test
