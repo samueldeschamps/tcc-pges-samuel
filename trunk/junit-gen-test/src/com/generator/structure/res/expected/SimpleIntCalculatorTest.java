@@ -8,22 +8,12 @@ public class SimpleIntCalculatorTest {
 
     @Test
     public void testdivide_1() {
-        try {
-            SimpleIntCalculator.divide(0, 0);
-            Assert.fail("An ArithmeticException must have been thrown.");
-        } catch (ArithmeticException ex) {
-            Assert.assertEquals("/ by zero", ex.getMessage());
-        }
+        SimpleIntCalculator.divide(0, 0);
     }
 
     @Test
     public void testdivide_2() {
-        try {
-            SimpleIntCalculator.divide(1, 0);
-            Assert.fail("An ArithmeticException must have been thrown.");
-        } catch (ArithmeticException ex) {
-            Assert.assertEquals("/ by zero", ex.getMessage());
-        }
+        SimpleIntCalculator.divide(1, 0);
     }
 
     @Test
@@ -40,12 +30,7 @@ public class SimpleIntCalculatorTest {
 
     @Test
     public void testdivide_5() {
-        try {
-            SimpleIntCalculator.divide(-1, 0);
-            Assert.fail("An ArithmeticException must have been thrown.");
-        } catch (ArithmeticException ex) {
-            Assert.assertEquals("/ by zero", ex.getMessage());
-        }
+        SimpleIntCalculator.divide(-1, 0);
     }
 
     @Test

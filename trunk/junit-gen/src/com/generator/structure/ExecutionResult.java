@@ -2,27 +2,30 @@ package com.generator.structure;
 
 public class ExecutionResult {
 
-	public final Object result;
-	public final Throwable exception;
-	public final boolean[] coverage;
+	private final Object result;
+	private final Throwable exception;
+	private final boolean exceptionDeclared;
+	private final boolean[] coverage;
 
 	public ExecutionResult(Object result) {
 		this(result, null);
 	}
 
-	public ExecutionResult(Throwable exception) {
-		this(exception, null);
+	public ExecutionResult(Throwable exception, boolean declared) {
+		this(exception, declared, null);
 	}
 
 	public ExecutionResult(Object result, boolean[] coverage) {
 		this.result = result;
 		this.exception = null;
+		this.exceptionDeclared = false;
 		this.coverage = coverage;
 	}
 
-	public ExecutionResult(Throwable exception, boolean[] coverage) {
+	public ExecutionResult(Throwable exception, boolean declared, boolean[] coverage) {
 		this.result = null;
 		this.exception = exception;
+		this.exceptionDeclared = declared;
 		this.coverage = coverage;
 	}
 
@@ -33,9 +36,25 @@ public class ExecutionResult {
 	public boolean failed() {
 		return exception != null;
 	}
-
+	
+	public Object getResult() {
+		return result;
+	}
+	
+	public Throwable getException() {
+		return exception;
+	}
+	
 	public Class<? extends Throwable> getExceptionClass() {
 		return exception.getClass();
+	}
+	
+	public boolean isExceptionDeclared() {
+		return exceptionDeclared;
+	}
+	
+	public boolean[] getCoverage() {
+		return coverage;
 	}
 
 	public double getCoverageRate() {

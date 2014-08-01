@@ -19,12 +19,21 @@ public class InnerExecutor {
 			Object result = method.invoke(null, params.toArray());
 			return new ExecutionResult(result);
 
-		} catch (InvocationTargetException e) {
-			return new ExecutionResult(e.getCause());
+		} catch (InvocationTargetException ex) {
+
+			boolean declared = false;
+			if (ex.getCause() != null) {
+				for (Class<?> throwEx : method.getExceptionTypes()) {
+					if (throwEx.isAssignableFrom(ex.getCause().getClass())) {
+						declared = true;
+					}
+				}
+			}
+			return new ExecutionResult(ex.getCause(), declared);
 
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 
-			throw new RuntimeException("Error invoking method.", e);
+			throw new RuntimeException("Error invoking method '" + method.getName() + "'.", e);
 		}
 	}
 

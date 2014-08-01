@@ -3,6 +3,9 @@ package com.generator.structure.res.input;
 public class ValidaCPF {
 
 	public static boolean isCpfValido(String cpf) {
+		if (cpf == null) {
+			return false;
+		}
 		char dig10, dig11;
 		int sm, i, r, num, peso;
 		if (cpf.length() != 11) {
@@ -38,6 +41,9 @@ public class ValidaCPF {
 	}
 
 	public static String formatarCPF(String cpf) throws StringIndexOutOfBoundsException {
+		if (cpf == null) {
+			return null;
+		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(cpf.substring(0, 3));
 		sb.append(".");
