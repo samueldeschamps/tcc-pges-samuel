@@ -1,11 +1,12 @@
 package com.generator.structure;
 
+
 public class ExecutionResult {
 
 	private final Object result;
 	private final Throwable exception;
 	private final boolean exceptionDeclared;
-	private final boolean[] coverage;
+	private final CoverageInfo coverageInfo;
 
 	public ExecutionResult(Object result) {
 		this(result, null);
@@ -15,18 +16,25 @@ public class ExecutionResult {
 		this(exception, declared, null);
 	}
 
-	public ExecutionResult(Object result, boolean[] coverage) {
+	public ExecutionResult(Object result, CoverageInfo coverageInfo) {
 		this.result = result;
 		this.exception = null;
 		this.exceptionDeclared = false;
-		this.coverage = coverage;
+		this.coverageInfo = coverageInfo;
 	}
 
-	public ExecutionResult(Throwable exception, boolean declared, boolean[] coverage) {
+	public ExecutionResult(Throwable exception, boolean declared, CoverageInfo coverageInfo) {
 		this.result = null;
 		this.exception = exception;
 		this.exceptionDeclared = declared;
-		this.coverage = coverage;
+		this.coverageInfo = coverageInfo;
+	}
+
+	public ExecutionResult(ExecutionResult other, CoverageInfo coverageInfo) {
+		this.result = other.result;
+		this.exception = other.exception;
+		this.exceptionDeclared = other.exceptionDeclared;
+		this.coverageInfo = coverageInfo;
 	}
 
 	public boolean succeeded() {
@@ -36,38 +44,33 @@ public class ExecutionResult {
 	public boolean failed() {
 		return exception != null;
 	}
-	
+
 	public Object getResult() {
 		return result;
 	}
-	
+
 	public Throwable getException() {
 		return exception;
 	}
-	
+
 	public Class<? extends Throwable> getExceptionClass() {
 		return exception.getClass();
 	}
-	
+
 	public boolean isExceptionDeclared() {
 		return exceptionDeclared;
 	}
-	
-	public boolean[] getCoverage() {
-		return coverage;
+
+	public CoverageInfo getCoverageInfo() {
+		return coverageInfo;
 	}
 
-	public double getCoverageRate() {
-		if (coverage.length == 0) {
-			return 0.0;
-		}
-		int trueCount = 0;
-		for (boolean b : coverage) {
-			if (b) {
-				++trueCount;
-			}
-		}
-		return ((double) trueCount) / coverage.length;
+	public boolean hasCoverageInfo() {
+		return coverageInfo != null;
+	}
+
+	public double getCoverageRatio() {
+		return coverageInfo.getCoverageRatio();
 	}
 
 }

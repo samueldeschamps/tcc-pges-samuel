@@ -5,6 +5,7 @@ import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.ImportDeclaration;
 import japa.parser.ast.PackageDeclaration;
 import japa.parser.ast.body.ClassOrInterfaceDeclaration;
+import japa.parser.ast.body.JavadocComment;
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.ModifierSet;
 import japa.parser.ast.body.Parameter;
@@ -43,7 +44,7 @@ public class TestCodeGenerator {
 	private Map<Method, List<TestCaseData>> cases;
 	private String testPackageName;
 	private CompilationUnit unit;
-	
+
 	public TestCodeGenerator(JUnitGenerator generator) {
 		this.generator = generator;
 	}
@@ -125,10 +126,14 @@ public class TestCodeGenerator {
 						addExceptionAssertion(block, call, result);
 					}
 				}
+				if (result.hasCoverageInfo()) {
+					String text = String.format("Coverage: %.2f%%", result.getCoverageRatio() * 100);
+					testMethod.setJavaDoc(new JavadocComment(text));
+				}
 			}
 		}
 	}
-	
+
 	public CompilationUnit getResult() {
 		return unit;
 	}
@@ -142,7 +147,7 @@ public class TestCodeGenerator {
 			unit.addImport(new ImportDeclaration(targetClass.getName(), false, false));
 		}
 	}
-	
+
 	private void addResultAssertion(Method method, BlockStmt block, MethodCallExpr call, ExecutionResult result) {
 		String actualName = "actual";
 		Type type = javaTypeToParserType(method.getReturnType());
@@ -244,7 +249,8 @@ public class TestCodeGenerator {
 			return new DoubleLiteralExpr(value.toString());
 		}
 		// TODO Suportar outros tipos
-		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + value.getClass().getSimpleName() + ").");
+		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + value.getClass().getSimpleName()
+				+ ").");
 	}
 
 }
