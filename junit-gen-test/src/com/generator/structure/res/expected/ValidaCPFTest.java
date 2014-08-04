@@ -6,12 +6,14 @@ import com.generator.structure.res.input.ValidaCPF;
 
 public class ValidaCPFTest {
 
+    /**Coverage: 7,84%*/
     @Test
     public void testformatarCPF_1() {
         String actual = ValidaCPF.formatarCPF(null);
         Assert.assertEquals(null, actual);
     }
 
+    /**Coverage: 0,00%*/
     @Test
     public void testformatarCPF_2() {
         try {
@@ -22,6 +24,7 @@ public class ValidaCPFTest {
         }
     }
 
+    /**Coverage: 0,00%*/
     @Test
     public void testformatarCPF_3() {
         try {
@@ -32,6 +35,7 @@ public class ValidaCPFTest {
         }
     }
 
+    /**Coverage: 0,00%*/
     @Test
     public void testformatarCPF_4() {
         try {
@@ -42,6 +46,7 @@ public class ValidaCPFTest {
         }
     }
 
+    /**Coverage: 0,00%*/
     @Test
     public void testformatarCPF_5() {
         try {
@@ -52,30 +57,35 @@ public class ValidaCPFTest {
         }
     }
 
+    /**Coverage: 3,57%*/
     @Test
     public void testisCpfValido_1() {
         boolean actual = ValidaCPF.isCpfValido(null);
         Assert.assertEquals(false, actual);
     }
 
+    /**Coverage: 7,14%*/
     @Test
     public void testisCpfValido_2() {
         boolean actual = ValidaCPF.isCpfValido("");
         Assert.assertEquals(false, actual);
     }
 
+    /**Coverage: 7,14%*/
     @Test
     public void testisCpfValido_3() {
         boolean actual = ValidaCPF.isCpfValido("a");
         Assert.assertEquals(false, actual);
     }
 
+    /**Coverage: 7,14%*/
     @Test
     public void testisCpfValido_4() {
         boolean actual = ValidaCPF.isCpfValido("A");
         Assert.assertEquals(false, actual);
     }
 
+    /**Coverage: 7,14%*/
     @Test
     public void testisCpfValido_5() {
         boolean actual = ValidaCPF.isCpfValido("abc");

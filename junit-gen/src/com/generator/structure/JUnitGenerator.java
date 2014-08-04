@@ -59,6 +59,7 @@ public class JUnitGenerator {
 		valueGenerators.register(Integer.class, IntegerCommonValues.class);
 		valueGenerators.register(int.class, IntegerCommonValues.class);
 		valueGenerators.register(String.class, StringCommonValues.class);
+		valueGenerators.register(String.class, StringCommonValues.class);
 	}
 
 	public void execute() {
