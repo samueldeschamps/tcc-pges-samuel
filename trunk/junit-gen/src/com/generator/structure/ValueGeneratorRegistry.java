@@ -22,6 +22,7 @@ public class ValueGeneratorRegistry {
 		innerList.add((Class<ValueGenerator<?>>) generator);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private <T, VG extends ValueGenerator<T>> ValueGenerator<T> createInstance(Class<VG> generator, Class<?> valueClass) {
 		try {
 			return generator.newInstance();
