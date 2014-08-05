@@ -3,9 +3,9 @@ package com.generator.structure.valuegenerators.common;
 import java.util.Arrays;
 
 import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.valuegenerators.FiniteValueGenerator;
+import com.generator.structure.valuegenerators.CachedValueGenerator;
 
-public class CharUpperLetterValues extends FiniteValueGenerator<Character> {
+public class CharUpperLetterValues extends CachedValueGenerator<Character> {
 
 	public CharUpperLetterValues() {
 		super(initValues());

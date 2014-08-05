@@ -1,9 +1,9 @@
 package com.generator.structure.valuegenerators.common;
 
 import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.valuegenerators.FiniteValueGenerator;
+import com.generator.structure.valuegenerators.CachedValueGenerator;
 
-public class StringCommonValues extends FiniteValueGenerator<String> {
+public class StringCommonValues extends CachedValueGenerator<String> {
 
 	public StringCommonValues() {
 		super(new String[] { //

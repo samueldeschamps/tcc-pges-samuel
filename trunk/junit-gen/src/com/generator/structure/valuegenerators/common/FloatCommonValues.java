@@ -1,9 +1,9 @@
 package com.generator.structure.valuegenerators.common;
 
 import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.valuegenerators.FiniteValueGenerator;
+import com.generator.structure.valuegenerators.CachedValueGenerator;
 
-public class FloatCommonValues extends FiniteValueGenerator<Float> {
+public class FloatCommonValues extends CachedValueGenerator<Float> {
 
 	public FloatCommonValues() {
 		super(new Float[] { //

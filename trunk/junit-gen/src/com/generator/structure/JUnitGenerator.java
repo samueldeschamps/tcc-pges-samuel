@@ -21,6 +21,7 @@ import com.generator.structure.valuegenerators.common.ByteFullValues;
 import com.generator.structure.valuegenerators.common.CharCommonValues;
 import com.generator.structure.valuegenerators.common.CharFullValues;
 import com.generator.structure.valuegenerators.common.DoubleCommonValues;
+import com.generator.structure.valuegenerators.common.EnumFullValues;
 import com.generator.structure.valuegenerators.common.FloatCommonValues;
 import com.generator.structure.valuegenerators.common.IntegerCommonValues;
 import com.generator.structure.valuegenerators.common.LongCommonValues;
@@ -66,6 +67,15 @@ public class JUnitGenerator {
 	}
 
 	private void loadDefaultParamGenerators() {
+		loadPrimiteParamGenerators();
+		
+		valueGenerators.register(Enum.class, EnumFullValues.class);
+		
+		valueGenerators.register(String.class, StringCommonValues.class);
+		valueGenerators.register(String.class, StringCommonValues.class);
+	}
+
+	private void loadPrimiteParamGenerators() {
 		valueGenerators.register(boolean.class, BooleanFullValues.class);
 		valueGenerators.register(Boolean.class, BooleanFullValues.class);
 
@@ -95,9 +105,6 @@ public class JUnitGenerator {
 
 		valueGenerators.register(double.class, DoubleCommonValues.class);
 		valueGenerators.register(Double.class, DoubleCommonValues.class);
-		
-		valueGenerators.register(String.class, StringCommonValues.class);
-		valueGenerators.register(String.class, StringCommonValues.class);
 	}
 
 	public void execute() {
