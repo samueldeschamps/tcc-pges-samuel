@@ -13,6 +13,7 @@ import org.junit.rules.TemporaryFolder;
 
 import com.generator.structure.res.input.Enumerations;
 import com.generator.structure.res.input.Exceptions;
+import com.generator.structure.res.input.PrimitiveOperations;
 import com.generator.structure.res.input.SimpleIntCalculator;
 import com.generator.structure.res.input.ValidaCPF;
 
@@ -96,6 +97,11 @@ public class JUnitGeneratorTest {
 	@Test
 	public void testEnumerations() {
 		testGeneration(Enumerations.class);
+	}
+	
+	@Test
+	public void testPrimitiveOperations() {
+		testGeneration(PrimitiveOperations.class);
 	}
 
 }

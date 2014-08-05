@@ -13,9 +13,12 @@ import japa.parser.ast.body.VariableDeclaratorId;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BooleanLiteralExpr;
+import japa.parser.ast.expr.CastExpr;
+import japa.parser.ast.expr.CharLiteralExpr;
 import japa.parser.ast.expr.DoubleLiteralExpr;
 import japa.parser.ast.expr.Expression;
 import japa.parser.ast.expr.IntegerLiteralExpr;
+import japa.parser.ast.expr.LongLiteralExpr;
 import japa.parser.ast.expr.MarkerAnnotationExpr;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.NameExpr;
@@ -149,7 +152,7 @@ public class TestCodeGenerator {
 		}
 	}
 
-	private void addResultAssertion(Method method, BlockStmt block, MethodCallExpr call, ExecutionResult result) {
+	private void addResultAssertion(Method method, BlockStmt block, MethodCallExpr call, ExecutionResult execResult) {
 		String actualName = "actual";
 		Type type = javaTypeToParserType(method.getReturnType());
 		VariableDeclarationExpr varDecl = ASTHelper.createVariableDeclarationExpr(type, actualName);
@@ -158,9 +161,10 @@ public class TestCodeGenerator {
 
 		NameExpr assertName = new NameExpr("Assert");
 		MethodCallExpr assertCall = new MethodCallExpr(assertName, "assertEquals");
-		ASTHelper.addArgument(assertCall, valueToExpression(result.getResult()));
+		Object resultValue = execResult.getResult();
+		ASTHelper.addArgument(assertCall, valueToExpression(resultValue));
 		ASTHelper.addArgument(assertCall, new NameExpr(actualName));
-		if (result.getResult() instanceof Double) {
+		if (resultValue instanceof Double || resultValue instanceof Float) {
 			String precision = String.valueOf(generator.getDoubleAssertPrecision());
 			ASTHelper.addArgument(assertCall, new DoubleLiteralExpr(precision));
 		}
@@ -202,11 +206,27 @@ public class TestCodeGenerator {
 	}
 
 	private Type javaTypeToParserType(Class<?> type) {
+		// Register types using a Map
+		if (type.equals(boolean.class)) {
+			return new PrimitiveType(Primitive.Boolean);
+		}
+		if (type.equals(byte.class)) {
+			return new PrimitiveType(Primitive.Byte);
+		}
+		if (type.equals(short.class)) {
+			return new PrimitiveType(Primitive.Short);
+		}
+		if (type.equals(char.class)) {
+			return new PrimitiveType(Primitive.Char);
+		}
 		if (type.equals(int.class)) {
 			return new PrimitiveType(Primitive.Int);
 		}
-		if (type.equals(boolean.class)) {
-			return new PrimitiveType(Primitive.Boolean);
+		if (type.equals(long.class)) {
+			return new PrimitiveType(Primitive.Long);
+		}
+		if (type.equals(float.class)) {
+			return new PrimitiveType(Primitive.Float);
 		}
 		if (type.equals(double.class)) {
 			return new PrimitiveType(Primitive.Double);
@@ -240,18 +260,34 @@ public class TestCodeGenerator {
 		unit.addImport(new ImportDeclaration(className, false, false));
 	}
 
+	@SuppressWarnings("rawtypes")
 	private Expression valueToExpression(Object value) {
 		if (value == null) {
 			return new NullLiteralExpr();
 		}
-		if (value instanceof String) {
-			return new StringLiteralExpr((String) value);
-		}
 		if (value instanceof Boolean) {
 			return new BooleanLiteralExpr((Boolean) value);
 		}
+		if (value instanceof Byte) {
+			IntegerLiteralExpr literal = new IntegerLiteralExpr(value.toString()); 
+			return new CastExpr(new PrimitiveType(Primitive.Byte), literal);
+		}
+		if (value instanceof Short) {
+			IntegerLiteralExpr literal = new IntegerLiteralExpr(value.toString());
+			return new CastExpr(new PrimitiveType(Primitive.Short), literal);
+		}
+		if (value instanceof Character) {
+			return new CharLiteralExpr(value.toString());
+		}
 		if (value instanceof Integer) {
 			return new IntegerLiteralExpr(value.toString());
+		}
+		if (value instanceof Long) {
+			return new LongLiteralExpr(value.toString());
+		}
+		if (value instanceof Float) {
+			DoubleLiteralExpr literal = new DoubleLiteralExpr(value.toString());
+			return new CastExpr(new PrimitiveType(Primitive.Float), literal);
 		}
 		if (value instanceof Double) {
 			return new DoubleLiteralExpr(value.toString());
@@ -261,6 +297,9 @@ public class TestCodeGenerator {
 			addImport(clazz);
 			NameExpr scope = new NameExpr(clazz.getSimpleName());
 			return new QualifiedNameExpr(scope, ((Enum) value).name());
+		}
+		if (value instanceof String) {
+			return new StringLiteralExpr((String) value);
 		}
 		// TODO Suportar outros tipos
 		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + clazz.getSimpleName() + ").");
