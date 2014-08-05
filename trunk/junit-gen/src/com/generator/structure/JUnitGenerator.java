@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 
 import com.generator.structure.valuegenerators.common.BooleanFullValues;
+import com.generator.structure.valuegenerators.common.ByteCommonValues;
 import com.generator.structure.valuegenerators.common.ByteFullValues;
 import com.generator.structure.valuegenerators.common.CharCommonValues;
 import com.generator.structure.valuegenerators.common.CharFullValues;
@@ -79,6 +80,8 @@ public class JUnitGenerator {
 		valueGenerators.register(boolean.class, BooleanFullValues.class);
 		valueGenerators.register(Boolean.class, BooleanFullValues.class);
 
+		valueGenerators.register(byte.class, ByteCommonValues.class);
+		valueGenerators.register(Byte.class, ByteCommonValues.class);
 		valueGenerators.register(byte.class, ByteFullValues.class);
 		valueGenerators.register(Byte.class, ByteFullValues.class);
 		
