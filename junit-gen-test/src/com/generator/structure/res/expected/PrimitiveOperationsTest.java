@@ -9,36 +9,36 @@ public class PrimitiveOperationsTest {
     /**Coverage: 100,00%*/
     @Test
     public void testbyteSum_1() {
-        byte actual = PrimitiveOperations.byteSum((byte) -128, (byte) -128);
+        byte actual = PrimitiveOperations.byteSum((byte) 0, (byte) 0);
         Assert.assertEquals((byte) 0, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testbyteSum_2() {
-        byte actual = PrimitiveOperations.byteSum((byte) -127, (byte) -128);
+        byte actual = PrimitiveOperations.byteSum((byte) 1, (byte) 0);
         Assert.assertEquals((byte) 1, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testbyteSum_3() {
-        byte actual = PrimitiveOperations.byteSum((byte) -128, (byte) -127);
+        byte actual = PrimitiveOperations.byteSum((byte) 0, (byte) 1);
         Assert.assertEquals((byte) 1, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testbyteSum_4() {
-        byte actual = PrimitiveOperations.byteSum((byte) -127, (byte) -127);
+        byte actual = PrimitiveOperations.byteSum((byte) 1, (byte) 1);
         Assert.assertEquals((byte) 2, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testbyteSum_5() {
-        byte actual = PrimitiveOperations.byteSum((byte) -126, (byte) -128);
-        Assert.assertEquals((byte) 2, actual);
+        byte actual = PrimitiveOperations.byteSum((byte) -1, (byte) 0);
+        Assert.assertEquals((byte) -1, actual);
     }
 
     /**Coverage: 100,00%*/
@@ -114,36 +114,36 @@ public class PrimitiveOperationsTest {
     /**Coverage: 100,00%*/
     @Test
     public void testhashCode_1() {
-        int actual = PrimitiveOperations.hashCode(false, (byte) -128, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
-        Assert.assertEquals(-1179, actual);
+        int actual = PrimitiveOperations.hashCode(false, (byte) 0, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
+        Assert.assertEquals(1253, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testhashCode_2() {
-        int actual = PrimitiveOperations.hashCode(true, (byte) -128, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
-        Assert.assertEquals(-1153, actual);
+        int actual = PrimitiveOperations.hashCode(true, (byte) 0, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
+        Assert.assertEquals(1279, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testhashCode_3() {
-        int actual = PrimitiveOperations.hashCode(false, (byte) -127, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
-        Assert.assertEquals(-1180, actual);
+        int actual = PrimitiveOperations.hashCode(false, (byte) 1, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
+        Assert.assertEquals(1252, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testhashCode_4() {
-        int actual = PrimitiveOperations.hashCode(true, (byte) -127, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
-        Assert.assertEquals(-1154, actual);
+        int actual = PrimitiveOperations.hashCode(true, (byte) 1, (short) 0, '0', 0, 0, (float) 0.0, 0.0);
+        Assert.assertEquals(1278, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
     public void testhashCode_5() {
-        int actual = PrimitiveOperations.hashCode(false, (byte) -128, (short) 1, '0', 0, 0, (float) 0.0, 0.0);
-        Assert.assertEquals(-1180, actual);
+        int actual = PrimitiveOperations.hashCode(false, (byte) 0, (short) 1, '0', 0, 0, (float) 0.0, 0.0);
+        Assert.assertEquals(1252, actual);
     }
 
     /**Coverage: 100,00%*/

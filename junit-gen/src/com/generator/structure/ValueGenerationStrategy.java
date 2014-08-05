@@ -31,7 +31,12 @@ public enum ValueGenerationStrategy {
 	/**
 	 * Mixes many strategies in one generator.
 	 */
-	MIXED;
+	MIXED,
+	
+	/**
+	 * TODO Rename to a better name.
+	 */
+	OTHER;
 
 	// TODO Adicionar os demais
 
