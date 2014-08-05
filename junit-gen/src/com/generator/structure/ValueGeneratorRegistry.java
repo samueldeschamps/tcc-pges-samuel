@@ -1,88 +1,77 @@
 package com.generator.structure;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class ValueGeneratorRegistry {
 
-	// TODO Support many generators for the same class/strategy:
-	private Map<Class<?>, Map<ValueGenerationStrategy, Class<ValueGenerator<?>>>> generators = new HashMap<>();
+	private Map<Class<?>, List<Class<ValueGenerator<?>>>> generators = new HashMap<>();
 
+	@SuppressWarnings("unchecked")
 	public <T, VG extends ValueGenerator<T>> void register(Class<T> clazz, Class<VG> generator) {
-		Map<ValueGenerationStrategy, Class<ValueGenerator<?>>> innerMap = generators.get(clazz);
-		if (innerMap == null) {
-			innerMap = new LinkedHashMap<>();
-			generators.put(clazz, innerMap);
+		List<Class<ValueGenerator<?>>> innerList = generators.get(clazz);
+		if (innerList == null) {
+			innerList = new ArrayList<>();
+			generators.put(clazz, innerList);
 		}
-		// FIXME Instanciar um objeto só pra isso ficou estranho.
-		ValueGenerator<T> instance = createInstance(generator);
-		innerMap.put(instance.getStrategy(), (Class<ValueGenerator<?>>) generator);
+		innerList.add((Class<ValueGenerator<?>>) generator);
 	}
 
-	private <T, VG extends ValueGenerator<T>> ValueGenerator<T> createInstance(Class<VG> generator) {
+	private <T, VG extends ValueGenerator<T>> ValueGenerator<T> createInstance(Class<VG> generator, Class<?> valueClass) {
 		try {
 			return generator.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			String msg = "Class %s must have a public, no-argument constructor.";
-			throw new RuntimeException(String.format(msg, generator.getSimpleName()), e);
+			try {
+				Class<? extends Class> paramType = valueClass.getClass();
+				Constructor<VG> constructor = generator.getConstructor(paramType);
+				return constructor.newInstance(valueClass);
+			} catch (ReflectiveOperationException | SecurityException | IllegalArgumentException e1) {
+				Log.error("Could not find a way to create a '" + generator.getSimpleName()
+						+ "' object.\nValueGenerators must have a public no-argument constructor, "
+						+ "or a public one-argument constructor with generators target type.");
+				return null;
+			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> ValueGenerator<T> get(Class<T> clazz, ValueGenerationStrategy strategy) {
-		Map<ValueGenerationStrategy, Class<ValueGenerator<?>>> innerMap = generators.get(clazz);
-		if (innerMap == null) {
-			return null;
-		}
-		Class<?> generator = innerMap.get(strategy);
-		return createInstance((Class<ValueGenerator<T>>) generator);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> List<ValueGenerator<T>> get(Class<T> clazz) {
-		Map<ValueGenerationStrategy, Class<ValueGenerator<?>>> innerMap = generators.get(clazz);
-		if (innerMap == null) {
-			return null;
-		}
-		ArrayList<ValueGenerator<T>> result = new ArrayList<ValueGenerator<T>>();
-		for (Class<ValueGenerator<?>> generator : innerMap.values()) {
-			Class<?> damnedGenerics = generator;
-			result.add(createInstance((Class<ValueGenerator<T>>) damnedGenerics));
+	public <T> List<ValueGenerator<T>> get(Class<T> clazz, ValueGenerationStrategy strategy) {
+		List<ValueGenerator<T>> result = get(clazz, clazz);
+		for (Iterator<ValueGenerator<T>> it = result.iterator(); it.hasNext();) {
+			if (it.next().getStrategy() != strategy) {
+				it.remove();
+			}
 		}
 		return result;
 	}
 
-	/*
-	private static class GeneratorKey {
-
-		final Class<?> type;
-		final ValueGenerationStrategy strategy;
-
-		public GeneratorKey(Class<?> type, ValueGenerationStrategy strategy) {
-			this.type = type;
-			this.strategy = strategy;
-		}
-
-		@Override
-		public int hashCode() {
-			return type.hashCode() * 7 + strategy.hashCode();
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == this) {
-				return true;
-			}
-			if (!(obj instanceof GeneratorKey)) {
-				return false;
-			}
-			GeneratorKey other = (GeneratorKey) obj;
-			return strategy == other.strategy && type.equals(other.type);
-		}
+	public <T> List<ValueGenerator<T>> get(Class<T> clazz) {
+		return get(clazz, clazz);
 	}
-	*/
+
+	@SuppressWarnings("unchecked")
+	public <T> List<ValueGenerator<T>> get(Class<T> registeredClass, Class<?> paramType) {
+		List<Class<ValueGenerator<?>>> innerList = generators.get(registeredClass);
+		List<ValueGenerator<T>> result = new ArrayList<>();
+		if (innerList != null) {
+			for (Class<ValueGenerator<?>> generator : innerList) {
+				Class<?> damnedGenerics = generator;
+				ValueGenerator<T> instance = this.<T, ValueGenerator<T>> createInstance(
+						(Class<ValueGenerator<T>>) damnedGenerics, paramType);
+				if (instance != null) {
+					result.add(instance);
+				}
+			}
+		}
+		// Enumeration types have generic value generators:
+		if (registeredClass.isEnum() && !registeredClass.equals(Enum.class)) {
+			result.addAll((Collection<? extends ValueGenerator<T>>) get(Enum.class, paramType));
+		}
+		return result;
+	}
 
 }

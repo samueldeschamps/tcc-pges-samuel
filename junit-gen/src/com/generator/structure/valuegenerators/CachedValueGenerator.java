@@ -2,12 +2,12 @@ package com.generator.structure.valuegenerators;
 
 import com.generator.structure.ValueGenerator;
 
-public abstract class FiniteValueGenerator<T> implements ValueGenerator<T> {
+public abstract class CachedValueGenerator<T> implements ValueGenerator<T> {
 	
 	protected final T[] values;
 	protected int index;
 	
-	public FiniteValueGenerator(T[] values) {
+	public CachedValueGenerator(T[] values) {
 		this.values = values;
 	}
 

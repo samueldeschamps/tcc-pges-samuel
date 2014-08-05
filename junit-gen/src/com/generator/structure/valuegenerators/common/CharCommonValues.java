@@ -2,9 +2,9 @@ package com.generator.structure.valuegenerators.common;
 
 import com.generator.structure.Util;
 import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.valuegenerators.FiniteValueGenerator;
+import com.generator.structure.valuegenerators.CachedValueGenerator;
 
-public class CharCommonValues extends FiniteValueGenerator<Character> {
+public class CharCommonValues extends CachedValueGenerator<Character> {
 
 	public CharCommonValues() {
 		super(initValues());

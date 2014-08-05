@@ -20,6 +20,7 @@ import japa.parser.ast.expr.MarkerAnnotationExpr;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.NullLiteralExpr;
+import japa.parser.ast.expr.QualifiedNameExpr;
 import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.expr.VariableDeclarationExpr;
 import japa.parser.ast.stmt.BlockStmt;
@@ -211,10 +212,7 @@ public class TestCodeGenerator {
 			return new PrimitiveType(Primitive.Double);
 		}
 		if (!type.isPrimitive() && !type.isArray() && !type.isAnnotation() && !type.isEnum()) {
-			String pkgName = type.getPackage().getName();
-			if (!pkgName.equals("java.lang") && !pkgName.equals(targetClass.getPackage().getName())) {
-				addImport(type);
-			}
+			addImport(type);
 			return new ClassOrInterfaceType(type.getSimpleName());
 		}
 		throw new IllegalArgumentException("Type not supported: '" + type + "'.");
@@ -223,6 +221,16 @@ public class TestCodeGenerator {
 
 	private void addImport(Class<?> type) {
 		String className = type.getName();
+		String pkgName = type.getPackage().getName();
+		// Inner class treatment:
+		if (type.getEnclosingClass() != null) {
+			className = className.replace("$", ".");
+			pkgName = type.getEnclosingClass().getName();
+		}
+		if (pkgName.equals("java.lang") || pkgName.equals(targetClass.getPackage().getName())) {
+			// This class doesn't need import
+			return;
+		}
 		for (ImportDeclaration imp : unit.getImports()) {
 			if (imp.getName().getName().equals(className) && !imp.isAsterisk() && !imp.isStatic()) {
 				// Import already included
@@ -248,9 +256,14 @@ public class TestCodeGenerator {
 		if (value instanceof Double) {
 			return new DoubleLiteralExpr(value.toString());
 		}
+		Class<? extends Object> clazz = value.getClass();
+		if (clazz.isEnum()) {
+			addImport(clazz);
+			NameExpr scope = new NameExpr(clazz.getSimpleName());
+			return new QualifiedNameExpr(scope, ((Enum) value).name());
+		}
 		// TODO Suportar outros tipos
-		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + value.getClass().getSimpleName()
-				+ ").");
+		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + clazz.getSimpleName() + ").");
 	}
 
 }

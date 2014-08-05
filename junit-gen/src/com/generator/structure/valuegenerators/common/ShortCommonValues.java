@@ -1,9 +1,9 @@
 package com.generator.structure.valuegenerators.common;
 
 import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.valuegenerators.FiniteValueGenerator;
+import com.generator.structure.valuegenerators.CachedValueGenerator;
 
-public class ShortCommonValues extends FiniteValueGenerator<Short> {
+public class ShortCommonValues extends CachedValueGenerator<Short> {
 
 	public ShortCommonValues() {
 		super(new Short[] { //

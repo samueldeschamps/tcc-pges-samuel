@@ -17,6 +17,7 @@ public class ValueSetGenerator {
 	private Item current;
 	private LinkedList<List<Object>> buffer = new LinkedList<>();
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ValueSetGenerator(ValueGeneratorRegistry registry, Class<?>[] paramTypes) {
 		for (Class<?> paramType : paramTypes) {
 			List<?> list = registry.get(paramType);

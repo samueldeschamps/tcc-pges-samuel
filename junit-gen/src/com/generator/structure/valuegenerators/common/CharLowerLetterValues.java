@@ -1,9 +1,9 @@
 package com.generator.structure.valuegenerators.common;
 
 import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.valuegenerators.FiniteValueGenerator;
+import com.generator.structure.valuegenerators.CachedValueGenerator;
 
-public class CharLowerLetterValues extends FiniteValueGenerator<Character> {
+public class CharLowerLetterValues extends CachedValueGenerator<Character> {
 
 	public CharLowerLetterValues() {
 		super(initValues());
