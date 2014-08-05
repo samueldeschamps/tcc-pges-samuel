@@ -16,8 +16,18 @@ import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
+import com.generator.structure.valuegenerators.common.BooleanFullValues;
+import com.generator.structure.valuegenerators.common.ByteFullValues;
+import com.generator.structure.valuegenerators.common.CharCommonValues;
+import com.generator.structure.valuegenerators.common.CharFullValues;
+import com.generator.structure.valuegenerators.common.DoubleCommonValues;
+import com.generator.structure.valuegenerators.common.FloatCommonValues;
 import com.generator.structure.valuegenerators.common.IntegerCommonValues;
+import com.generator.structure.valuegenerators.common.LongCommonValues;
+import com.generator.structure.valuegenerators.common.ShortCommonValues;
+import com.generator.structure.valuegenerators.common.ShortFullValues;
 import com.generator.structure.valuegenerators.common.StringCommonValues;
+import com.generator.structure.valuegenerators.random.IntegerRandomValues;
 
 public class JUnitGenerator {
 
@@ -56,8 +66,36 @@ public class JUnitGenerator {
 	}
 
 	private void loadDefaultParamGenerators() {
-		valueGenerators.register(Integer.class, IntegerCommonValues.class);
+		valueGenerators.register(boolean.class, BooleanFullValues.class);
+		valueGenerators.register(Boolean.class, BooleanFullValues.class);
+
+		valueGenerators.register(byte.class, ByteFullValues.class);
+		valueGenerators.register(Byte.class, ByteFullValues.class);
+		
+		valueGenerators.register(short.class, ShortCommonValues.class);
+		valueGenerators.register(Short.class, ShortCommonValues.class);
+		valueGenerators.register(short.class, ShortFullValues.class);
+		valueGenerators.register(Short.class, ShortFullValues.class);
+		
+		valueGenerators.register(char.class, CharCommonValues.class);
+		valueGenerators.register(Character.class, CharCommonValues.class);
+		valueGenerators.register(char.class, CharFullValues.class);
+		valueGenerators.register(Character.class, CharFullValues.class);
+		
 		valueGenerators.register(int.class, IntegerCommonValues.class);
+		valueGenerators.register(Integer.class, IntegerCommonValues.class);
+		valueGenerators.register(int.class, IntegerRandomValues.class);
+		valueGenerators.register(Integer.class, IntegerRandomValues.class);
+		
+		valueGenerators.register(long.class, LongCommonValues.class);
+		valueGenerators.register(Long.class, LongCommonValues.class);
+		
+		valueGenerators.register(float.class, FloatCommonValues.class);
+		valueGenerators.register(Float.class, FloatCommonValues.class);
+
+		valueGenerators.register(double.class, DoubleCommonValues.class);
+		valueGenerators.register(Double.class, DoubleCommonValues.class);
+		
 		valueGenerators.register(String.class, StringCommonValues.class);
 		valueGenerators.register(String.class, StringCommonValues.class);
 	}
@@ -157,7 +195,7 @@ public class JUnitGenerator {
 	}
 
 	private List<TestCaseData> getTestCasesValues(Class<?> targetClass, Method method) {
-		TestDataGenerator generator = new TestDataGenerator(this, method);
+		TestCaseGenerator generator = new TestCaseGenerator(this, method);
 		generator.execute();
 		return generator.getResult();
 	}

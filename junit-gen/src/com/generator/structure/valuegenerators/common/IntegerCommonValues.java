@@ -8,7 +8,9 @@ public class IntegerCommonValues extends FiniteValueGenerator<Integer> {
 	public IntegerCommonValues() {
 		super(new Integer[] { //
 				0, 1, -1, 2, -2, 3, -3, //
-						10, -10, 100, -100, 1000, -1000, 10000, -10000 });
+						10, -10, 100, -100, 1000, -1000, 10000, -10000, //
+						(int) Short.MAX_VALUE, (int) Short.MIN_VALUE, //
+						Integer.MAX_VALUE, Integer.MIN_VALUE, null });
 	}
 
 	@Override

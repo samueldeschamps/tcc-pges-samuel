@@ -20,5 +20,9 @@ public abstract class FiniteValueGenerator<T> implements ValueGenerator<T> {
 	public T next() {
 		return values[index++];
 	}
+	
+	public T[] getValues() {
+		return values;
+	}
 
 }
