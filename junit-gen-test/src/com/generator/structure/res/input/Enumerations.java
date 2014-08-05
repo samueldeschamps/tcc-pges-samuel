@@ -21,7 +21,7 @@ public class Enumerations {
 		}
 		return null;
 	}
-
+	
 	public static enum WeekDay {
 		MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 	}
