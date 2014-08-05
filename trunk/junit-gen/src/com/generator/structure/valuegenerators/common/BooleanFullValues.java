@@ -3,16 +3,15 @@ package com.generator.structure.valuegenerators.common;
 import com.generator.structure.ValueGenerationStrategy;
 import com.generator.structure.valuegenerators.FiniteValueGenerator;
 
-public class StringCommonValues extends FiniteValueGenerator<String> {
+public class BooleanFullValues extends FiniteValueGenerator<Boolean> {
 
-	public StringCommonValues() {
-		super(new String[] { //
-				"", "a", "A", "abc", "ABC", "123", " ", "abc123", null });
+	public BooleanFullValues() {
+		super(new Boolean[] { Boolean.FALSE, Boolean.TRUE, null });
 	}
 
 	@Override
 	public ValueGenerationStrategy getStrategy() {
-		return ValueGenerationStrategy.COMMON_VALUES;
+		return ValueGenerationStrategy.BRUTE_FORCE;
 	}
 
 }

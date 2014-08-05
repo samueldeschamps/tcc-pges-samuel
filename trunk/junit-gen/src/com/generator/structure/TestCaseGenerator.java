@@ -4,14 +4,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestDataGenerator {
+public class TestCaseGenerator {
 
 	private JUnitGenerator jUnitGenerator;
 	private final Method method;
 	private final InnerExecutor executor;
 	private final List<TestCaseData> result = new ArrayList<>();
 
-	public TestDataGenerator(JUnitGenerator jUnitGenerator, Method method) {
+	public TestCaseGenerator(JUnitGenerator jUnitGenerator, Method method) {
 		this.jUnitGenerator = jUnitGenerator;
 		this.method = method;
 		this.executor = new InnerExecutor(method);
@@ -30,7 +30,10 @@ public class TestDataGenerator {
 		while (paramValuesGen.hasNext() && count < 5) {
 
 			List<Object> paramValues = paramValuesGen.next();
-			ExecutionResult execResult = executor.execute(paramValues);
+			ExecutionResult execResult = executor.executeCoverage(paramValues);
+//			if (execResult.hasCoverageInfo() && execResult.getCoverageRatio() < 0.01) {
+//				continue;
+//			}
 			TestCaseData caseData = new TestCaseData(paramValues, execResult);
 			if (caseData.getResult().failed()) {
 				switch (jUnitGenerator.getExceptionsStrategy()) {

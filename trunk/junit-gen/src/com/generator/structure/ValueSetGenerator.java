@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.generator.structure.valuegenerators.common.BooleanFullValues;
 import com.generator.structure.valuegenerators.common.DoubleCommonValues;
 import com.generator.structure.valuegenerators.common.IntegerCommonValues;
 import com.generator.structure.valuegenerators.common.StringCommonValues;
-import com.generator.structure.valuegenerators.random.IntegerRandomValues;
 
 public class ValueSetGenerator {
 
@@ -18,10 +18,16 @@ public class ValueSetGenerator {
 	private LinkedList<List<Object>> buffer = new LinkedList<>();
 
 	public ValueSetGenerator(ValueGeneratorRegistry registry, Class<?>[] paramTypes) {
-		for (Class<?> clazz : paramTypes) {
-			List<?> list = registry.get(clazz);
+		for (Class<?> paramType : paramTypes) {
+			List<?> list = registry.get(paramType);
 			ValueGeneratorComposite generator = new ValueGeneratorComposite((List<ValueGenerator<?>>) list);
-			generators.add(new Item(generator));
+			Item item;
+			if (paramType.isPrimitive()) {
+				item = new PrimitiveItem(generator);
+			} else {
+				item = new Item(generator);
+			}
+			generators.add(item);
 		}
 	}
 
@@ -99,8 +105,8 @@ public class ValueSetGenerator {
 
 	private static class Item {
 
-		private final ValueGenerator<?> generator;
-		private final List<Object> history = new ArrayList<>();
+		protected final ValueGenerator<?> generator;
+		protected final List<Object> history = new ArrayList<>();
 
 		public Item(ValueGenerator<?> generator) {
 			this.generator = generator;
@@ -121,26 +127,66 @@ public class ValueSetGenerator {
 		}
 	}
 
+	/**
+	 * Always "jumps" null values (incompatible with primitives).
+	 */
+	private static class PrimitiveItem extends Item {
+
+		private Object next;
+
+		public PrimitiveItem(ValueGenerator<?> generator) {
+			super(generator);
+		}
+
+		public boolean hasNext() {
+			for (;;) {
+				if (!generator.hasNext()) {
+					next = null;
+					return false;
+				} else {
+					next = generator.next();
+					if (next != null) {
+						return true;
+					}
+				}
+			}
+		}
+
+		public Object next() {
+			history.add(next);
+			return next;
+		}
+
+		public List<Object> getHistory() {
+			return history;
+		}
+
+	}
+
 	public static void main(String[] args) throws InterruptedException {
 
 		ValueGeneratorRegistry registry = new ValueGeneratorRegistry();
 		registry.register(Integer.class, IntegerCommonValues.class);
-//		registry.register(Integer.class, IntegerRandomValues.class);
+		registry.register(int.class, IntegerCommonValues.class);
+		// registry.register(Integer.class, IntegerRandomValues.class);
 		registry.register(String.class, StringCommonValues.class);
 		registry.register(Double.class, DoubleCommonValues.class);
+		registry.register(Boolean.class, BooleanFullValues.class);
+		registry.register(boolean.class, BooleanFullValues.class);
 
-//		Class<?>[] paramTypes = new Class<?>[] { Integer.class, Integer.class };
-		Class<?>[] paramTypes = new Class<?>[] { Integer.class, String.class, Double.class, Integer.class };
+		// Class<?>[] paramTypes = new Class<?>[] { Integer.class, Integer.class
+		// };
+		Class<?>[] paramTypes = new Class<?>[] { int.class, boolean.class };
 		ValueSetGenerator setGen = new ValueSetGenerator(registry, paramTypes);
-		
+
 		long before = System.currentTimeMillis();
-		
+
 		int count = 0;
 		while (setGen.hasNext()) {
 			count++;
 			List<Object> next = setGen.next();
 			System.out.println(next);
-//			Thread.sleep(10L);
+			// Thread.sleep(10L);
 		}
 
 		long after = System.currentTimeMillis();
