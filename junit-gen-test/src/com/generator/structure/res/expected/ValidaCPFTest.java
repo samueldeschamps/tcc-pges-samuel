@@ -6,73 +6,80 @@ import com.generator.structure.res.input.ValidaCPF;
 
 public class ValidaCPFTest {
 
-    /**Coverage: 7,84%*/
+    /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_1() {
-        String actual = ValidaCPF.formatarCPF(null);
-        Assert.assertEquals(null, actual);
+        String actual = ValidaCPF.formatarCPF("355772253850");
+        Assert.assertEquals("355.772.253-85", actual);
     }
 
     /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_2() {
-        String actual = ValidaCPF.formatarCPF("346416106820");
-        Assert.assertEquals("346.416.106-82", actual);
+        String actual = ValidaCPF.formatarCPF("73254451038472032");
+        Assert.assertEquals("732.544.510-38", actual);
     }
 
     /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_3() {
-        String actual = ValidaCPF.formatarCPF("316511486628249947430");
-        Assert.assertEquals("316.511.486-62", actual);
+        String actual = ValidaCPF.formatarCPF("37785887188882716");
+        Assert.assertEquals("377.858.871-88", actual);
     }
 
     /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_4() {
-        String actual = ValidaCPF.formatarCPF("6614016322838626");
-        Assert.assertEquals("661.401.632-28", actual);
+        String actual = ValidaCPF.formatarCPF("25073795293113084");
+        Assert.assertEquals("250.737.952-93", actual);
     }
 
-    /**Coverage: 96,08%*/
+    /**Coverage: 7,84%*/
     @Test
     public void testformatarCPF_5() {
-        String actual = ValidaCPF.formatarCPF("429830699185663767655980179");
-        Assert.assertEquals("429.830.699-18", actual);
+        String actual = ValidaCPF.formatarCPF(null);
+        Assert.assertEquals(null, actual);
     }
 
-    /**Coverage: 7,14%*/
+    /**Coverage: 89,29%*/
     @Test
     public void testisCpfValido_1() {
-        boolean actual = ValidaCPF.isCpfValido("");
+        boolean actual = ValidaCPF.isCpfValido("97960481169");
         Assert.assertEquals(false, actual);
     }
 
-    /**Coverage: 7,14%*/
+    /**Coverage: 84,82%*/
     @Test
     public void testisCpfValido_2() {
-        boolean actual = ValidaCPF.isCpfValido("a");
+        boolean actual = ValidaCPF.isCpfValido("59316373208");
         Assert.assertEquals(false, actual);
     }
 
-    /**Coverage: 7,14%*/
+    /**Coverage: 84,82%*/
     @Test
     public void testisCpfValido_3() {
-        boolean actual = ValidaCPF.isCpfValido("A");
-        Assert.assertEquals(false, actual);
+        boolean actual = ValidaCPF.isCpfValido("57249755307");
+        Assert.assertEquals(true, actual);
     }
 
-    /**Coverage: 7,14%*/
+    /**Coverage: 83,04%*/
     @Test
     public void testisCpfValido_4() {
-        boolean actual = ValidaCPF.isCpfValido("abc");
+        boolean actual = ValidaCPF.isCpfValido("15468165609");
         Assert.assertEquals(false, actual);
     }
 
     /**Coverage: 7,14%*/
     @Test
     public void testisCpfValido_5() {
-        boolean actual = ValidaCPF.isCpfValido("ABC");
+        boolean actual = ValidaCPF.isCpfValido("");
+        Assert.assertEquals(false, actual);
+    }
+
+    /**Coverage: 3,57%*/
+    @Test
+    public void testisCpfValido_6() {
+        boolean actual = ValidaCPF.isCpfValido(null);
         Assert.assertEquals(false, actual);
     }
 }

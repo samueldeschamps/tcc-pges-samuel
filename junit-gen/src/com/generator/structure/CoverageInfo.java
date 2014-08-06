@@ -3,12 +3,15 @@ package com.generator.structure;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
 import org.jacoco.core.analysis.IMethodCoverage;
+import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 
 public class CoverageInfo {
@@ -62,6 +65,7 @@ public class CoverageInfo {
 			for (IClassCoverage cc : coverageBuilder.getClasses()) {
 				if (targetName.equals(cc.getName())) {
 					for (IMethodCoverage mc : cc.getMethods()) {
+						
 						// FIXME Also compare the parameter types of methods!!!
 						if (method.getName().equals(mc.getName())) {
 							ICounter counter = mc.getInstructionCounter();
@@ -75,6 +79,46 @@ public class CoverageInfo {
 		} finally {
 			byteCode.close();
 		}
+	}
+	
+	public static CoverageInfo merge(CoverageInfo... infos) {
+		if (infos == null || infos.length == 0) {
+			return null;
+		}
+		CoverageInfo res = infos[0].copy();
+		for (int i = 1; i < infos.length; ++i) {
+			res.mergeWith(infos[i]);
+		}
+		return res;
+	}
+
+	public CoverageInfo copy() {
+		return new CoverageInfo(dataStore.copy(), method);
+	}
+	
+	/**
+	 * This method changes the content of <code>this</code> object.
+	 */
+	private void mergeWith(CoverageInfo other) {
+		if (!this.method.equals(other.method)) {
+			Log.error("Could not merge coverage from different methods!");
+			return;
+		}
+		Collection<ExecutionData> thisData = this.dataStore.getContents();
+		Collection<ExecutionData> otherData = other.dataStore.getContents();
+		if (thisData.size() != otherData.size()) {
+			Log.error("CoverageInfos with incompatible data stores.");
+			return;
+		}
+		Iterator<ExecutionData> otherIt = otherData.iterator();
+		for (ExecutionData thisItem : thisData) {
+			thisItem.merge(otherIt.next());
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(getCoverageRatio());
 	}
 
 }

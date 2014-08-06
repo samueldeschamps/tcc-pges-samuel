@@ -27,6 +27,7 @@ public class JUnitGeneratorTest {
 
 	@BeforeClass
 	public static void beforeClass() {
+		RandomProvider.FIXED_SEED = true;
 		expectedDir = getExpectedDir();
 	}
 

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,13 +25,13 @@ import com.generator.structure.valuegenerators.common.IntegerCommonValues;
 import com.generator.structure.valuegenerators.common.LongCommonValues;
 import com.generator.structure.valuegenerators.common.ShortCommonValues;
 import com.generator.structure.valuegenerators.common.StringCommonValues;
-import com.generator.structure.valuegenerators.common.StringNumericRandomValues;
 import com.generator.structure.valuegenerators.full.BooleanFullValues;
 import com.generator.structure.valuegenerators.full.ByteFullValues;
 import com.generator.structure.valuegenerators.full.CharFullValues;
 import com.generator.structure.valuegenerators.full.EnumFullValues;
 import com.generator.structure.valuegenerators.full.ShortFullValues;
 import com.generator.structure.valuegenerators.random.IntegerRandomValues;
+import com.generator.structure.valuegenerators.random.StringNumericRandomValues;
 
 public class JUnitGenerator {
 
@@ -39,7 +40,10 @@ public class JUnitGenerator {
 	private String outputDir;
 	private String testPackageName;
 	private List<Class<? extends Throwable>> bugExceptions = new ArrayList<>();
-	private double minCoverageRate; // Value between 0.0 and 1.0
+	private double minCovRatioPerMethod; // Value between 0.0 and 1.0
+	private double minCovRatioPerSucceededTestCase; // Value between 0.0 and 1.0
+	private double minCovRatioPerFailedTestCase; // Value between 0.0 and 1.0
+	private int minTestCasesPerMethod; //
 	private int eternalLoopTimeout; // Value in seconds.
 	private double doubleAssertPrecision; // Used in double assertives.
 	private ExceptionsStrategy exceptionsStrategy;
@@ -53,8 +57,13 @@ public class JUnitGenerator {
 	private void loadDefaultConfig() {
 		loadDefaultBugExceptions();
 		loadDefaultParamGenerators();
+		
 		exceptionsStrategy = ExceptionsStrategy.ASSERT_WHEN_DECLARED;
 		doubleAssertPrecision = 0.00000001;
+		minCovRatioPerFailedTestCase = 0.01;
+		minCovRatioPerSucceededTestCase = 0.01;
+		minCovRatioPerMethod = 0.999;
+		minTestCasesPerMethod = 5;
 	}
 
 	private void loadDefaultBugExceptions() {
@@ -70,9 +79,9 @@ public class JUnitGenerator {
 
 	private void loadDefaultParamGenerators() {
 		loadPrimitiveParamGenerators();
-		
+
 		valueGenerators.register(Enum.class, EnumFullValues.class);
-		
+
 		valueGenerators.register(String.class, StringCommonValues.class);
 		valueGenerators.register(String.class, StringNumericRandomValues.class);
 	}
@@ -85,25 +94,25 @@ public class JUnitGenerator {
 		valueGenerators.register(Byte.class, ByteCommonValues.class);
 		valueGenerators.register(byte.class, ByteFullValues.class);
 		valueGenerators.register(Byte.class, ByteFullValues.class);
-		
+
 		valueGenerators.register(short.class, ShortCommonValues.class);
 		valueGenerators.register(Short.class, ShortCommonValues.class);
 		valueGenerators.register(short.class, ShortFullValues.class);
 		valueGenerators.register(Short.class, ShortFullValues.class);
-		
+
 		valueGenerators.register(char.class, CharCommonValues.class);
 		valueGenerators.register(Character.class, CharCommonValues.class);
 		valueGenerators.register(char.class, CharFullValues.class);
 		valueGenerators.register(Character.class, CharFullValues.class);
-		
+
 		valueGenerators.register(int.class, IntegerCommonValues.class);
 		valueGenerators.register(Integer.class, IntegerCommonValues.class);
 		valueGenerators.register(int.class, IntegerRandomValues.class);
 		valueGenerators.register(Integer.class, IntegerRandomValues.class);
-		
+
 		valueGenerators.register(long.class, LongCommonValues.class);
 		valueGenerators.register(Long.class, LongCommonValues.class);
-		
+
 		valueGenerators.register(float.class, FloatCommonValues.class);
 		valueGenerators.register(Float.class, FloatCommonValues.class);
 
@@ -180,7 +189,7 @@ public class JUnitGenerator {
 
 		Map<Method, List<TestCaseData>> cases = new LinkedHashMap<>();
 		if (method != null) {
-			cases.put(method, getTestCasesValues(targetClass, method));
+			cases.put(method, generateTestCasesValues(targetClass, method));
 		} else {
 			// TODO Alterar para obter a ordem original dos métodos na classe
 			Method[] methods = targetClass.getDeclaredMethods();
@@ -192,7 +201,11 @@ public class JUnitGenerator {
 				}
 			});
 			for (Method m : methods) {
-				cases.put(m, getTestCasesValues(targetClass, m));
+				// TODO Ignore constructors
+				if (!Modifier.isPublic(m.getModifiers())) {
+					continue;
+				}
+				cases.put(m, generateTestCasesValues(targetClass, m));
 			}
 		}
 
@@ -205,10 +218,11 @@ public class JUnitGenerator {
 		return unit;
 	}
 
-	private List<TestCaseData> getTestCasesValues(Class<?> targetClass, Method method) {
+	private List<TestCaseData> generateTestCasesValues(Class<?> targetClass, Method method) {
+		String msg = "Generating test cases for method '%s.%s'...";
+		Log.info(String.format(msg, method.getDeclaringClass().getSimpleName(), method.getName()));
 		TestCaseGenerator generator = new TestCaseGenerator(this, method);
-		generator.execute();
-		return generator.getResult();
+		return generator.execute();
 	}
 
 	public List<Class<?>> getTargetClasses() {
@@ -257,12 +271,36 @@ public class JUnitGenerator {
 		this.bugExceptions.add(bugException);
 	}
 
-	public double getMinCoverageRate() {
-		return minCoverageRate;
+	public double getMinCovRatioPerMethod() {
+		return minCovRatioPerMethod;
 	}
 
-	public void setMinCoverageRate(double minCoverageRate) {
-		this.minCoverageRate = minCoverageRate;
+	public void setMinCovRatioPerMethod(double minCovRatioPerMethod) {
+		this.minCovRatioPerMethod = minCovRatioPerMethod;
+	}
+
+	public double getMinCovRatioPerSucceededTestCase() {
+		return minCovRatioPerSucceededTestCase;
+	}
+
+	public void setMinCovRatioPerSucceededTestCase(double minCovRatioPerSucceededTestCase) {
+		this.minCovRatioPerSucceededTestCase = minCovRatioPerSucceededTestCase;
+	}
+
+	public double getMinCovRatioPerFailedTestCase() {
+		return minCovRatioPerFailedTestCase;
+	}
+
+	public void setMinCovRatioPerFailedTestCase(double minCovRatioPerFailedTestCase) {
+		this.minCovRatioPerFailedTestCase = minCovRatioPerFailedTestCase;
+	}
+
+	public int getMinTestCasesPerMethod() {
+		return minTestCasesPerMethod;
+	}
+
+	public void setMinTestCasesPerMethod(int minTestCasesPerMethod) {
+		this.minTestCasesPerMethod = minTestCasesPerMethod;
 	}
 
 	public int getEternalLoopTimeout() {

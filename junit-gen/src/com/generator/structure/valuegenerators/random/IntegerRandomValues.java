@@ -2,12 +2,13 @@ package com.generator.structure.valuegenerators.random;
 
 import java.util.Random;
 
+import com.generator.structure.RandomProvider;
 import com.generator.structure.ValueGenerationStrategy;
 import com.generator.structure.ValueGenerator;
 
 public class IntegerRandomValues implements ValueGenerator<Integer> {
 
-	private Random random = new Random();
+	private Random random = RandomProvider.createRandom();
 	
 	@Override
 	public boolean hasNext() {

@@ -41,4 +41,18 @@ public class EnumerationsTest {
         String actual = Enumerations.weekDayToStr(WeekDay.FRIDAY);
         Assert.assertEquals("Friday", actual);
     }
+
+    /**Coverage: 33,33%*/
+    @Test
+    public void testweekDayToStr_6() {
+        String actual = Enumerations.weekDayToStr(WeekDay.SATURDAY);
+        Assert.assertEquals("Saturday", actual);
+    }
+
+    /**Coverage: 33,33%*/
+    @Test
+    public void testweekDayToStr_7() {
+        String actual = Enumerations.weekDayToStr(WeekDay.SUNDAY);
+        Assert.assertEquals("Sunday", actual);
+    }
 }
