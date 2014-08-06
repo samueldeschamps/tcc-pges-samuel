@@ -54,5 +54,5 @@ public class ValidaCPF {
 		sb.append(cpf.substring(9, 11));
 		return sb.toString();
 	}
-	
+
 }
