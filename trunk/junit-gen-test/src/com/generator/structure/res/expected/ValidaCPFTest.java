@@ -6,59 +6,39 @@ import com.generator.structure.res.input.ValidaCPF;
 
 public class ValidaCPFTest {
 
-    /**Coverage: 0,00%*/
+    /**Coverage: 7,84%*/
     @Test
     public void testformatarCPF_1() {
-        try {
-            ValidaCPF.formatarCPF("");
-            Assert.fail("A StringIndexOutOfBoundsException must have been thrown.");
-        } catch (StringIndexOutOfBoundsException ex) {
-            Assert.assertEquals("String index out of range: 3", ex.getMessage());
-        }
+        String actual = ValidaCPF.formatarCPF(null);
+        Assert.assertEquals(null, actual);
     }
 
-    /**Coverage: 0,00%*/
+    /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_2() {
-        try {
-            ValidaCPF.formatarCPF("a");
-            Assert.fail("A StringIndexOutOfBoundsException must have been thrown.");
-        } catch (StringIndexOutOfBoundsException ex) {
-            Assert.assertEquals("String index out of range: 3", ex.getMessage());
-        }
+        String actual = ValidaCPF.formatarCPF("346416106820");
+        Assert.assertEquals("346.416.106-82", actual);
     }
 
-    /**Coverage: 0,00%*/
+    /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_3() {
-        try {
-            ValidaCPF.formatarCPF("A");
-            Assert.fail("A StringIndexOutOfBoundsException must have been thrown.");
-        } catch (StringIndexOutOfBoundsException ex) {
-            Assert.assertEquals("String index out of range: 3", ex.getMessage());
-        }
+        String actual = ValidaCPF.formatarCPF("316511486628249947430");
+        Assert.assertEquals("316.511.486-62", actual);
     }
 
-    /**Coverage: 0,00%*/
+    /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_4() {
-        try {
-            ValidaCPF.formatarCPF("abc");
-            Assert.fail("A StringIndexOutOfBoundsException must have been thrown.");
-        } catch (StringIndexOutOfBoundsException ex) {
-            Assert.assertEquals("String index out of range: 6", ex.getMessage());
-        }
+        String actual = ValidaCPF.formatarCPF("6614016322838626");
+        Assert.assertEquals("661.401.632-28", actual);
     }
 
-    /**Coverage: 0,00%*/
+    /**Coverage: 96,08%*/
     @Test
     public void testformatarCPF_5() {
-        try {
-            ValidaCPF.formatarCPF("ABC");
-            Assert.fail("A StringIndexOutOfBoundsException must have been thrown.");
-        } catch (StringIndexOutOfBoundsException ex) {
-            Assert.assertEquals("String index out of range: 6", ex.getMessage());
-        }
+        String actual = ValidaCPF.formatarCPF("429830699185663767655980179");
+        Assert.assertEquals("429.830.699-18", actual);
     }
 
     /**Coverage: 7,14%*/

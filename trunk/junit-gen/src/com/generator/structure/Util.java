@@ -22,11 +22,22 @@ public class Util {
 		return false;
 	}
 
+	public static int intPow(int base, int exp) {
+		if (exp < 0) {
+			throw new IllegalArgumentException("Negative exponents not supported!");
+		}
+		int res = 1;
+		while (exp-- > 0) {
+			res *= base;
+		}
+		return res;
+	}
+
 	public static InputStream getClassBytecodeAsStream(Class<?> clazz) {
 		final String resource = '/' + clazz.getName().replace('.', '/') + ".class";
 		return clazz.getResourceAsStream(resource);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> T[] arrayConcat(Class<T> elementType, T[]... arrays) {
 		int totalLen = 0;

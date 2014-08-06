@@ -1,4 +1,4 @@
-package com.generator.structure.valuegenerators.common;
+package com.generator.structure.valuegenerators.full;
 
 import com.generator.structure.ValueGenerationStrategy;
 import com.generator.structure.ValueGenerator;

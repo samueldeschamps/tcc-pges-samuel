@@ -16,19 +16,20 @@ import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
-import com.generator.structure.valuegenerators.common.BooleanFullValues;
 import com.generator.structure.valuegenerators.common.ByteCommonValues;
-import com.generator.structure.valuegenerators.common.ByteFullValues;
 import com.generator.structure.valuegenerators.common.CharCommonValues;
-import com.generator.structure.valuegenerators.common.CharFullValues;
 import com.generator.structure.valuegenerators.common.DoubleCommonValues;
-import com.generator.structure.valuegenerators.common.EnumFullValues;
 import com.generator.structure.valuegenerators.common.FloatCommonValues;
 import com.generator.structure.valuegenerators.common.IntegerCommonValues;
 import com.generator.structure.valuegenerators.common.LongCommonValues;
 import com.generator.structure.valuegenerators.common.ShortCommonValues;
-import com.generator.structure.valuegenerators.common.ShortFullValues;
 import com.generator.structure.valuegenerators.common.StringCommonValues;
+import com.generator.structure.valuegenerators.common.StringNumericRandomValues;
+import com.generator.structure.valuegenerators.full.BooleanFullValues;
+import com.generator.structure.valuegenerators.full.ByteFullValues;
+import com.generator.structure.valuegenerators.full.CharFullValues;
+import com.generator.structure.valuegenerators.full.EnumFullValues;
+import com.generator.structure.valuegenerators.full.ShortFullValues;
 import com.generator.structure.valuegenerators.random.IntegerRandomValues;
 
 public class JUnitGenerator {
@@ -68,15 +69,15 @@ public class JUnitGenerator {
 	}
 
 	private void loadDefaultParamGenerators() {
-		loadPrimiteParamGenerators();
+		loadPrimitiveParamGenerators();
 		
 		valueGenerators.register(Enum.class, EnumFullValues.class);
 		
 		valueGenerators.register(String.class, StringCommonValues.class);
-		valueGenerators.register(String.class, StringCommonValues.class);
+		valueGenerators.register(String.class, StringNumericRandomValues.class);
 	}
 
-	private void loadPrimiteParamGenerators() {
+	private void loadPrimitiveParamGenerators() {
 		valueGenerators.register(boolean.class, BooleanFullValues.class);
 		valueGenerators.register(Boolean.class, BooleanFullValues.class);
 

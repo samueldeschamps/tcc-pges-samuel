@@ -7,7 +7,7 @@ import com.generator.structure.ValueGenerator;
 
 public class IntegerRandomValues implements ValueGenerator<Integer> {
 
-	private Random random = new Random(System.currentTimeMillis());
+	private Random random = new Random();
 	
 	@Override
 	public boolean hasNext() {

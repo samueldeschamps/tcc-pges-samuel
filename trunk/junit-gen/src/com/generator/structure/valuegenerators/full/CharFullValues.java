@@ -1,14 +1,14 @@
-package com.generator.structure.valuegenerators.common;
+package com.generator.structure.valuegenerators.full;
 
 import com.generator.structure.ValueGenerationStrategy;
 import com.generator.structure.ValueGenerator;
 
-public class ShortFullValues implements ValueGenerator<Short> {
+public class CharFullValues implements ValueGenerator<Character> {
 
-	private static final int LIMIT = 1 << Short.SIZE;
+	private static final int LIMIT = 1 << Character.SIZE;
 
 	private int index = 0;
-	private short current = Short.MIN_VALUE;
+	private char current = Character.MIN_VALUE;
 
 	@Override
 	public ValueGenerationStrategy getStrategy() {
@@ -21,12 +21,12 @@ public class ShortFullValues implements ValueGenerator<Short> {
 	}
 
 	@Override
-	public Short next() {
+	public Character next() {
 		if (index++ == LIMIT) {
 			return null;
 		} else {
 			return current++;
 		}
 	}
-	
+
 }
