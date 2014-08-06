@@ -103,7 +103,7 @@ public class TestCodeGenerator {
 			}
 			int counter = 1;
 			for (TestCaseData caseData : methodCases) {
-				String testMethodName = "test" + method.getName() + "_" + counter++;
+				String testMethodName = "test" + Util.upFirstChar(method.getName()) + "_" + counter++;
 				MethodDeclaration testMethod = new MethodDeclaration(ModifierSet.PUBLIC, ASTHelper.VOID_TYPE,
 						testMethodName);
 				testMethod.addAnnotation(new MarkerAnnotationExpr("Test"));
@@ -132,10 +132,15 @@ public class TestCodeGenerator {
 				}
 				if (result.hasCoverageInfo()) {
 					String text = String.format("Coverage: %.2f%%", result.getCoverageRatio() * 100);
-					testMethod.setJavaDoc(new JavadocComment(text));
+					testMethod.setJavaDoc(new JavadocComment(formatJavadoc(text)));
 				}
 			}
 		}
+	}
+
+	// TODO Do the identing in JavaParser dump methods.
+	private String formatJavadoc(String text) {
+		return "\n     * " + text.replace("\n", "\n    * ") + "\n     ";
 	}
 
 	public CompilationUnit getResult() {
