@@ -31,9 +31,9 @@ public class TestCaseGenerator {
 
 			List<Object> paramValues = paramValuesGen.next();
 			ExecutionResult execResult = executor.executeCoverage(paramValues);
-//			if (execResult.hasCoverageInfo() && execResult.getCoverageRatio() < 0.01) {
-//				continue;
-//			}
+			if (execResult.hasCoverageInfo() && execResult.getCoverageRatio() < 0.01) {
+				continue;
+			}
 			TestCaseData caseData = new TestCaseData(paramValues, execResult);
 			if (caseData.getResult().failed()) {
 				switch (jUnitGenerator.getExceptionsStrategy()) {

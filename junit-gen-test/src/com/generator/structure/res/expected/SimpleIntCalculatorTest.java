@@ -6,36 +6,39 @@ import com.generator.structure.res.input.SimpleIntCalculator;
 
 public class SimpleIntCalculatorTest {
 
-    /**Coverage: 0,00%*/
-    @Test
-    public void testdivide_1() {
-        SimpleIntCalculator.divide(0, 0);
-    }
-
-    /**Coverage: 0,00%*/
-    @Test
-    public void testdivide_2() {
-        SimpleIntCalculator.divide(1, 0);
-    }
-
     /**Coverage: 100,00%*/
     @Test
-    public void testdivide_3() {
+    public void testdivide_1() {
         int actual = SimpleIntCalculator.divide(0, 1);
         Assert.assertEquals(0, actual);
     }
 
     /**Coverage: 100,00%*/
     @Test
-    public void testdivide_4() {
+    public void testdivide_2() {
         int actual = SimpleIntCalculator.divide(1, 1);
         Assert.assertEquals(1, actual);
     }
 
-    /**Coverage: 0,00%*/
+    /**Coverage: 100,00%*/
+    @Test
+    public void testdivide_3() {
+        int actual = SimpleIntCalculator.divide(-1, 1);
+        Assert.assertEquals(-1, actual);
+    }
+
+    /**Coverage: 100,00%*/
+    @Test
+    public void testdivide_4() {
+        int actual = SimpleIntCalculator.divide(0, -1);
+        Assert.assertEquals(0, actual);
+    }
+
+    /**Coverage: 100,00%*/
     @Test
     public void testdivide_5() {
-        SimpleIntCalculator.divide(-1, 0);
+        int actual = SimpleIntCalculator.divide(1, -1);
+        Assert.assertEquals(-1, actual);
     }
 
     /**Coverage: 58,82%*/
