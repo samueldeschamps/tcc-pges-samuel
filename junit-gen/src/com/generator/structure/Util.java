@@ -53,4 +53,14 @@ public class Util {
 		return result;
 	}
 
+	public static String upFirstChar(String str) {
+		if (str == null || str.isEmpty()) {
+			return str;
+		}
+		if (Character.isUpperCase(str.charAt(0))) {
+			return str;
+		}
+		return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+	}
+
 }
