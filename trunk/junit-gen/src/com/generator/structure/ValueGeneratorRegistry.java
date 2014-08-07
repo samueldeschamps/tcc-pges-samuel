@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.generator.structure.util.Log;
+
 public class ValueGeneratorRegistry {
 
 	private Map<Class<?>, List<Class<ValueGenerator<?>>>> generators = new HashMap<>();

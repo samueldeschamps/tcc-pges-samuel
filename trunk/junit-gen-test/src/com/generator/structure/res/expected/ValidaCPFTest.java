@@ -11,17 +11,17 @@ public class ValidaCPFTest {
      */
     @Test
     public void testFormatarCPF_1() {
-        String actual = ValidaCPF.formatarCPF("355772253850");
-        Assert.assertEquals("355.772.253-85", actual);
+        String actual = ValidaCPF.formatarCPF("13172148398");
+        Assert.assertEquals("131.721.483-98", actual);
     }
 
     /**
-     * Coverage: 96,08%
+     * Coverage: 7,84%
      */
     @Test
     public void testFormatarCPF_2() {
-        String actual = ValidaCPF.formatarCPF("73254451038472032");
-        Assert.assertEquals("732.544.510-38", actual);
+        String actual = ValidaCPF.formatarCPF(null);
+        Assert.assertEquals(null, actual);
     }
 
     /**
@@ -29,8 +29,8 @@ public class ValidaCPFTest {
      */
     @Test
     public void testFormatarCPF_3() {
-        String actual = ValidaCPF.formatarCPF("37785887188882716");
-        Assert.assertEquals("377.858.871-88", actual);
+        String actual = ValidaCPF.formatarCPF("14056442208");
+        Assert.assertEquals("140.564.422-08", actual);
     }
 
     /**
@@ -38,17 +38,17 @@ public class ValidaCPFTest {
      */
     @Test
     public void testFormatarCPF_4() {
-        String actual = ValidaCPF.formatarCPF("25073795293113084");
-        Assert.assertEquals("250.737.952-93", actual);
+        String actual = ValidaCPF.formatarCPF("50104703776");
+        Assert.assertEquals("501.047.037-76", actual);
     }
 
     /**
-     * Coverage: 7,84%
+     * Coverage: 96,08%
      */
     @Test
     public void testFormatarCPF_5() {
-        String actual = ValidaCPF.formatarCPF(null);
-        Assert.assertEquals(null, actual);
+        String actual = ValidaCPF.formatarCPF("59436834751");
+        Assert.assertEquals("594.368.347-51", actual);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ValidaCPFTest {
      */
     @Test
     public void testIsCpfValido_1() {
-        boolean actual = ValidaCPF.isCpfValido("97960481169");
+        boolean actual = ValidaCPF.isCpfValido("00933070711");
         Assert.assertEquals(false, actual);
     }
 
@@ -65,15 +65,6 @@ public class ValidaCPFTest {
      */
     @Test
     public void testIsCpfValido_2() {
-        boolean actual = ValidaCPF.isCpfValido("59316373208");
-        Assert.assertEquals(false, actual);
-    }
-
-    /**
-     * Coverage: 84,82%
-     */
-    @Test
-    public void testIsCpfValido_3() {
         boolean actual = ValidaCPF.isCpfValido("57249755307");
         Assert.assertEquals(true, actual);
     }
@@ -82,8 +73,8 @@ public class ValidaCPFTest {
      * Coverage: 83,04%
      */
     @Test
-    public void testIsCpfValido_4() {
-        boolean actual = ValidaCPF.isCpfValido("15468165609");
+    public void testIsCpfValido_3() {
+        boolean actual = ValidaCPF.isCpfValido("14909973232");
         Assert.assertEquals(false, actual);
     }
 
@@ -91,7 +82,7 @@ public class ValidaCPFTest {
      * Coverage: 7,14%
      */
     @Test
-    public void testIsCpfValido_5() {
+    public void testIsCpfValido_4() {
         boolean actual = ValidaCPF.isCpfValido("");
         Assert.assertEquals(false, actual);
     }
@@ -100,7 +91,7 @@ public class ValidaCPFTest {
      * Coverage: 3,57%
      */
     @Test
-    public void testIsCpfValido_6() {
+    public void testIsCpfValido_5() {
         boolean actual = ValidaCPF.isCpfValido(null);
         Assert.assertEquals(false, actual);
     }

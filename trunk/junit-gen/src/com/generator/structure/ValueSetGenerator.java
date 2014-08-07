@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.generator.structure.valuegenerators.NotNullValues;
+import com.generator.structure.valuegenerators.UniqueValues;
+import com.generator.structure.valuegenerators.SerialValueGeneratorComposite;
+
 public class ValueSetGenerator {
 
 	private List<UniqueValues<?>> generators = new ArrayList<>();
@@ -16,7 +20,7 @@ public class ValueSetGenerator {
 	public ValueSetGenerator(ValueGeneratorRegistry registry, Class<?>[] paramTypes) {
 		for (Class<?> paramType : paramTypes) {
 			List<?> list = registry.get(paramType);
-			ValueGenerator<?> generator = new ValueGeneratorComposite((List<ValueGenerator<?>>) list);
+			ValueGenerator<?> generator = new SerialValueGeneratorComposite((List<ValueGenerator<?>>) list);
 			if (paramType.isPrimitive()) {
 				generator = new NotNullValues(generator);
 			}
@@ -92,7 +96,7 @@ public class ValueSetGenerator {
 				categories.add(categ);
 			}
 		}
-		List<List<Object>> combinations = CombinationGenerator.combine(categories);
+		List<List<Object>> combinations = Combinator.combine(categories);
 		buffer.addAll(combinations);
 	}
 

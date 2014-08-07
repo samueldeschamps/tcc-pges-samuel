@@ -16,6 +16,7 @@ import com.generator.structure.res.input.Exceptions;
 import com.generator.structure.res.input.PrimitiveOperations;
 import com.generator.structure.res.input.SimpleIntCalculator;
 import com.generator.structure.res.input.ValidaCPF;
+import com.generator.structure.util.FileUtil;
 
 public class JUnitGeneratorTest {
 
@@ -31,7 +32,7 @@ public class JUnitGeneratorTest {
 		expectedDir = getExpectedDir();
 	}
 
-	private static File getExpectedDir() {
+	public static File getExpectedDir() {
 		String url = JUnitGeneratorTest.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		File projectDir = new File(url).getParentFile();
 		String sep = File.separator;
@@ -50,23 +51,23 @@ public class JUnitGeneratorTest {
 			gen.execute();
 
 			String testFileName = clazz.getSimpleName() + "Test.java";
-			String actual = FileUtils.fileToText(new File(tempDirName, testFileName));
+			String actual = FileUtil.fileToText(new File(tempDirName, testFileName));
 			File expectedFile = new File(expectedDir, testFileName);
 			if (!expectedFile.exists()) {
 				if (REGENERATE) {
-					FileUtils.writeTextToFile(expectedFile, actual);
+					FileUtil.writeTextToFile(expectedFile, actual);
 				} else {
 					Assert.fail("File '" + expectedFile.getAbsolutePath() + "' does not exist.");
 				}
 			} else {
-				String expected = FileUtils.fileToText(expectedFile);
+				String expected = FileUtil.fileToText(expectedFile);
 				try {
 					Assert.assertEquals(expected, actual);
 				} catch (AssertionError ex) {
 					if (REGENERATE) {
 						String msg = "Confirm overwrite " + testFileName + "?";
 						if (JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION) {
-							FileUtils.writeTextToFile(expectedFile, actual);
+							FileUtil.writeTextToFile(expectedFile, actual);
 						} else {
 							throw ex;
 						}
