@@ -17,6 +17,7 @@ import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
+import com.generator.structure.util.Log;
 import com.generator.structure.valuegenerators.common.ByteCommonValues;
 import com.generator.structure.valuegenerators.common.CharCommonValues;
 import com.generator.structure.valuegenerators.common.DoubleCommonValues;
@@ -31,7 +32,7 @@ import com.generator.structure.valuegenerators.full.CharFullValues;
 import com.generator.structure.valuegenerators.full.EnumFullValues;
 import com.generator.structure.valuegenerators.full.ShortFullValues;
 import com.generator.structure.valuegenerators.random.IntegerRandomValues;
-import com.generator.structure.valuegenerators.random.StringNumericRandomValues;
+import com.generator.structure.valuegenerators.random.StringRandomValues;
 
 public class JUnitGenerator {
 
@@ -83,7 +84,7 @@ public class JUnitGenerator {
 		valueGenerators.register(Enum.class, EnumFullValues.class);
 
 		valueGenerators.register(String.class, StringCommonValues.class);
-		valueGenerators.register(String.class, StringNumericRandomValues.class);
+		valueGenerators.register(String.class, StringRandomValues.class);
 	}
 
 	private void loadPrimitiveParamGenerators() {

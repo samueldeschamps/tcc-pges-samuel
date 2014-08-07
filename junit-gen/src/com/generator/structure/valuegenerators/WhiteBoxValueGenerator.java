@@ -1,4 +1,6 @@
-package com.generator.structure;
+package com.generator.structure.valuegenerators;
+
+import com.generator.structure.ValueGenerator;
 
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;

@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.generator.structure.util.Log;
+
 public class TestCaseGenerator {
 
 	private JUnitGenerator jUnitGenerator;
@@ -24,27 +26,27 @@ public class TestCaseGenerator {
 		ValueGeneratorRegistry registry = jUnitGenerator.getValueGenerators();
 		ValueSetGenerator paramValuesGen = new ValueSetGenerator(registry, method.getParameterTypes());
 		int minTestCases = jUnitGenerator.getMinTestCasesPerMethod();
-		
+
 		// TODO Turn this guys into parameters:
-		int maxTries = 8000;
+		int minTries = 200;
+		int maxTries = 20000;
 		int clearTrigger = 200;
 
 		List<TestCaseData> result = new ArrayList<>();
 		int tries = 0;
 		for (;;) {
 			if (!paramValuesGen.hasNext()) {
-				Log.warning("Reached limit of possible values for method '" + method.getName() + "' (" + tries + ").");
+				Log.warning(String.format("Reached limit of inputs for method '%s' (%d inputs).", method.getName(),
+						tries));
 				break;
 			}
-			if (result.size() > minTestCases && isEnoughCoverage(result)) {
+			if (tries > minTries && result.size() > minTestCases && isEnoughCoverage(result)) {
 				break;
 			}
 			if (result.size() > clearTrigger) {
-				int oldSize = result.size();
 				double covRat = removeRedundantTestCases(result, minTestCases);
-				Log.debug("Removing redundant cases... " + oldSize + " >> " + result.size() + ".");
-				Log.info(String.format("It's being hard. %d tries. %d relevant cases. Coverage: %.2f.", tries,
-						result.size(), covRat));
+				Log.info(String.format("It's being hard. %d tries. %d relevant cases. Coverage: %.2f%%.", tries,
+						result.size(), covRat * 100));
 			}
 			if (tries >= maxTries) {
 				Log.warning("Reached limit of attempts for method '" + method.getName() + "' (" + tries + ").");
@@ -59,7 +61,8 @@ public class TestCaseGenerator {
 			TestCaseData caseData = new TestCaseData(paramValues, execResult);
 			result.add(caseData);
 		}
-		removeRedundantTestCases(result, minTestCases);
+		double covRat = removeRedundantTestCases(result, minTestCases);
+		Log.info(String.format("Final coverage: %.2f%%. Tries: %d.", covRat * 100, tries));
 		return result;
 	}
 
@@ -77,27 +80,33 @@ public class TestCaseGenerator {
 		}
 		CoverageInfo totalCoverage = firstCase.getResult().getCoverageInfo().copy();
 
+		List<TestCaseData> removedOnes = new ArrayList<>();
 		while (iterator.hasNext()) {
-			if (cases.size() <= minTestCases) {
-				break;
-			}
 			TestCaseData testCase = iterator.next();
 			ExecutionResult execRes = testCase.getResult();
 			if (!execRes.hasCoverageInfo()) {
 				iterator.remove();
+				removedOnes.add(testCase);
 				continue;
 			}
 			CoverageInfo after = CoverageInfo.merge(execRes.getCoverageInfo(), totalCoverage);
 			if (after.getCoverageRatio() <= totalCoverage.getCoverageRatio()) {
 				iterator.remove();
+				removedOnes.add(testCase);
 				continue;
 			}
 			totalCoverage = after;
+		}
+		int i = 0;
+		while (cases.size() < minTestCases && i < removedOnes.size()) {
+			cases.add(removedOnes.get(i++));
 		}
 		return totalCoverage.getCoverageRatio();
 	}
 
 	private static class TestCaseComparator implements Comparator<TestCaseData> {
+
+		private Comparator<String> strComparator = new StringComplexityComparator();
 
 		@Override
 		public int compare(TestCaseData o2, TestCaseData o1) {
@@ -110,6 +119,10 @@ public class TestCaseGenerator {
 			CoverageInfo cov1 = r1.getCoverageInfo();
 			CoverageInfo cov2 = r2.getCoverageInfo();
 			res = Double.compare(cov1.getCoverageRatio(), cov2.getCoverageRatio());
+			if (res != 0) {
+				return res;
+			}
+			res = Boolean.compare(r1.succeeded(), r2.succeeded());
 			if (res != 0) {
 				return res;
 			}
@@ -140,11 +153,12 @@ public class TestCaseGenerator {
 				if (res != 0) {
 					return res;
 				}
-				// If abs are equal, maybe one is negative and other is positive. In this case, prefer the positive.
+				// If abs are equal, maybe one is negative and other is
+				// positive. In this case, prefer the positive.
 				return Double.compare(d2, d1);
 			}
 			if (o1 instanceof String) {
-				return Integer.compare(((String) o1).length(), ((String) o2).length());
+				return strComparator.compare((String) o1, (String) o2);
 			}
 			if (o1 instanceof Enum) {
 				return 0;
@@ -153,6 +167,7 @@ public class TestCaseGenerator {
 				return 0;
 			}
 			if (o1 instanceof Character) {
+				// TODO Prefer numbers than letters than special chars
 				return 0;
 			}
 			Log.warning("Don't know how to compare elements of type " + o1.getClass().getSimpleName() + ".");
@@ -188,15 +203,15 @@ public class TestCaseGenerator {
 		}
 		if (execResult.failed()) {
 			switch (jUnitGenerator.getExceptionsStrategy()) {
-			case IGNORE_ALWAYS:
-				return false;
-			case IGNORE_WHEN_NOT_DECLARED:
-				if (!execResult.isExceptionDeclared()) {
+				case IGNORE_ALWAYS:
 					return false;
-				}
-				break;
-			default:
-				break;
+				case IGNORE_WHEN_NOT_DECLARED:
+					if (!execResult.isExceptionDeclared()) {
+						return false;
+					}
+					break;
+				default:
+					break;
 			}
 		}
 		return true;

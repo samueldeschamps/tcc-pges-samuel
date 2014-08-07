@@ -1,4 +1,4 @@
-package com.generator.structure;
+package com.generator.structure.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author Samuel Y. Deschamps [samueldeschamps at gmail dot com]
  * @since July/2014
  */
-public class FileUtils {
+public class FileUtil {
 
 	/**
 	 * Reads a text file into a list of strings.

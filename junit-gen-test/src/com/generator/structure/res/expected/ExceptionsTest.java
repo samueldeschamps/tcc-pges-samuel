@@ -25,30 +25,27 @@ public class ExceptionsTest {
     }
 
     /**
-     * Coverage: 54,55%
+     * Coverage: 63,64%
      */
     @Test
     public void testSquareRoot_3() {
-        double actual = Exceptions.squareRoot(1);
-        Assert.assertEquals(1.0, actual, 1.0E-8);
+        Exceptions.squareRoot(-2);
     }
 
     /**
-     * Coverage: 54,55%
+     * Coverage: 63,64%
      */
     @Test
     public void testSquareRoot_4() {
-        double actual = Exceptions.squareRoot(2);
-        Assert.assertEquals(1.4142135623730951, actual, 1.0E-8);
+        Exceptions.squareRoot(-3);
     }
 
     /**
-     * Coverage: 54,55%
+     * Coverage: 63,64%
      */
     @Test
     public void testSquareRoot_5() {
-        double actual = Exceptions.squareRoot(3);
-        Assert.assertEquals(1.7320508075688772, actual, 1.0E-8);
+        Exceptions.squareRoot(-10);
     }
 
     /**
@@ -74,30 +71,42 @@ public class ExceptionsTest {
     }
 
     /**
-     * Coverage: 54,55%
+     * Coverage: 63,64%
      */
     @Test
     public void testSquareRootDeclared_3() {
-        double actual = Exceptions.squareRootDeclared(1);
-        Assert.assertEquals(1.0, actual, 1.0E-8);
+        try {
+            Exceptions.squareRootDeclared(-2);
+            Assert.fail("An IllegalArgumentException must have been thrown.");
+        } catch (IllegalArgumentException ex) {
+            Assert.assertEquals("A cannot be negative!", ex.getMessage());
+        }
     }
 
     /**
-     * Coverage: 54,55%
+     * Coverage: 63,64%
      */
     @Test
     public void testSquareRootDeclared_4() {
-        double actual = Exceptions.squareRootDeclared(2);
-        Assert.assertEquals(1.4142135623730951, actual, 1.0E-8);
+        try {
+            Exceptions.squareRootDeclared(-3);
+            Assert.fail("An IllegalArgumentException must have been thrown.");
+        } catch (IllegalArgumentException ex) {
+            Assert.assertEquals("A cannot be negative!", ex.getMessage());
+        }
     }
 
     /**
-     * Coverage: 54,55%
+     * Coverage: 63,64%
      */
     @Test
     public void testSquareRootDeclared_5() {
-        double actual = Exceptions.squareRootDeclared(3);
-        Assert.assertEquals(1.7320508075688772, actual, 1.0E-8);
+        try {
+            Exceptions.squareRootDeclared(-10);
+            Assert.fail("An IllegalArgumentException must have been thrown.");
+        } catch (IllegalArgumentException ex) {
+            Assert.assertEquals("A cannot be negative!", ex.getMessage());
+        }
     }
 
     /**
@@ -118,7 +127,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_2() {
         try {
-            Exceptions.throwDeclaredCheckedException(0, 1);
+            Exceptions.throwDeclaredCheckedException(1, 0);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -130,7 +139,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_3() {
         try {
-            Exceptions.throwDeclaredCheckedException(1, 1);
+            Exceptions.throwDeclaredCheckedException(0, 1);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -142,7 +151,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_4() {
         try {
-            Exceptions.throwDeclaredCheckedException(-1, 0);
+            Exceptions.throwDeclaredCheckedException(1, 1);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -154,7 +163,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_5() {
         try {
-            Exceptions.throwDeclaredCheckedException(-1, 1);
+            Exceptions.throwDeclaredCheckedException(-1, 0);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -178,7 +187,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_2() {
         try {
-            Exceptions.throwDeclaredUncheckedException(0, 1);
+            Exceptions.throwDeclaredUncheckedException(1, 0);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -190,7 +199,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_3() {
         try {
-            Exceptions.throwDeclaredUncheckedException(1, 1);
+            Exceptions.throwDeclaredUncheckedException(0, 1);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -202,7 +211,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_4() {
         try {
-            Exceptions.throwDeclaredUncheckedException(-1, 0);
+            Exceptions.throwDeclaredUncheckedException(1, 1);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -214,7 +223,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_5() {
         try {
-            Exceptions.throwDeclaredUncheckedException(-1, 1);
+            Exceptions.throwDeclaredUncheckedException(-1, 0);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -233,7 +242,7 @@ public class ExceptionsTest {
      */
     @Test
     public void testThrowException_2() {
-        Exceptions.throwException(0, 1);
+        Exceptions.throwException(1, 0);
     }
 
     /**
@@ -241,7 +250,7 @@ public class ExceptionsTest {
      */
     @Test
     public void testThrowException_3() {
-        Exceptions.throwException(1, 1);
+        Exceptions.throwException(0, 1);
     }
 
     /**
@@ -249,7 +258,7 @@ public class ExceptionsTest {
      */
     @Test
     public void testThrowException_4() {
-        Exceptions.throwException(-1, 0);
+        Exceptions.throwException(1, 1);
     }
 
     /**
@@ -257,6 +266,6 @@ public class ExceptionsTest {
      */
     @Test
     public void testThrowException_5() {
-        Exceptions.throwException(-1, 1);
+        Exceptions.throwException(-1, 0);
     }
 }

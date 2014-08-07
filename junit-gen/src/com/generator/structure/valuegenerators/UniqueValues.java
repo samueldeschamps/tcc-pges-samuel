@@ -1,7 +1,10 @@
-package com.generator.structure;
+package com.generator.structure.valuegenerators;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import com.generator.structure.ValueGenerationStrategy;
+import com.generator.structure.ValueGenerator;
 
 public class UniqueValues<T> extends FilteredValues<T> {
 

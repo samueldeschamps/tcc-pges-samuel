@@ -1,4 +1,6 @@
-package com.generator.structure;
+package com.generator.structure.valuegenerators;
+
+import com.generator.structure.ValueGenerator;
 
 public abstract class FilteredValues<T> implements ValueGenerator<T> {
 
