@@ -2,7 +2,7 @@ package com.generator.structure.valuegenerators.common;
 
 import java.math.BigDecimal;
 
-import com.generator.structure.ValueGenerationStrategy;
+import com.generator.core.ValueGenerationStrategy;
 import com.generator.structure.valuegenerators.CachedValueGenerator;
 
 public class BigDecimalCommonValues extends CachedValueGenerator<BigDecimal> {

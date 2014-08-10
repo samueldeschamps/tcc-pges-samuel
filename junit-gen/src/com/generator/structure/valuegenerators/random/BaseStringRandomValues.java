@@ -2,9 +2,9 @@ package com.generator.structure.valuegenerators.random;
 
 import java.util.Random;
 
-import com.generator.structure.RandomProvider;
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
+import com.generator.core.RandomProvider;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
 
 public abstract class BaseStringRandomValues implements ValueGenerator<String> {
 

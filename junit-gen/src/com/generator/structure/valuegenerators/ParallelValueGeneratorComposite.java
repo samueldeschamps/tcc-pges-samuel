@@ -2,8 +2,8 @@ package com.generator.structure.valuegenerators;
 
 import java.util.List;
 
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
 
 public class ParallelValueGeneratorComposite<T> implements ValueGenerator<T> {
 

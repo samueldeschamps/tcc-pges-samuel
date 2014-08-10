@@ -2,8 +2,8 @@ package com.generator.structure.valuegenerators;
 
 import java.lang.reflect.Array;
 
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
 import com.generator.structure.util.Util;
 
 public class EmptyArrayValueGenerator<T> implements ValueGenerator<T[]> {

@@ -1,7 +1,7 @@
 package com.generator.structure.valuegenerators;
 
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
 
 public class NotNullValues<T> extends FilteredValues<T> {
 

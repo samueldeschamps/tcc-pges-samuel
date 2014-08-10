@@ -3,9 +3,9 @@ package com.generator.structure.valuegenerators.random;
 import java.text.DecimalFormat;
 import java.util.Random;
 
-import com.generator.structure.RandomProvider;
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
+import com.generator.core.RandomProvider;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
 import com.generator.structure.util.Util;
 
 // TODO This guy could generate better distributed values

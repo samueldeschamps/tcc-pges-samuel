@@ -1,6 +1,6 @@
 package com.generator.structure.valuegenerators.common;
 
-import com.generator.structure.ValueGenerationStrategy;
+import com.generator.core.ValueGenerationStrategy;
 import com.generator.structure.util.Util;
 import com.generator.structure.valuegenerators.CachedValueGenerator;
 
