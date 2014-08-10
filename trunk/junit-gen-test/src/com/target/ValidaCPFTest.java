@@ -2,7 +2,7 @@ package com.target;
 
 import org.junit.*;
 
-import com.generator.structure.res.input.ValidaCPF;
+import com.generator.core.res.input.ValidaCPF;
 
 import static org.junit.Assert.*;
 

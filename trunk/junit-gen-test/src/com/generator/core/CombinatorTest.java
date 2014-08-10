@@ -1,4 +1,4 @@
-package com.generator.structure;
+package com.generator.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.generator.core.Combinator;
 import com.generator.structure.util.FileUtil;
 
 public class CombinatorTest {

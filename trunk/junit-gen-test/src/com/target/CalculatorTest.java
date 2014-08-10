@@ -2,7 +2,7 @@ package com.target;
 
 import org.junit.*;
 
-import com.generator.structure.res.input.SimpleIntCalculator;
+import com.generator.core.res.input.SimpleIntCalculator;
 
 import static org.junit.Assert.*;
 

@@ -1,4 +1,4 @@
-package com.generator.structure;
+package com.generator.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,19 +11,21 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.generator.structure.res.input.ArrayOperations;
-import com.generator.structure.res.input.Enumerations;
-import com.generator.structure.res.input.Exceptions;
-import com.generator.structure.res.input.Monetary;
-import com.generator.structure.res.input.PrimitiveOperations;
-import com.generator.structure.res.input.SimpleIntCalculator;
-import com.generator.structure.res.input.ValidaCPF;
-import com.generator.structure.res.input.ValidaCpfCnpj;
+import com.generator.core.JUnitGenerator;
+import com.generator.core.RandomProvider;
+import com.generator.core.res.input.ArrayOperations;
+import com.generator.core.res.input.Enumerations;
+import com.generator.core.res.input.Exceptions;
+import com.generator.core.res.input.Monetary;
+import com.generator.core.res.input.PrimitiveOperations;
+import com.generator.core.res.input.SimpleIntCalculator;
+import com.generator.core.res.input.ValidaCPF;
+import com.generator.core.res.input.ValidaCpfCnpj;
 import com.generator.structure.util.FileUtil;
 
 public class JUnitGeneratorTest {
 
-	private static final boolean REGENERATE = false;
+	private static final boolean REGENERATE = true;
 
 	@Rule
 	public TemporaryFolder tempDir = new TemporaryFolder();
@@ -39,7 +41,7 @@ public class JUnitGeneratorTest {
 		String url = JUnitGeneratorTest.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		File projectDir = new File(url).getParentFile();
 		String sep = File.separator;
-		File result = new File(projectDir, "src.com.generator.structure.res.expected".replace(".", sep));
+		File result = new File(projectDir, "src.com.generator.core.res.expected".replace(".", sep));
 		return result;
 	}
 
@@ -50,7 +52,7 @@ public class JUnitGeneratorTest {
 			JUnitGenerator gen = new JUnitGenerator();
 			gen.addTargetClass(clazz);
 			gen.setOutputDir(tempDirName);
-			gen.setTestPackageName("com.generator.structure.res.expected");
+			gen.setTestPackageName("com.generator.core.res.expected");
 			gen.execute();
 
 			String testFileName = clazz.getSimpleName() + "Test.java";
