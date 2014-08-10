@@ -10,6 +10,8 @@ import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.ModifierSet;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.VariableDeclaratorId;
+import japa.parser.ast.expr.ArrayCreationExpr;
+import japa.parser.ast.expr.ArrayInitializerExpr;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
 import japa.parser.ast.expr.BooleanLiteralExpr;
@@ -34,6 +36,7 @@ import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.type.PrimitiveType.Primitive;
 import japa.parser.ast.type.Type;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -300,17 +303,32 @@ public class TestCodeGenerator {
 		if (value instanceof Double) {
 			return new DoubleLiteralExpr(value.toString());
 		}
+		if (value instanceof String) {
+			return new StringLiteralExpr((String) value);
+		}
 		Class<? extends Object> clazz = value.getClass();
 		if (clazz.isEnum()) {
 			addImport(clazz);
 			NameExpr scope = new NameExpr(clazz.getSimpleName());
 			return new QualifiedNameExpr(scope, ((Enum) value).name());
 		}
-		if (value instanceof String) {
-			return new StringLiteralExpr((String) value);
+		if (clazz.isArray()) {
+			// TODO Support array of array:
+			Type compType = javaTypeToParserType(clazz.getComponentType());
+			int length = Array.getLength(value);
+			ArrayInitializerExpr initializer = new ArrayInitializerExpr(arrayValueToExpression(value, length));
+			return new ArrayCreationExpr(compType, 1, initializer);
 		}
 		// TODO Suportar outros tipos
 		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + clazz.getSimpleName() + ").");
+	}
+
+	private List<Expression> arrayValueToExpression(Object array, int length) {
+		List<Expression> res = new ArrayList<>();
+		for (int i = 0; i < length; ++i) {
+			res.add(valueToExpression(Array.get(array, i)));
+		}
+		return res;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.generator.structure;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 
 import com.generator.structure.util.Log;
+import com.generator.structure.util.Util;
 
 public class InnerExecutor {
 
@@ -73,6 +75,9 @@ public class InnerExecutor {
 
 	private ExecutionResult invokeMethod(Method method, List<Object> params) {
 		try {
+			if (containsArrays(params)) {
+				normalizeArrays(params, method);
+			}
 			Object callRes = method.invoke(null, params.toArray());
 			return new ExecutionResult(callRes);
 
@@ -93,6 +98,45 @@ public class InnerExecutor {
 			Log.error("Error invoking method '" + method.getName() + "'.", e);
 			return null;
 		}
+	}
+
+	private void normalizeArrays(List<Object> paramValues, Method method) {
+		for (int i = 0; i < paramValues.size(); ++i) {
+			Object paramVal = paramValues.get(i);
+			if (paramVal == null) {
+				continue;
+			}
+			Class<? extends Object> type = paramVal.getClass();
+			if (paramVal == null || !type.isArray()) {
+				continue;
+			}
+			Class<?> paramType = method.getParameterTypes()[i];
+			if (type.equals(paramType)) {
+				continue;
+			}
+			Class<?> compType = paramType.getComponentType();
+			if (paramType.getComponentType().isPrimitive() && Util.primitiveToWrapper(compType).equals(type.getComponentType())) {
+				paramValues.set(i, convertArrayToPrimitive(paramVal, compType));
+			}
+		}
+	}
+
+	private Object convertArrayToPrimitive(Object paramVal, Class<?> primitiveType) {
+		int length = Array.getLength(paramVal);
+		Object res = Array.newInstance(primitiveType, length);
+		for (int i = 0; i < length; ++i) {
+			Array.set(res, i, Array.get(paramVal, i));
+		}
+		return res;
+	}
+
+	private boolean containsArrays(List<Object> params) {
+		for (Object param : params) {
+			if (param != null && param.getClass().isArray()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Method getCoverageMethod(final Class<?> instrumentedClass) {
