@@ -3,10 +3,10 @@ package com.generator.structure.valuegenerators;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
-import com.generator.structure.ValueGeneratorRegistry;
-import com.generator.structure.ValueSetGenerator;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
+import com.generator.core.ValueGeneratorRegistry;
+import com.generator.core.ValueSetGenerator;
 import com.generator.structure.util.Util;
 
 public class FixedArrayValuesGenerator<T> implements ValueGenerator<T[]> {

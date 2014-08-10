@@ -3,8 +3,8 @@ package com.generator.structure.valuegenerators.random;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
 
 public class BigDecimalRandomValues implements ValueGenerator<BigDecimal> {
 

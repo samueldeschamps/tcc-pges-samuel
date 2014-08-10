@@ -1,6 +1,6 @@
 package com.generator.structure.valuegenerators.full;
 
-import com.generator.structure.ValueGenerationStrategy;
+import com.generator.core.ValueGenerationStrategy;
 import com.generator.structure.valuegenerators.CachedValueGenerator;
 
 @SuppressWarnings("rawtypes")

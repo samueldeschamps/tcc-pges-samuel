@@ -3,7 +3,7 @@ package com.generator.structure.valuegenerators.random;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerator;
 import com.generator.structure.valuegenerators.ParallelValueGeneratorComposite;
 
 public class StringRandomValues extends ParallelValueGeneratorComposite<String> {

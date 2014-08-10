@@ -1,6 +1,6 @@
 package com.generator.structure.valuegenerators;
 
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerator;
 
 public abstract class CachedValueGenerator<T> implements ValueGenerator<T> {
 	

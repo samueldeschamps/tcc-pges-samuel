@@ -3,8 +3,8 @@ package com.generator.structure.valuegenerators;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
 
 /**
  * Reads all values from one ValueGenerator, then goes to the next and so on.

@@ -1,6 +1,6 @@
 package com.generator.structure.valuegenerators;
 
-import com.generator.structure.ValueGenerator;
+import com.generator.core.ValueGenerator;
 
 import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.Parameter;

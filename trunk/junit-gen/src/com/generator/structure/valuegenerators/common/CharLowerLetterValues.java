@@ -1,6 +1,6 @@
 package com.generator.structure.valuegenerators.common;
 
-import com.generator.structure.ValueGenerationStrategy;
+import com.generator.core.ValueGenerationStrategy;
 import com.generator.structure.valuegenerators.CachedValueGenerator;
 
 public class CharLowerLetterValues extends CachedValueGenerator<Character> {

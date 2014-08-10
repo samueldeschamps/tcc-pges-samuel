@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.generator.structure.RandomProvider;
-import com.generator.structure.ValueGenerationStrategy;
-import com.generator.structure.ValueGenerator;
-import com.generator.structure.ValueGeneratorRegistry;
+import com.generator.core.RandomProvider;
+import com.generator.core.ValueGenerationStrategy;
+import com.generator.core.ValueGenerator;
+import com.generator.core.ValueGeneratorRegistry;
 import com.generator.structure.valuegenerators.EmptyArrayValueGenerator;
 import com.generator.structure.valuegenerators.FixedArrayValuesGenerator;
 import com.generator.structure.valuegenerators.NullValueGenerator;
