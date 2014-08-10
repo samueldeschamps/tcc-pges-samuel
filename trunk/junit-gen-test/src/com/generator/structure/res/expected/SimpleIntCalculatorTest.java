@@ -20,24 +20,6 @@ public class SimpleIntCalculatorTest {
      */
     @Test
     public void testDivide_2() {
-        int actual = SimpleIntCalculator.divide(1, 1);
-        Assert.assertEquals(1, actual);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testDivide_3() {
-        int actual = SimpleIntCalculator.divide(-1, 1);
-        Assert.assertEquals(-1, actual);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testDivide_4() {
         int actual = SimpleIntCalculator.divide(0, -1);
         Assert.assertEquals(0, actual);
     }
@@ -46,9 +28,27 @@ public class SimpleIntCalculatorTest {
      * Coverage: 100,00%
      */
     @Test
+    public void testDivide_3() {
+        int actual = SimpleIntCalculator.divide(0, 2);
+        Assert.assertEquals(0, actual);
+    }
+
+    /**
+     * Coverage: 100,00%
+     */
+    @Test
+    public void testDivide_4() {
+        int actual = SimpleIntCalculator.divide(0, -2);
+        Assert.assertEquals(0, actual);
+    }
+
+    /**
+     * Coverage: 100,00%
+     */
+    @Test
     public void testDivide_5() {
-        int actual = SimpleIntCalculator.divide(1, -1);
-        Assert.assertEquals(-1, actual);
+        int actual = SimpleIntCalculator.divide(0, 3);
+        Assert.assertEquals(0, actual);
     }
 
     /**
@@ -110,15 +110,6 @@ public class SimpleIntCalculatorTest {
      */
     @Test
     public void testMultiply_2() {
-        int actual = SimpleIntCalculator.multiply(1, 0);
-        Assert.assertEquals(0, actual);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testMultiply_3() {
         int actual = SimpleIntCalculator.multiply(0, 1);
         Assert.assertEquals(0, actual);
     }
@@ -127,9 +118,18 @@ public class SimpleIntCalculatorTest {
      * Coverage: 100,00%
      */
     @Test
+    public void testMultiply_3() {
+        int actual = SimpleIntCalculator.multiply(0, -1);
+        Assert.assertEquals(0, actual);
+    }
+
+    /**
+     * Coverage: 100,00%
+     */
+    @Test
     public void testMultiply_4() {
-        int actual = SimpleIntCalculator.multiply(1, 1);
-        Assert.assertEquals(1, actual);
+        int actual = SimpleIntCalculator.multiply(0, 2);
+        Assert.assertEquals(0, actual);
     }
 
     /**
@@ -137,7 +137,7 @@ public class SimpleIntCalculatorTest {
      */
     @Test
     public void testMultiply_5() {
-        int actual = SimpleIntCalculator.multiply(-1, 0);
+        int actual = SimpleIntCalculator.multiply(0, -2);
         Assert.assertEquals(0, actual);
     }
 
@@ -155,15 +155,6 @@ public class SimpleIntCalculatorTest {
      */
     @Test
     public void testSubtract_2() {
-        int actual = SimpleIntCalculator.subtract(1, 0);
-        Assert.assertEquals(1, actual);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testSubtract_3() {
         int actual = SimpleIntCalculator.subtract(0, 1);
         Assert.assertEquals(-1, actual);
     }
@@ -172,9 +163,18 @@ public class SimpleIntCalculatorTest {
      * Coverage: 100,00%
      */
     @Test
+    public void testSubtract_3() {
+        int actual = SimpleIntCalculator.subtract(0, -1);
+        Assert.assertEquals(1, actual);
+    }
+
+    /**
+     * Coverage: 100,00%
+     */
+    @Test
     public void testSubtract_4() {
-        int actual = SimpleIntCalculator.subtract(1, 1);
-        Assert.assertEquals(0, actual);
+        int actual = SimpleIntCalculator.subtract(0, 2);
+        Assert.assertEquals(-2, actual);
     }
 
     /**
@@ -182,8 +182,8 @@ public class SimpleIntCalculatorTest {
      */
     @Test
     public void testSubtract_5() {
-        int actual = SimpleIntCalculator.subtract(-1, 0);
-        Assert.assertEquals(-1, actual);
+        int actual = SimpleIntCalculator.subtract(0, -2);
+        Assert.assertEquals(2, actual);
     }
 
     /**
@@ -200,15 +200,6 @@ public class SimpleIntCalculatorTest {
      */
     @Test
     public void testSum_2() {
-        int actual = SimpleIntCalculator.sum(1, 0);
-        Assert.assertEquals(1, actual);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testSum_3() {
         int actual = SimpleIntCalculator.sum(0, 1);
         Assert.assertEquals(1, actual);
     }
@@ -217,8 +208,17 @@ public class SimpleIntCalculatorTest {
      * Coverage: 100,00%
      */
     @Test
+    public void testSum_3() {
+        int actual = SimpleIntCalculator.sum(0, -1);
+        Assert.assertEquals(-1, actual);
+    }
+
+    /**
+     * Coverage: 100,00%
+     */
+    @Test
     public void testSum_4() {
-        int actual = SimpleIntCalculator.sum(1, 1);
+        int actual = SimpleIntCalculator.sum(0, 2);
         Assert.assertEquals(2, actual);
     }
 
@@ -227,7 +227,7 @@ public class SimpleIntCalculatorTest {
      */
     @Test
     public void testSum_5() {
-        int actual = SimpleIntCalculator.sum(-1, 0);
-        Assert.assertEquals(-1, actual);
+        int actual = SimpleIntCalculator.sum(0, -2);
+        Assert.assertEquals(-2, actual);
     }
 }

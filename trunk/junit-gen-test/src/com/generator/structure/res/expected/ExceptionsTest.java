@@ -127,7 +127,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_2() {
         try {
-            Exceptions.throwDeclaredCheckedException(1, 0);
+            Exceptions.throwDeclaredCheckedException(0, 1);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -139,7 +139,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_3() {
         try {
-            Exceptions.throwDeclaredCheckedException(0, 1);
+            Exceptions.throwDeclaredCheckedException(0, -1);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -151,7 +151,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_4() {
         try {
-            Exceptions.throwDeclaredCheckedException(1, 1);
+            Exceptions.throwDeclaredCheckedException(0, 2);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -163,7 +163,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredCheckedException_5() {
         try {
-            Exceptions.throwDeclaredCheckedException(-1, 0);
+            Exceptions.throwDeclaredCheckedException(0, -2);
             Assert.fail("An IOException must have been thrown.");
         } catch (IOException ex) {
         }
@@ -187,7 +187,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_2() {
         try {
-            Exceptions.throwDeclaredUncheckedException(1, 0);
+            Exceptions.throwDeclaredUncheckedException(0, 1);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -199,7 +199,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_3() {
         try {
-            Exceptions.throwDeclaredUncheckedException(0, 1);
+            Exceptions.throwDeclaredUncheckedException(0, -1);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -211,7 +211,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_4() {
         try {
-            Exceptions.throwDeclaredUncheckedException(1, 1);
+            Exceptions.throwDeclaredUncheckedException(0, 2);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -223,7 +223,7 @@ public class ExceptionsTest {
     @Test
     public void testThrowDeclaredUncheckedException_5() {
         try {
-            Exceptions.throwDeclaredUncheckedException(-1, 0);
+            Exceptions.throwDeclaredUncheckedException(0, -2);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
         }
@@ -242,14 +242,6 @@ public class ExceptionsTest {
      */
     @Test
     public void testThrowException_2() {
-        Exceptions.throwException(1, 0);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testThrowException_3() {
         Exceptions.throwException(0, 1);
     }
 
@@ -257,8 +249,16 @@ public class ExceptionsTest {
      * Coverage: 100,00%
      */
     @Test
+    public void testThrowException_3() {
+        Exceptions.throwException(0, -1);
+    }
+
+    /**
+     * Coverage: 100,00%
+     */
+    @Test
     public void testThrowException_4() {
-        Exceptions.throwException(1, 1);
+        Exceptions.throwException(0, 2);
     }
 
     /**
@@ -266,6 +266,6 @@ public class ExceptionsTest {
      */
     @Test
     public void testThrowException_5() {
-        Exceptions.throwException(-1, 0);
+        Exceptions.throwException(0, -2);
     }
 }

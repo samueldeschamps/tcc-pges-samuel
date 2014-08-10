@@ -11,11 +11,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.generator.structure.res.input.ArrayOperations;
 import com.generator.structure.res.input.Enumerations;
 import com.generator.structure.res.input.Exceptions;
 import com.generator.structure.res.input.PrimitiveOperations;
 import com.generator.structure.res.input.SimpleIntCalculator;
 import com.generator.structure.res.input.ValidaCPF;
+import com.generator.structure.res.input.ValidaCpfCnpj;
 import com.generator.structure.util.FileUtil;
 
 public class JUnitGeneratorTest {
@@ -97,6 +99,11 @@ public class JUnitGeneratorTest {
 	}
 	
 	@Test
+	public void testValidaCpfCnpj() {
+		testGeneration(ValidaCpfCnpj.class);
+	}
+	
+	@Test
 	public void testEnumerations() {
 		testGeneration(Enumerations.class);
 	}
@@ -104,6 +111,11 @@ public class JUnitGeneratorTest {
 	@Test
 	public void testPrimitiveOperations() {
 		testGeneration(PrimitiveOperations.class);
+	}
+	
+	@Test
+	public void testArrayOperations() {
+		testGeneration(ArrayOperations.class);
 	}
 
 }

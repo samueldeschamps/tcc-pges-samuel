@@ -1,4 +1,4 @@
-package com.generator.structure;
+package com.generator.structure.comparators;
 
 import java.util.Comparator;
 

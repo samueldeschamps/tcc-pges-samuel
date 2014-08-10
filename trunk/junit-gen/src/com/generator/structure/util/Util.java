@@ -2,19 +2,21 @@ package com.generator.structure.util;
 
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Util {
 
-	private static String[] uVowels = new String[] { "A", "E", "I", "O", "U" };
-	private static String[] lVowels = new String[] { "a", "e", "i", "o", "u" };
+	private static final String[] UVOWELS = new String[] { "A", "E", "I", "O", "U" };
+	private static final String[] LVOWELS = new String[] { "a", "e", "i", "o", "u" };
 
 	public static boolean startsWithVowel(String str) {
-		for (String vowel : uVowels) {
+		for (String vowel : UVOWELS) {
 			if (str.startsWith(vowel)) {
 				return true;
 			}
 		}
-		for (String vowel : lVowels) {
+		for (String vowel : LVOWELS) {
 			if (str.startsWith(vowel)) {
 				return true;
 			}
@@ -61,6 +63,24 @@ public class Util {
 			return str;
 		}
 		return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+	}
+
+	private static final Map<Class<?>, Class<?>> WRAPPERS = new HashMap<Class<?>, Class<?>>();
+	static {
+		WRAPPERS.put(boolean.class, Boolean.class);
+		WRAPPERS.put(byte.class, Byte.class);
+		WRAPPERS.put(char.class, Character.class);
+		WRAPPERS.put(double.class, Double.class);
+		WRAPPERS.put(float.class, Float.class);
+		WRAPPERS.put(int.class, Integer.class);
+		WRAPPERS.put(long.class, Long.class);
+		WRAPPERS.put(short.class, Short.class);
+		WRAPPERS.put(void.class, Void.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> primitiveToWrapper(Class<T> c) {
+		return (Class<T>) WRAPPERS.get(c);
 	}
 
 }

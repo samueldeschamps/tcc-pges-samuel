@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.generator.structure.comparators.ComplexityComparator;
 import com.generator.structure.util.Log;
 
 public class TestCaseGenerator {
@@ -24,7 +25,7 @@ public class TestCaseGenerator {
 	public List<TestCaseData> execute() {
 
 		ValueGeneratorRegistry registry = jUnitGenerator.getValueGenerators();
-		ValueSetGenerator paramValuesGen = new ValueSetGenerator(registry, method.getParameterTypes());
+		ParamValuesGenerator paramValuesGen = new ParamValuesGenerator(registry, method.getParameterTypes());
 		int minTestCases = jUnitGenerator.getMinTestCasesPerMethod();
 
 		// TODO Turn this guys into parameters:
@@ -40,7 +41,7 @@ public class TestCaseGenerator {
 						tries));
 				break;
 			}
-			if (tries > minTries && result.size() > minTestCases && isEnoughCoverage(result)) {
+			if (tries >= minTries && result.size() > minTestCases && isEnoughCoverage(result)) {
 				break;
 			}
 			if (result.size() > clearTrigger) {
@@ -106,72 +107,45 @@ public class TestCaseGenerator {
 
 	private static class TestCaseComparator implements Comparator<TestCaseData> {
 
-		private Comparator<String> strComparator = new StringComplexityComparator();
+		private Comparator<Object> complexityComparator = new ComplexityComparator();
 
 		@Override
-		public int compare(TestCaseData o2, TestCaseData o1) {
+		public int compare(TestCaseData o1, TestCaseData o2) {
 			ExecutionResult r1 = o1.getResult();
 			ExecutionResult r2 = o2.getResult();
-			int res = Boolean.compare(r1.hasCoverageInfo(), r2.hasCoverageInfo());
+			int res = Boolean.compare(!r1.hasCoverageInfo(), !r2.hasCoverageInfo());
 			if (res != 0) {
 				return res;
 			}
 			CoverageInfo cov1 = r1.getCoverageInfo();
 			CoverageInfo cov2 = r2.getCoverageInfo();
-			res = Double.compare(cov1.getCoverageRatio(), cov2.getCoverageRatio());
+			res = Double.compare(-cov1.getCoverageRatio(), -cov2.getCoverageRatio());
 			if (res != 0) {
 				return res;
 			}
-			res = Boolean.compare(r1.succeeded(), r2.succeeded());
+			res = Boolean.compare(r1.failed(), r2.failed());
 			if (res != 0) {
 				return res;
 			}
 			// For cases with same coverage, the winner is the simpler:
-			return compareValuesComplexity(o2.getParamValues(), o1.getParamValues());
+			return compareValuesComplexity(o1.getParamValues(), o2.getParamValues());
 		}
 
 		private int compareValuesComplexity(List<Object> v1, List<Object> v2) {
-			int res = Integer.compare(v1.size(), v2.size());
-			if (res != 0) {
-				return res;
-			}
+			int sum = 0;
+			int firstDiff = 0;
 			for (int i = 0; i < v1.size(); ++i) {
-				res += compareComplexity(v1.get(i), v2.get(i));
-			}
-			return res;
-		}
-
-		private int compareComplexity(Object o1, Object o2) {
-			if (o1 == null || o2 == null) {
-				return Boolean.compare(o1 != null, o2 != null);
-			}
-			if (o1 instanceof Number && o1 instanceof Comparable) {
-				// Prefers the closest to zero:
-				double d1 = ((Number) o1).doubleValue();
-				double d2 = ((Number) o2).doubleValue();
-				int res = Double.compare(Math.abs(d1), Math.abs(d2));
-				if (res != 0) {
-					return res;
+				int comp = complexityComparator.compare(v1.get(i), v2.get(i));
+				int normalized = comp == 0 ? 0 : comp < 0 ? -1 : 1;
+				if (firstDiff == 0 && normalized != 0) {
+					firstDiff = normalized;
 				}
-				// If abs are equal, maybe one is negative and other is
-				// positive. In this case, prefer the positive.
-				return Double.compare(d2, d1);
+				sum += normalized;
 			}
-			if (o1 instanceof String) {
-				return strComparator.compare((String) o1, (String) o2);
+			if (sum != 0) {
+				return sum;
 			}
-			if (o1 instanceof Enum) {
-				return 0;
-			}
-			if (o1 instanceof Boolean) {
-				return 0;
-			}
-			if (o1 instanceof Character) {
-				// TODO Prefer numbers than letters than special chars
-				return 0;
-			}
-			Log.warning("Don't know how to compare elements of type " + o1.getClass().getSimpleName() + ".");
-			return 0;
+			return firstDiff;
 		}
 
 	}

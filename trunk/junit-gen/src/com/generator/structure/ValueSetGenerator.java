@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.generator.structure.valuegenerators.NotNullValues;
 import com.generator.structure.valuegenerators.UniqueValues;
-import com.generator.structure.valuegenerators.SerialValueGeneratorComposite;
 
 public class ValueSetGenerator {
 
@@ -16,15 +14,10 @@ public class ValueSetGenerator {
 	private ValueGenerator<?> current;
 	private LinkedList<List<Object>> buffer = new LinkedList<>();
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ValueSetGenerator(ValueGeneratorRegistry registry, Class<?>[] paramTypes) {
-		for (Class<?> paramType : paramTypes) {
-			List<?> list = registry.get(paramType);
-			ValueGenerator<?> generator = new SerialValueGeneratorComposite((List<ValueGenerator<?>>) list);
-			if (paramType.isPrimitive()) {
-				generator = new NotNullValues(generator);
-			}
-			generators.add(new UniqueValues(generator));
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public ValueSetGenerator(ValueGenerator<?>[] valueGenerators) {
+		for (ValueGenerator<?> gen : valueGenerators) {
+			generators.add(new UniqueValues(gen));
 		}
 	}
 
