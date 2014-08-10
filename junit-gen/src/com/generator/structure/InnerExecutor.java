@@ -84,20 +84,28 @@ public class InnerExecutor {
 		} catch (InvocationTargetException ex) {
 
 			boolean declared = false;
-			if (ex.getCause() != null) {
+			Throwable cause = ex.getCause();
+			if (cause != null) {
+				if (cause instanceof VirtualMachineError) {
+					throw new RuntimeException("Fatal JVM error with params: " + paramsToStr(params), (VirtualMachineError) cause);
+				}
 				for (Class<?> throwEx : method.getExceptionTypes()) {
-					if (throwEx.isAssignableFrom(ex.getCause().getClass())) {
+					if (throwEx.isAssignableFrom(cause.getClass())) {
 						declared = true;
 					}
 				}
 			}
-			return new ExecutionResult(ex.getCause(), declared);
+			return new ExecutionResult(cause, declared);
 
 		} catch (IllegalAccessException | IllegalArgumentException e) {
 
 			Log.error("Error invoking method '" + method.getName() + "'.", e);
 			return null;
 		}
+	}
+
+	private String paramsToStr(List<Object> params) {
+		return Arrays.toString(params.toArray());
 	}
 
 	private void normalizeArrays(List<Object> paramValues, Method method) {

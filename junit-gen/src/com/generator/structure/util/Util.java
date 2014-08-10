@@ -2,6 +2,7 @@ package com.generator.structure.util;
 
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,6 +82,22 @@ public class Util {
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> primitiveToWrapper(Class<T> c) {
 		return (Class<T>) WRAPPERS.get(c);
+	}
+
+	public static double round(double x, int scale) {
+		return round(x, scale, BigDecimal.ROUND_HALF_EVEN);
+	}
+
+	public static double round(double x, int scale, int roundingMethod) {
+		try {
+			return (new BigDecimal(Double.toString(x)).setScale(scale, roundingMethod)).doubleValue();
+		} catch (NumberFormatException ex) {
+			if (Double.isInfinite(x)) {
+				return x;
+			} else {
+				return Double.NaN;
+			}
+		}
 	}
 
 }
