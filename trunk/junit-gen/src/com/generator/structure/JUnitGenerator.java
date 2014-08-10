@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 
 import com.generator.structure.util.Log;
+import com.generator.structure.valuegenerators.common.BigDecimalCommonValues;
 import com.generator.structure.valuegenerators.common.ByteCommonValues;
 import com.generator.structure.valuegenerators.common.CharCommonValues;
 import com.generator.structure.valuegenerators.common.DoubleCommonValues;
@@ -31,6 +33,8 @@ import com.generator.structure.valuegenerators.full.ByteFullValues;
 import com.generator.structure.valuegenerators.full.CharFullValues;
 import com.generator.structure.valuegenerators.full.EnumFullValues;
 import com.generator.structure.valuegenerators.full.ShortFullValues;
+import com.generator.structure.valuegenerators.random.BigDecimalRandomValues;
+import com.generator.structure.valuegenerators.random.DoubleRandomValues;
 import com.generator.structure.valuegenerators.random.IntegerRandomValues;
 import com.generator.structure.valuegenerators.random.StringRandomValues;
 
@@ -58,7 +62,7 @@ public class JUnitGenerator {
 	private void loadDefaultConfig() {
 		loadDefaultBugExceptions();
 		loadDefaultParamGenerators();
-		
+
 		exceptionsStrategy = ExceptionsStrategy.ASSERT_WHEN_DECLARED;
 		doubleAssertPrecision = 0.00000001;
 		minCovRatioPerFailedTestCase = 0.01;
@@ -85,6 +89,9 @@ public class JUnitGenerator {
 
 		valueGenerators.register(String.class, StringCommonValues.class);
 		valueGenerators.register(String.class, StringRandomValues.class);
+
+		valueGenerators.register(BigDecimal.class, BigDecimalCommonValues.class);
+		valueGenerators.register(BigDecimal.class, BigDecimalRandomValues.class);
 	}
 
 	private void loadPrimitiveParamGenerators() {
@@ -119,6 +126,8 @@ public class JUnitGenerator {
 
 		valueGenerators.register(double.class, DoubleCommonValues.class);
 		valueGenerators.register(Double.class, DoubleCommonValues.class);
+		valueGenerators.register(double.class, DoubleRandomValues.class);
+		valueGenerators.register(Double.class, DoubleRandomValues.class);
 	}
 
 	public void execute() {

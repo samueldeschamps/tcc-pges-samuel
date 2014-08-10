@@ -25,6 +25,7 @@ import japa.parser.ast.expr.MarkerAnnotationExpr;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.expr.NullLiteralExpr;
+import japa.parser.ast.expr.ObjectCreationExpr;
 import japa.parser.ast.expr.QualifiedNameExpr;
 import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.expr.VariableDeclarationExpr;
@@ -39,6 +40,7 @@ import japa.parser.ast.type.Type;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -169,17 +171,43 @@ public class TestCodeGenerator {
 		VariableDeclarationExpr varDecl = ASTHelper.createVariableDeclarationExpr(type, actualName);
 		AssignExpr assign = new AssignExpr(varDecl, call, Operator.assign);
 		ASTHelper.addStmt(block, assign);
-
+		
 		NameExpr assertName = new NameExpr("Assert");
-		MethodCallExpr assertCall = new MethodCallExpr(assertName, "assertEquals");
+		MethodCallExpr assertCall;
+		if (method.getReturnType().isArray()) {
+			assertCall = new MethodCallExpr(assertName, "assertArrayEquals");
+		} else {
+			assertCall = new MethodCallExpr(assertName, "assertEquals");
+		}
 		Object resultValue = execResult.getResult();
-		ASTHelper.addArgument(assertCall, valueToExpression(resultValue));
+		Expression expectedExpr;
+		if (resultIsBig(resultValue)) {
+			String expectedName = "expected";
+			VariableDeclarationExpr expectVarDecl = ASTHelper.createVariableDeclarationExpr(type, expectedName);
+			AssignExpr expectAssign = new AssignExpr(expectVarDecl, valueToExpression(resultValue), Operator.assign);
+			ASTHelper.addStmt(block, expectAssign);
+			expectedExpr = new NameExpr(expectedName);
+		} else {
+			expectedExpr = valueToExpression(resultValue);
+		}
+		ASTHelper.addArgument(assertCall, expectedExpr);
 		ASTHelper.addArgument(assertCall, new NameExpr(actualName));
 		if (resultValue instanceof Double || resultValue instanceof Float) {
 			String precision = String.valueOf(generator.getDoubleAssertPrecision());
 			ASTHelper.addArgument(assertCall, new DoubleLiteralExpr(precision));
 		}
 		ASTHelper.addStmt(block, assertCall);
+	}
+
+	private boolean resultIsBig(Object resultValue) {
+		if (resultValue == null) {
+			return false;
+		}
+		if (resultValue.getClass().isArray()) {
+			return true;
+		}
+		// TODO Add more cases.
+		return false;
 	}
 
 	private void addExceptionAssertion(BlockStmt block, MethodCallExpr call, ExecutionResult result) {
@@ -246,6 +274,11 @@ public class TestCodeGenerator {
 			addImport(type);
 			return new ClassOrInterfaceType(type.getSimpleName());
 		}
+		if (type.isArray()) {
+			addImport(type.getComponentType());
+			// FIXME Is this correct?
+			return new ClassOrInterfaceType(type.getComponentType().getSimpleName() + "[]");
+		}
 		throw new IllegalArgumentException("Type not supported: '" + type + "'.");
 		// TODO Suportar outros tipos
 	}
@@ -271,6 +304,7 @@ public class TestCodeGenerator {
 		unit.addImport(new ImportDeclaration(className, false, false));
 	}
 
+	// TODO Create a registry to solve this many IFs:
 	@SuppressWarnings("rawtypes")
 	private Expression valueToExpression(Object value) {
 		if (value == null) {
@@ -318,6 +352,11 @@ public class TestCodeGenerator {
 			int length = Array.getLength(value);
 			ArrayInitializerExpr initializer = new ArrayInitializerExpr(arrayValueToExpression(value, length));
 			return new ArrayCreationExpr(compType, 1, initializer);
+		}
+		if (value instanceof BigDecimal) {
+			BigDecimal decimal = (BigDecimal) value;
+			Expression argument = new StringLiteralExpr(decimal.toPlainString());
+			return new ObjectCreationExpr((ClassOrInterfaceType) javaTypeToParserType(BigDecimal.class), argument);
 		}
 		// TODO Suportar outros tipos
 		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + clazz.getSimpleName() + ").");

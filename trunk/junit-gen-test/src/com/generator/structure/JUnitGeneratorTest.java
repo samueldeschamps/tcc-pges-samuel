@@ -14,6 +14,7 @@ import org.junit.rules.TemporaryFolder;
 import com.generator.structure.res.input.ArrayOperations;
 import com.generator.structure.res.input.Enumerations;
 import com.generator.structure.res.input.Exceptions;
+import com.generator.structure.res.input.Monetary;
 import com.generator.structure.res.input.PrimitiveOperations;
 import com.generator.structure.res.input.SimpleIntCalculator;
 import com.generator.structure.res.input.ValidaCPF;
@@ -87,35 +88,40 @@ public class JUnitGeneratorTest {
 	public void testSimpleIntCalculator() {
 		testGeneration(SimpleIntCalculator.class);
 	}
-	
+
 	@Test
 	public void testExceptions() {
 		testGeneration(Exceptions.class);
 	}
-	
+
 	@Test
 	public void testValidaCPF() {
 		testGeneration(ValidaCPF.class);
 	}
-	
+
 	@Test
 	public void testValidaCpfCnpj() {
 		testGeneration(ValidaCpfCnpj.class);
 	}
-	
+
 	@Test
 	public void testEnumerations() {
 		testGeneration(Enumerations.class);
 	}
-	
+
 	@Test
 	public void testPrimitiveOperations() {
 		testGeneration(PrimitiveOperations.class);
 	}
-	
+
 	@Test
 	public void testArrayOperations() {
 		testGeneration(ArrayOperations.class);
+	}
+
+	@Test
+	public void testMonetary() {
+		testGeneration(Monetary.class);
 	}
 
 }
