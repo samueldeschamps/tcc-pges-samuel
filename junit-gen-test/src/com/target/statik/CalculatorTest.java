@@ -3,7 +3,7 @@ package com.target.statik;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.generator.structure.res.input.SimpleIntCalculator;
+import com.generator.core.res.input.SimpleIntCalculator;
 
 public class CalculatorTest {
 
