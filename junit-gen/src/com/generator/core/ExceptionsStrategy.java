@@ -1,4 +1,4 @@
-package com.generator.structure;
+package com.generator.core;
 
 public enum ExceptionsStrategy {
 
