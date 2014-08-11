@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import com.generator.structure.comparators.ComplexityComparator;
-import com.generator.structure.util.Log;
+import com.generator.core.comparators.ComplexityComparator;
+import com.generator.core.util.Log;
 
 public class TestCaseGenerator {
 

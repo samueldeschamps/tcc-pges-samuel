@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.generator.structure.valuegenerators.UniqueValues;
+import com.generator.core.valuegenerators.UniqueValues;
 
 public class ValueSetGenerator {
 

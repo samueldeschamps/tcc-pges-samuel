@@ -8,10 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.generator.structure.util.Log;
-import com.generator.structure.valuegenerators.NotNullValues;
-import com.generator.structure.valuegenerators.SerialValueGeneratorComposite;
-import com.generator.structure.valuegenerators.random.RandomArrayValuesGenerator;
+import com.generator.core.util.Log;
+import com.generator.core.valuegenerators.NotNullValues;
+import com.generator.core.valuegenerators.SerialValueGeneratorComposite;
+import com.generator.core.valuegenerators.random.RandomArrayValuesGenerator;
 
 public class ValueGeneratorRegistry {
 

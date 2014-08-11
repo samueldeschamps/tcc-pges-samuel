@@ -14,8 +14,8 @@ import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.data.ExecutionData;
 import org.jacoco.core.data.ExecutionDataStore;
 
-import com.generator.structure.util.Log;
-import com.generator.structure.util.Util;
+import com.generator.core.util.Log;
+import com.generator.core.util.Util;
 
 public class CoverageInfo {
 
