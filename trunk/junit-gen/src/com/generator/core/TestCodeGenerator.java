@@ -42,6 +42,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -56,6 +57,7 @@ public class TestCodeGenerator {
 	private Map<Method, List<TestCaseData>> cases;
 	private String testPackageName;
 	private CompilationUnit unit;
+	private Map<String, Integer> overloadCount = new HashMap<>();
 
 	public TestCodeGenerator(JUnitGenerator generator) {
 		this.generator = generator;
@@ -104,14 +106,24 @@ public class TestCodeGenerator {
 		for (Entry<Method, List<TestCaseData>> entry : cases.entrySet()) {
 			Method method = entry.getKey();
 			List<TestCaseData> methodCases = entry.getValue();
-
+			
 			if ((method.getModifiers() & Modifier.STATIC) == 0) {
 				// TODO Suportar métodos não estáticos.
 				continue;
 			}
+
+			Integer overCount = overloadCount.get(method.getName());
+			if (overCount == null) {
+				overCount = 0;
+			}
+			overloadCount.put(method.getName(), ++overCount);
 			int counter = 1;
 			for (TestCaseData caseData : methodCases) {
-				String testMethodName = "test" + Util.upFirstChar(method.getName()) + "_" + counter++;
+				String uniqueName = Util.upFirstChar(method.getName());
+				if (overCount > 1) {
+					uniqueName = uniqueName + overCount;
+				}
+				String testMethodName = "test" + uniqueName + "_" + counter++;
 				MethodDeclaration testMethod = new MethodDeclaration(ModifierSet.PUBLIC, ASTHelper.VOID_TYPE,
 						testMethodName);
 				testMethod.addAnnotation(new MarkerAnnotationExpr("Test"));

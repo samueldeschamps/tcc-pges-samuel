@@ -75,8 +75,8 @@ public class MonetaryTest {
      * Coverage: 100,00%
      */
     @Test
-    public void testInstallments__1() {
-        BigDecimal[] actual = Monetary.installments_(new BigDecimal("0"), 0);
+    public void testInstallments2_1() {
+        BigDecimal[] actual = Monetary.installments(new BigDecimal("0"), 0);
         BigDecimal[] expected = new BigDecimal[] {  };
         Assert.assertArrayEquals(expected, actual);
     }
@@ -85,8 +85,8 @@ public class MonetaryTest {
      * Coverage: 100,00%
      */
     @Test
-    public void testInstallments__2() {
-        BigDecimal[] actual = Monetary.installments_(new BigDecimal("0"), 1);
+    public void testInstallments2_2() {
+        BigDecimal[] actual = Monetary.installments(new BigDecimal("0"), 1);
         BigDecimal[] expected = new BigDecimal[] { new BigDecimal("0.00") };
         Assert.assertArrayEquals(expected, actual);
     }
@@ -95,8 +95,8 @@ public class MonetaryTest {
      * Coverage: 100,00%
      */
     @Test
-    public void testInstallments__3() {
-        BigDecimal[] actual = Monetary.installments_(new BigDecimal("0"), 2);
+    public void testInstallments2_3() {
+        BigDecimal[] actual = Monetary.installments(new BigDecimal("0"), 2);
         BigDecimal[] expected = new BigDecimal[] { new BigDecimal("0.00"), new BigDecimal("0.00") };
         Assert.assertArrayEquals(expected, actual);
     }
@@ -105,8 +105,8 @@ public class MonetaryTest {
      * Coverage: 100,00%
      */
     @Test
-    public void testInstallments__4() {
-        BigDecimal[] actual = Monetary.installments_(new BigDecimal("0"), 3);
+    public void testInstallments2_4() {
+        BigDecimal[] actual = Monetary.installments(new BigDecimal("0"), 3);
         BigDecimal[] expected = new BigDecimal[] { new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00") };
         Assert.assertArrayEquals(expected, actual);
     }
@@ -115,8 +115,8 @@ public class MonetaryTest {
      * Coverage: 100,00%
      */
     @Test
-    public void testInstallments__5() {
-        BigDecimal[] actual = Monetary.installments_(new BigDecimal("0"), 10);
+    public void testInstallments2_5() {
+        BigDecimal[] actual = Monetary.installments(new BigDecimal("0"), 10);
         BigDecimal[] expected = new BigDecimal[] { new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00"), new BigDecimal("0.00") };
         Assert.assertArrayEquals(expected, actual);
     }
