@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.generator.core.Combinator;
-import com.generator.structure.util.FileUtil;
+import com.generator.core.util.FileUtil;
 
 public class CombinatorTest {
 

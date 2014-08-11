@@ -21,7 +21,7 @@ import com.generator.core.res.input.PrimitiveOperations;
 import com.generator.core.res.input.SimpleIntCalculator;
 import com.generator.core.res.input.ValidaCPF;
 import com.generator.core.res.input.ValidaCpfCnpj;
-import com.generator.structure.util.FileUtil;
+import com.generator.core.util.FileUtil;
 
 public class JUnitGeneratorTest {
 
