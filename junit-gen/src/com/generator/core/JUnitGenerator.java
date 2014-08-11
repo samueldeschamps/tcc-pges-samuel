@@ -18,25 +18,25 @@ import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
-import com.generator.structure.util.Log;
-import com.generator.structure.valuegenerators.common.BigDecimalCommonValues;
-import com.generator.structure.valuegenerators.common.ByteCommonValues;
-import com.generator.structure.valuegenerators.common.CharCommonValues;
-import com.generator.structure.valuegenerators.common.DoubleCommonValues;
-import com.generator.structure.valuegenerators.common.FloatCommonValues;
-import com.generator.structure.valuegenerators.common.IntegerCommonValues;
-import com.generator.structure.valuegenerators.common.LongCommonValues;
-import com.generator.structure.valuegenerators.common.ShortCommonValues;
-import com.generator.structure.valuegenerators.common.StringCommonValues;
-import com.generator.structure.valuegenerators.full.BooleanFullValues;
-import com.generator.structure.valuegenerators.full.ByteFullValues;
-import com.generator.structure.valuegenerators.full.CharFullValues;
-import com.generator.structure.valuegenerators.full.EnumFullValues;
-import com.generator.structure.valuegenerators.full.ShortFullValues;
-import com.generator.structure.valuegenerators.random.BigDecimalRandomValues;
-import com.generator.structure.valuegenerators.random.DoubleRandomValues;
-import com.generator.structure.valuegenerators.random.IntegerRandomValues;
-import com.generator.structure.valuegenerators.random.StringRandomValues;
+import com.generator.core.util.Log;
+import com.generator.core.valuegenerators.common.BigDecimalCommonValues;
+import com.generator.core.valuegenerators.common.ByteCommonValues;
+import com.generator.core.valuegenerators.common.CharCommonValues;
+import com.generator.core.valuegenerators.common.DoubleCommonValues;
+import com.generator.core.valuegenerators.common.FloatCommonValues;
+import com.generator.core.valuegenerators.common.IntegerCommonValues;
+import com.generator.core.valuegenerators.common.LongCommonValues;
+import com.generator.core.valuegenerators.common.ShortCommonValues;
+import com.generator.core.valuegenerators.common.StringCommonValues;
+import com.generator.core.valuegenerators.full.BooleanFullValues;
+import com.generator.core.valuegenerators.full.ByteFullValues;
+import com.generator.core.valuegenerators.full.CharFullValues;
+import com.generator.core.valuegenerators.full.EnumFullValues;
+import com.generator.core.valuegenerators.full.ShortFullValues;
+import com.generator.core.valuegenerators.random.BigDecimalRandomValues;
+import com.generator.core.valuegenerators.random.DoubleRandomValues;
+import com.generator.core.valuegenerators.random.IntegerRandomValues;
+import com.generator.core.valuegenerators.random.StringRandomValues;
 
 public class JUnitGenerator {
 

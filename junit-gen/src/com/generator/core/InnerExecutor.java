@@ -15,8 +15,8 @@ import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
 
-import com.generator.structure.util.Log;
-import com.generator.structure.util.Util;
+import com.generator.core.util.Log;
+import com.generator.core.util.Util;
 
 public class InnerExecutor {
 
