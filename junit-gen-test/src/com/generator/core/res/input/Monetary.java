@@ -9,7 +9,7 @@ public class Monetary {
 	private static final int DECIMAL_DIGITS = 2;
 	private static final BigDecimal ONE_CENT = BigDecimal.ONE.movePointLeft(DECIMAL_DIGITS);
 
-	public static BigDecimal[] installments_(BigDecimal totalValue, int installments) throws IllegalArgumentException {
+	public static BigDecimal[] installments(BigDecimal totalValue, int installments) throws IllegalArgumentException {
 		return installments(totalValue, installments, RemainderStrategy.FIRST_N);
 	}
 
