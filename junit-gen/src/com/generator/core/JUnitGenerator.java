@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import javax.naming.OperationNotSupportedException;
 
 import com.generator.core.util.Log;
 import com.generator.core.valuegenerators.common.BigDecimalCommonValues;
+import com.generator.core.valuegenerators.common.BigIntegerCommonValues;
 import com.generator.core.valuegenerators.common.ByteCommonValues;
 import com.generator.core.valuegenerators.common.CharCommonValues;
 import com.generator.core.valuegenerators.common.DoubleCommonValues;
@@ -34,6 +36,7 @@ import com.generator.core.valuegenerators.full.CharFullValues;
 import com.generator.core.valuegenerators.full.EnumFullValues;
 import com.generator.core.valuegenerators.full.ShortFullValues;
 import com.generator.core.valuegenerators.random.BigDecimalRandomValues;
+import com.generator.core.valuegenerators.random.BigIntegerRandomValues;
 import com.generator.core.valuegenerators.random.DoubleRandomValues;
 import com.generator.core.valuegenerators.random.IntegerRandomValues;
 import com.generator.core.valuegenerators.random.StringRandomValues;
@@ -92,6 +95,9 @@ public class JUnitGenerator {
 
 		valueGenerators.register(BigDecimal.class, BigDecimalCommonValues.class);
 		valueGenerators.register(BigDecimal.class, BigDecimalRandomValues.class);
+
+		valueGenerators.register(BigInteger.class, BigIntegerCommonValues.class);
+		valueGenerators.register(BigInteger.class, BigIntegerRandomValues.class);
 	}
 
 	private void loadPrimitiveParamGenerators() {
