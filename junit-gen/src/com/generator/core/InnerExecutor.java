@@ -41,8 +41,8 @@ public class InnerExecutor {
 
 	private ExecutionResult invokeCoverage(List<Object> params) throws IOException, Exception, ClassNotFoundException {
 		final Class<?> clazz = method.getDeclaringClass();
-		final String resource = '/' + clazz.getName().replace('.', '/') + ".class";
-		final InputStream byteCodeInput = clazz.getResourceAsStream(resource);
+		final InputStream byteCodeInput = Util.getClassBytecodeAsStream(clazz);
+		
 		final IRuntime runtime = new LoggerRuntime();
 		final String className = clazz.getName();
 		final byte[] instrumented = new Instrumenter(runtime).instrument(byteCodeInput, className);

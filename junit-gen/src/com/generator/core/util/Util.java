@@ -1,5 +1,8 @@
 package com.generator.core.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -39,6 +42,35 @@ public class Util {
 	public static InputStream getClassBytecodeAsStream(Class<?> clazz) {
 		final String resource = '/' + clazz.getName().replace('.', '/') + ".class";
 		return clazz.getResourceAsStream(resource);
+	}
+
+	public static InputStream getClassSourceAsStream(Class<?> clazz) {
+		File sourceFile = getSourceFile(clazz);
+		try {
+			return new FileInputStream(sourceFile);
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+	}
+	
+	public static File getSourceFile(Class<?> clazz) {
+		String srcDir = getSourceDirLocation(clazz);
+		if (!srcDir.endsWith("/")) {
+			srcDir += "/";
+		}
+		String javaFilePath = clazz.getName().replace('.', '/') + ".java";
+		return new File(srcDir + javaFilePath);
+	}
+
+	public static String getSourceDirLocation(Class<?> clazz) {
+		return getSourceDirLocation(clazz, "src");
+	}
+
+	public static String getSourceDirLocation(Class<?> clazz, String srcDirSimpleName) {
+		final String resource = '/' + clazz.getName().replace('.', '/') + ".class";
+		final String path = clazz.getResource(resource).getPath();
+		final String projectPath = path.substring(0, path.length() - resource.length() - "bin".length());
+		return projectPath + srcDirSimpleName;
 	}
 
 	@SuppressWarnings("unchecked")
