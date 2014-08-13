@@ -10,37 +10,22 @@ import japa.parser.ast.body.MethodDeclaration;
 import japa.parser.ast.body.ModifierSet;
 import japa.parser.ast.body.Parameter;
 import japa.parser.ast.body.VariableDeclaratorId;
-import japa.parser.ast.expr.ArrayCreationExpr;
-import japa.parser.ast.expr.ArrayInitializerExpr;
 import japa.parser.ast.expr.AssignExpr;
 import japa.parser.ast.expr.AssignExpr.Operator;
-import japa.parser.ast.expr.BooleanLiteralExpr;
-import japa.parser.ast.expr.CastExpr;
-import japa.parser.ast.expr.CharLiteralExpr;
 import japa.parser.ast.expr.DoubleLiteralExpr;
 import japa.parser.ast.expr.Expression;
-import japa.parser.ast.expr.IntegerLiteralExpr;
-import japa.parser.ast.expr.LongLiteralExpr;
 import japa.parser.ast.expr.MarkerAnnotationExpr;
 import japa.parser.ast.expr.MethodCallExpr;
 import japa.parser.ast.expr.NameExpr;
-import japa.parser.ast.expr.NullLiteralExpr;
-import japa.parser.ast.expr.ObjectCreationExpr;
-import japa.parser.ast.expr.QualifiedNameExpr;
 import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.expr.VariableDeclarationExpr;
 import japa.parser.ast.stmt.BlockStmt;
 import japa.parser.ast.stmt.CatchClause;
 import japa.parser.ast.stmt.TryStmt;
-import japa.parser.ast.type.ClassOrInterfaceType;
-import japa.parser.ast.type.PrimitiveType;
-import japa.parser.ast.type.PrimitiveType.Primitive;
 import japa.parser.ast.type.Type;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +91,7 @@ public class TestCodeGenerator {
 		for (Entry<Method, List<TestCaseData>> entry : cases.entrySet()) {
 			Method method = entry.getKey();
 			List<TestCaseData> methodCases = entry.getValue();
-			
+
 			if ((method.getModifiers() & Modifier.STATIC) == 0) {
 				// TODO Suportar métodos não estáticos.
 				continue;
@@ -135,7 +120,10 @@ public class TestCodeGenerator {
 				NameExpr clazzExpr = new NameExpr(targetClass.getSimpleName());
 				MethodCallExpr call = new MethodCallExpr(clazzExpr, method.getName());
 				for (Object paramValue : caseData.getParamValues()) {
-					ASTHelper.addArgument(call, valueToExpression(paramValue));
+					ASTHelper.addArgument(call, JavaParserAdapter.valueToExpression(paramValue));
+					if (paramValue != null) {
+						addImportIfNecessary(paramValue.getClass());
+					}
 				}
 
 				ExecutionResult result = caseData.getResult();
@@ -179,11 +167,12 @@ public class TestCodeGenerator {
 
 	private void addResultAssertion(Method method, BlockStmt block, MethodCallExpr call, ExecutionResult execResult) {
 		String actualName = "actual";
-		Type type = javaTypeToParserType(method.getReturnType());
+		Type type = JavaParserAdapter.javaTypeToParserType(method.getReturnType());
+		addImportIfNecessary(method.getReturnType());
 		VariableDeclarationExpr varDecl = ASTHelper.createVariableDeclarationExpr(type, actualName);
 		AssignExpr assign = new AssignExpr(varDecl, call, Operator.assign);
 		ASTHelper.addStmt(block, assign);
-		
+
 		NameExpr assertName = new NameExpr("Assert");
 		MethodCallExpr assertCall;
 		if (method.getReturnType().isArray()) {
@@ -192,15 +181,19 @@ public class TestCodeGenerator {
 			assertCall = new MethodCallExpr(assertName, "assertEquals");
 		}
 		Object resultValue = execResult.getResult();
+		Expression resulExpression = JavaParserAdapter.valueToExpression(resultValue);
+		if (resultValue != null) {
+			addImportIfNecessary(resultValue.getClass());
+		}
 		Expression expectedExpr;
 		if (resultIsBig(resultValue)) {
 			String expectedName = "expected";
 			VariableDeclarationExpr expectVarDecl = ASTHelper.createVariableDeclarationExpr(type, expectedName);
-			AssignExpr expectAssign = new AssignExpr(expectVarDecl, valueToExpression(resultValue), Operator.assign);
+			AssignExpr expectAssign = new AssignExpr(expectVarDecl, resulExpression, Operator.assign);
 			ASTHelper.addStmt(block, expectAssign);
 			expectedExpr = new NameExpr(expectedName);
 		} else {
-			expectedExpr = valueToExpression(resultValue);
+			expectedExpr = resulExpression;
 		}
 		ASTHelper.addArgument(assertCall, expectedExpr);
 		ASTHelper.addArgument(assertCall, new NameExpr(actualName));
@@ -209,6 +202,21 @@ public class TestCodeGenerator {
 			ASTHelper.addArgument(assertCall, new DoubleLiteralExpr(precision));
 		}
 		ASTHelper.addStmt(block, assertCall);
+	}
+
+	private void addImportIfNecessary(Class<?> type) {
+		if (type.isArray()) {
+			addImportIfNecessary((type.getComponentType()));
+			return;
+		}
+		if (type.isEnum()) {
+			addImport(type);
+			return;
+		}
+		if (!type.isPrimitive() && !type.isArray() && !type.isAnnotation() && !type.isEnum()) {
+			addImport(type);
+			return;
+		}
 	}
 
 	private boolean resultIsBig(Object resultValue) {
@@ -231,7 +239,8 @@ public class TestCodeGenerator {
 		ASTHelper.addStmt(tryBlock, failCall);
 
 		CatchClause catchClause = new CatchClause();
-		Type exceptionType = javaTypeToParserType(result.getExceptionClass());
+		Type exceptionType = JavaParserAdapter.javaTypeToParserType(result.getExceptionClass());
+		addImportIfNecessary(result.getExceptionClass());
 		String exceptionVarName = "ex";
 		catchClause.setExcept(new Parameter(exceptionType, new VariableDeclaratorId(exceptionVarName)));
 
@@ -256,45 +265,6 @@ public class TestCodeGenerator {
 		return "A" + (Util.startsWithVowel(exceptionName) ? "n " : " ") + exceptionName + " must have been thrown.";
 	}
 
-	private Type javaTypeToParserType(Class<?> type) {
-		// Register types using a Map
-		if (type.equals(boolean.class)) {
-			return new PrimitiveType(Primitive.Boolean);
-		}
-		if (type.equals(byte.class)) {
-			return new PrimitiveType(Primitive.Byte);
-		}
-		if (type.equals(short.class)) {
-			return new PrimitiveType(Primitive.Short);
-		}
-		if (type.equals(char.class)) {
-			return new PrimitiveType(Primitive.Char);
-		}
-		if (type.equals(int.class)) {
-			return new PrimitiveType(Primitive.Int);
-		}
-		if (type.equals(long.class)) {
-			return new PrimitiveType(Primitive.Long);
-		}
-		if (type.equals(float.class)) {
-			return new PrimitiveType(Primitive.Float);
-		}
-		if (type.equals(double.class)) {
-			return new PrimitiveType(Primitive.Double);
-		}
-		if (!type.isPrimitive() && !type.isArray() && !type.isAnnotation() && !type.isEnum()) {
-			addImport(type);
-			return new ClassOrInterfaceType(type.getSimpleName());
-		}
-		if (type.isArray()) {
-			addImport(type.getComponentType());
-			// FIXME Is this correct?
-			return new ClassOrInterfaceType(type.getComponentType().getSimpleName() + "[]");
-		}
-		throw new IllegalArgumentException("Type not supported: '" + type + "'.");
-		// TODO Suportar outros tipos
-	}
-
 	private void addImport(Class<?> type) {
 		String className = type.getName();
 		String pkgName = type.getPackage().getName();
@@ -314,72 +284,6 @@ public class TestCodeGenerator {
 			}
 		}
 		unit.addImport(new ImportDeclaration(className, false, false));
-	}
-
-	// TODO Create a registry to solve this many IFs:
-	@SuppressWarnings("rawtypes")
-	private Expression valueToExpression(Object value) {
-		if (value == null) {
-			return new NullLiteralExpr();
-		}
-		if (value instanceof Boolean) {
-			return new BooleanLiteralExpr((Boolean) value);
-		}
-		if (value instanceof Byte) {
-			IntegerLiteralExpr literal = new IntegerLiteralExpr(value.toString()); 
-			return new CastExpr(new PrimitiveType(Primitive.Byte), literal);
-		}
-		if (value instanceof Short) {
-			IntegerLiteralExpr literal = new IntegerLiteralExpr(value.toString());
-			return new CastExpr(new PrimitiveType(Primitive.Short), literal);
-		}
-		if (value instanceof Character) {
-			return new CharLiteralExpr(value.toString());
-		}
-		if (value instanceof Integer) {
-			return new IntegerLiteralExpr(value.toString());
-		}
-		if (value instanceof Long) {
-			return new LongLiteralExpr(value.toString());
-		}
-		if (value instanceof Float) {
-			DoubleLiteralExpr literal = new DoubleLiteralExpr(value.toString());
-			return new CastExpr(new PrimitiveType(Primitive.Float), literal);
-		}
-		if (value instanceof Double) {
-			return new DoubleLiteralExpr(value.toString());
-		}
-		if (value instanceof String) {
-			return new StringLiteralExpr((String) value);
-		}
-		Class<? extends Object> clazz = value.getClass();
-		if (clazz.isEnum()) {
-			addImport(clazz);
-			NameExpr scope = new NameExpr(clazz.getSimpleName());
-			return new QualifiedNameExpr(scope, ((Enum) value).name());
-		}
-		if (clazz.isArray()) {
-			// TODO Support array of array:
-			Type compType = javaTypeToParserType(clazz.getComponentType());
-			int length = Array.getLength(value);
-			ArrayInitializerExpr initializer = new ArrayInitializerExpr(arrayValueToExpression(value, length));
-			return new ArrayCreationExpr(compType, 1, initializer);
-		}
-		if (value instanceof BigDecimal) {
-			BigDecimal decimal = (BigDecimal) value;
-			Expression argument = new StringLiteralExpr(decimal.toPlainString());
-			return new ObjectCreationExpr((ClassOrInterfaceType) javaTypeToParserType(BigDecimal.class), argument);
-		}
-		// TODO Suportar outros tipos
-		throw new IllegalArgumentException("Value not supported: '" + value + "'. (" + clazz.getSimpleName() + ").");
-	}
-
-	private List<Expression> arrayValueToExpression(Object array, int length) {
-		List<Expression> res = new ArrayList<>();
-		for (int i = 0; i < length; ++i) {
-			res.add(valueToExpression(Array.get(array, i)));
-		}
-		return res;
 	}
 
 }
