@@ -34,24 +34,6 @@ public class ValidaCPFTest {
     }
 
     /**
-     * Coverage: 96,08%
-     */
-    @Test
-    public void testFormatarCPF_4() {
-        String actual = ValidaCPF.formatarCPF("50104703776");
-        Assert.assertEquals("501.047.037-76", actual);
-    }
-
-    /**
-     * Coverage: 96,08%
-     */
-    @Test
-    public void testFormatarCPF_5() {
-        String actual = ValidaCPF.formatarCPF("59436834751");
-        Assert.assertEquals("594.368.347-51", actual);
-    }
-
-    /**
      * Coverage: 89,29%
      */
     @Test

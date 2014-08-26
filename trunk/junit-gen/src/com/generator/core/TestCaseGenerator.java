@@ -12,14 +12,16 @@ import com.generator.core.util.Log;
 
 public class TestCaseGenerator {
 
-	private JUnitGenerator jUnitGenerator;
+	private static final long FEEDBACK_INTERVAL = 1000;
+
+	final JUnitGenerator jUnitGenerator;
 	private final Method method;
-	private final InnerExecutor executor;
+	private final CaseExecutor executor;
 
 	public TestCaseGenerator(JUnitGenerator jUnitGenerator, Method method) {
 		this.jUnitGenerator = jUnitGenerator;
 		this.method = method;
-		this.executor = new InnerExecutor(method);
+		this.executor = new CaseExecutor(jUnitGenerator, method);
 	}
 
 	public List<TestCaseData> execute() {
@@ -35,7 +37,10 @@ public class TestCaseGenerator {
 
 		List<TestCaseData> result = new ArrayList<>();
 		int tries = 0;
+		double[] covRatios = null;
 		for (;;) {
+			showFeedbackMsg(tries, result, covRatios);
+
 			if (!paramValuesGen.hasNext()) {
 				Log.warning(String.format("Reached limit of inputs for method '%s' (%d inputs).", method.getName(),
 						tries));
@@ -45,9 +50,7 @@ public class TestCaseGenerator {
 				break;
 			}
 			if (result.size() > clearTrigger) {
-				double covRat = removeRedundantTestCases(result, minTestCases);
-				Log.info(String.format("It's being hard. %d tries. %d relevant cases. Coverage: %.2f%%.", tries,
-						result.size(), covRat * 100));
+				covRatios = removeRedundantTestCases(result, minTestCases);
 			}
 			if (tries >= maxTries) {
 				Log.warning("Reached limit of attempts for method '" + method.getName() + "' (" + tries + ").");
@@ -62,22 +65,54 @@ public class TestCaseGenerator {
 			TestCaseData caseData = new TestCaseData(paramValues, execResult);
 			result.add(caseData);
 		}
-		double covRat = removeRedundantTestCases(result, minTestCases);
-		Log.info(String.format("Final coverage: %.2f%%. Tries: %d.", covRat * 100, tries));
+		covRatios = removeRedundantTestCases(result, minTestCases);
+		Log.info(String.format("Final coverages: %s. Tries: %d.", coveragesToStr(covRatios), tries));
 		return result;
 	}
 
-	private double removeRedundantTestCases(List<TestCaseData> cases, int minTestCases) {
-		if (cases.isEmpty()) {
-			return 0.0;
+	private long lastFeedback = 0L;
+
+	private void showFeedbackMsg(int tries, List<TestCaseData> result, double[] covRatios) {
+		long now = System.currentTimeMillis();
+		if (tries == 0) {
+			lastFeedback = now;
+			return;
 		}
+		if (now < lastFeedback + FEEDBACK_INTERVAL) {
+			return;
+		}
+		lastFeedback = now;
+		String msg = "Working. %d tries. %d current cases. Coverages: %s.";
+		Log.info(String.format(msg, tries, result.size(), coveragesToStr(covRatios)));
+	}
+
+	private String coveragesToStr(double[] covRatios) {
+		StringBuilder strCov = new StringBuilder();
+		if (covRatios == null) {
+			strCov.append("0.0%");
+		} else {
+			for (double cr : covRatios) {
+				if (strCov.length() > 0) {
+					strCov.append(", ");
+				}
+				strCov.append(String.format("%.1f%%", cr * 100));
+			}
+		}
+		return strCov.toString();
+	}
+
+	private double[] removeRedundantTestCases(List<TestCaseData> cases, int minTestCases) {
+		if (cases.isEmpty()) {
+			return null;
+		}
+		int maxCovDepth = jUnitGenerator.getMaxCoverageDepth();
 		// Sort the test cases (higher coverages / low complexity come first):
-		Collections.sort(cases, new TestCaseComparator());
+		Collections.sort(cases, new TestCaseComparator(maxCovDepth));
 
 		Iterator<TestCaseData> iterator = cases.iterator();
 		TestCaseData firstCase = iterator.next();
 		if (!firstCase.getResult().hasCoverageInfo()) {
-			return 0.0;
+			return null;
 		}
 		CoverageInfo totalCoverage = firstCase.getResult().getCoverageInfo().copy();
 
@@ -91,7 +126,7 @@ public class TestCaseGenerator {
 				continue;
 			}
 			CoverageInfo after = CoverageInfo.merge(execRes.getCoverageInfo(), totalCoverage);
-			if (after.getCoverageRatio() <= totalCoverage.getCoverageRatio()) {
+			if (!coversSomethingMore(after, totalCoverage)) {
 				iterator.remove();
 				removedOnes.add(testCase);
 				continue;
@@ -102,12 +137,38 @@ public class TestCaseGenerator {
 		while (cases.size() < minTestCases && i < removedOnes.size()) {
 			cases.add(removedOnes.get(i++));
 		}
-		return totalCoverage.getCoverageRatio();
+		return mountCoverageRatios(totalCoverage, maxCovDepth);
+	}
+
+	private double[] mountCoverageRatios(CoverageInfo totalCoverage, int maxCovDepth) {
+		double[] res = new double[maxCovDepth];
+		for (int i = 0; i < res.length; ++i) {
+			res[i] = totalCoverage.getDeepCounter(i).getRatio();
+		}
+		return res;
+	}
+
+	private boolean coversSomethingMore(CoverageInfo after, CoverageInfo total) {
+		if (after.getShallowCounter().greaterThan(total.getShallowCounter())) {
+			return true;
+		}
+		int maxDepth = jUnitGenerator.getMaxCoverageDepth();
+		for (int i = 0; i < maxDepth; ++i) {
+			if (after.getDeepCounter(i).greaterThan(total.getDeepCounter(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static class TestCaseComparator implements Comparator<TestCaseData> {
 
-		private Comparator<Object> complexityComparator = new ComplexityComparator();
+		private final Comparator<Object> complexityComparator = new ComplexityComparator();
+		private final int maxCoverageDepth;
+
+		public TestCaseComparator(int maxCoverageDepth) {
+			this.maxCoverageDepth = maxCoverageDepth;
+		}
 
 		@Override
 		public int compare(TestCaseData o1, TestCaseData o2) {
@@ -117,9 +178,7 @@ public class TestCaseGenerator {
 			if (res != 0) {
 				return res;
 			}
-			CoverageInfo cov1 = r1.getCoverageInfo();
-			CoverageInfo cov2 = r2.getCoverageInfo();
-			res = Double.compare(-cov1.getCoverageRatio(), -cov2.getCoverageRatio());
+			res = r2.getCoverageInfo().compareCoverages(r1.getCoverageInfo(), maxCoverageDepth);
 			if (res != 0) {
 				return res;
 			}
@@ -158,7 +217,13 @@ public class TestCaseGenerator {
 			infos[i] = cases.get(i).getResult().getCoverageInfo();
 		}
 		CoverageInfo merged = CoverageInfo.merge(infos);
-		return merged.getCoverageRatio() >= jUnitGenerator.getMinCovRatioPerMethod();
+		double[] minCovRatio = jUnitGenerator.getMinCovRatioPerMethod();
+		for (int i = 0; i < minCovRatio.length; ++i) {
+			if (merged.getDeepCounter(i).getRatio() < minCovRatio[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	// TODO Extract these rules to an extensible interface:
@@ -166,10 +231,10 @@ public class TestCaseGenerator {
 		double minCovSucceeded = jUnitGenerator.getMinCovRatioPerSucceededTestCase();
 		double minCovFailed = jUnitGenerator.getMinCovRatioPerFailedTestCase();
 		if (execResult.hasCoverageInfo()) {
-			if (execResult.succeeded() && execResult.getCoverageRatio() < minCovSucceeded) {
+			if (execResult.succeeded() && execResult.getShallowCoverageRatio() < minCovSucceeded) {
 				return false;
 			}
-			if (execResult.failed() && execResult.getCoverageRatio() < minCovFailed) {
+			if (execResult.failed() && execResult.getShallowCoverageRatio() < minCovFailed) {
 				return false;
 			}
 		} else {

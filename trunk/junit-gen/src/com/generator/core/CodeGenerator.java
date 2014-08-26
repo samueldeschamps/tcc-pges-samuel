@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 import com.generator.core.util.Log;
 import com.generator.core.util.Util;
 
-public class TestCodeGenerator {
+public class CodeGenerator {
 
 	private final JUnitGenerator generator;
 	private Class<?> targetClass;
@@ -44,7 +44,7 @@ public class TestCodeGenerator {
 	private CompilationUnit unit;
 	private Map<String, Integer> overloadCount = new HashMap<>();
 
-	public TestCodeGenerator(JUnitGenerator generator) {
+	public CodeGenerator(JUnitGenerator generator) {
 		this.generator = generator;
 	}
 
@@ -139,7 +139,7 @@ public class TestCodeGenerator {
 					}
 				}
 				if (result.hasCoverageInfo()) {
-					String text = String.format("Coverage: %.2f%%", result.getCoverageRatio() * 100);
+					String text = String.format("Coverage: %.2f%%", result.getShallowCoverageRatio() * 100);
 					testMethod.setJavaDoc(new JavadocComment(formatJavadoc(text)));
 				}
 			}
