@@ -13,6 +13,7 @@ ExceptionsTest.class, //
 		PrimitiveOperationsTest.class, //
 		EnumerationsTest.class, //
 		ArrayOperationsTest.class, //
+		MonetaryTest.class, //
 })
 public class SuiteCoverage {
 

@@ -112,24 +112,6 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Coverage: 82,14%
-     */
-    @Test
-    public void testMax_4() {
-        int actual = ArrayOperations.max(new int[] { -1 });
-        Assert.assertEquals(-1, actual);
-    }
-
-    /**
-     * Coverage: 82,14%
-     */
-    @Test
-    public void testMax_5() {
-        int actual = ArrayOperations.max(new int[] { 2 });
-        Assert.assertEquals(2, actual);
-    }
-
-    /**
      * Coverage: 100,00%
      */
     @Test
@@ -154,23 +136,5 @@ public class ArrayOperationsTest {
     public void testSum_3() {
         double actual = ArrayOperations.sum(new double[] { -1.0 });
         Assert.assertEquals(-1.0, actual, 1.0E-8);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testSum_4() {
-        double actual = ArrayOperations.sum(new double[] { 2.0 });
-        Assert.assertEquals(2.0, actual, 1.0E-8);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testSum_5() {
-        double actual = ArrayOperations.sum(new double[] { -2.0 });
-        Assert.assertEquals(-2.0, actual, 1.0E-8);
     }
 }

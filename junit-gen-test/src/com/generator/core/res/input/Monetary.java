@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 
 public class Monetary {
 
-	private static final int MAX_INSTALLMENTS = 1200;
+	private static final int MAX_INSTALLMENTS = 360;
 	private static final int DECIMAL_DIGITS = 2;
 	private static final BigDecimal ONE_CENT = BigDecimal.ONE.movePointLeft(DECIMAL_DIGITS);
 
@@ -31,25 +31,20 @@ public class Monetary {
 		}
 
 		BigDecimal remainder = totalValue.subtract(quotient.multiply(qtd));
-		switch (strategy) {
-			case FIRST_1:
-				result[0] = result[0].add(remainder);
-				break;
-			case LAST_1:
-				result[result.length - 1] = result[result.length - 1].add(remainder);
-				break;
-			case FIRST_N:
-				for (int i = 0; remainder.compareTo(BigDecimal.ZERO) > 0; ++i) {
-					result[i] = result[i].add(ONE_CENT);
-					remainder = remainder.subtract(ONE_CENT);
-				}
-				break;
-			case LAST_N:
-				for (int i = result.length - 1; remainder.compareTo(BigDecimal.ZERO) > 0; --i) {
-					result[i] = result[i].add(ONE_CENT);
-					remainder = remainder.subtract(ONE_CENT);
-				}
-				break;
+		if (strategy == RemainderStrategy.FIRST_1) {
+			result[0] = result[0].add(remainder);
+		} else if (strategy == RemainderStrategy.LAST_1) {
+			result[result.length - 1] = result[result.length - 1].add(remainder);
+		} else if (strategy == RemainderStrategy.FIRST_N) {
+			for (int i = 0; remainder.compareTo(BigDecimal.ZERO) > 0; ++i) {
+				result[i] = result[i].add(ONE_CENT);
+				remainder = remainder.subtract(ONE_CENT);
+			}
+		} else if (strategy == RemainderStrategy.LAST_N) {
+			for (int i = result.length - 1; remainder.compareTo(BigDecimal.ZERO) > 0; --i) {
+				result[i] = result[i].add(ONE_CENT);
+				remainder = remainder.subtract(ONE_CENT);
+			}
 		}
 		return result;
 	}

@@ -6,7 +6,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
@@ -18,12 +20,27 @@ import org.jacoco.core.runtime.RuntimeData;
 import com.generator.core.util.Log;
 import com.generator.core.util.Util;
 
-public class InnerExecutor {
+public class CaseExecutor {
 
 	private final Method method;
+	private final CallNode callHierarchy;
+	private final Set<Class<?>> usedClasses = new LinkedHashSet<>();
 
-	public InnerExecutor(Method method) {
+	public CaseExecutor(JUnitGenerator jUnitGenerator, Method method) {
 		this.method = method;
+		this.callHierarchy = jUnitGenerator.getCodeInfo().getCallHierarchy(method);
+		if (callHierarchy != null) {
+			addInvolvedClasses(callHierarchy);
+		}
+	}
+
+	private void addInvolvedClasses(CallNode node) {
+		usedClasses.add(node.getMethod().getDeclaringClass());
+		if (node.hasChildren()) {
+			for (CallNode child : node.getCalleds()) {
+				addInvolvedClasses(child);
+			}
+		}
 	}
 
 	public ExecutionResult execute(List<Object> params) {
@@ -39,21 +56,34 @@ public class InnerExecutor {
 		}
 	}
 
+	// TODO Improve code quality
 	private ExecutionResult invokeCoverage(List<Object> params) throws IOException, Exception, ClassNotFoundException {
-		final Class<?> clazz = method.getDeclaringClass();
-		final InputStream byteCodeInput = Util.getClassBytecodeAsStream(clazz);
+		
+		final InputStream[] byteCodeInputs = new InputStream[usedClasses.size()];
+		int i = 0;
+		for (Class<?> clazz : usedClasses) {
+			byteCodeInputs[i++] = Util.getClassBytecodeAsStream(clazz);
+		}
 		
 		final IRuntime runtime = new LoggerRuntime();
-		final String className = clazz.getName();
-		final byte[] instrumented = new Instrumenter(runtime).instrument(byteCodeInput, className);
-
+		final byte[][] instrumenteds = new byte[usedClasses.size()][];
+		int j = 0;
+		for (Class<?> clazz : usedClasses) {
+			instrumenteds[j] = new Instrumenter(runtime).instrument(byteCodeInputs[j], clazz.getName());
+			j++;
+		}
+		
 		final RuntimeData data = new RuntimeData();
 		runtime.startup(data);
 		try {
 			final MemoryClassLoader memoryClassLoader = new MemoryClassLoader();
-			memoryClassLoader.addDefinition(className, instrumented);
-			final Class<?> instrumentedClass = memoryClassLoader.loadClass(className);
-
+			int k = 0;
+			for (Class<?> clazz : usedClasses) {
+				memoryClassLoader.addDefinition(clazz.getName(), instrumenteds[k]);
+				k++;
+			}
+			final Class<?> instrumentedClass = memoryClassLoader.loadClass(method.getDeclaringClass().getName());
+			
 			Method covMethod = getCoverageMethod(instrumentedClass);
 			if (covMethod == null) {
 				return null;
@@ -65,12 +95,21 @@ public class InnerExecutor {
 			final ExecutionDataStore executionData = new ExecutionDataStore();
 			final SessionInfoStore sessionInfos = new SessionInfoStore();
 			data.collect(executionData, sessionInfos, false);
-
-			CoverageInfo covInfo = new CoverageInfo(executionData, method);
-			return new ExecutionResult(result, covInfo);
+			
+			return new ExecutionResult(result, mountCoverageInfo(executionData, callHierarchy));
 		} finally {
 			runtime.shutdown();
 		}
+	}
+
+	private CoverageInfo mountCoverageInfo(ExecutionDataStore executionData, CallNode node) {
+		CoverageInfo root = new CoverageInfo(executionData, node.getMethod());
+		if (node.hasChildren()) {
+			for (CallNode child : node.getCalleds()) {
+				root.addIndirectCoverage(mountCoverageInfo(executionData, child));
+			}
+		}
+		return root;
 	}
 
 	private ExecutionResult invokeMethod(Method method, List<Object> params) {
@@ -87,7 +126,8 @@ public class InnerExecutor {
 			Throwable cause = ex.getCause();
 			if (cause != null) {
 				if (cause instanceof VirtualMachineError) {
-					throw new RuntimeException("Fatal JVM error with params: " + paramsToStr(params), (VirtualMachineError) cause);
+					throw new RuntimeException("Fatal JVM error with params: " + paramsToStr(params),
+							(VirtualMachineError) cause);
 				}
 				for (Class<?> throwEx : method.getExceptionTypes()) {
 					if (throwEx.isAssignableFrom(cause.getClass())) {
@@ -123,7 +163,8 @@ public class InnerExecutor {
 				continue;
 			}
 			Class<?> compType = paramType.getComponentType();
-			if (paramType.getComponentType().isPrimitive() && Util.primitiveToWrapper(compType).equals(type.getComponentType())) {
+			if (paramType.getComponentType().isPrimitive()
+					&& Util.primitiveToWrapper(compType).equals(type.getComponentType())) {
 				paramValues.set(i, convertArrayToPrimitive(paramVal, compType));
 			}
 		}

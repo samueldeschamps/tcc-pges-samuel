@@ -48,7 +48,7 @@ public class JUnitGenerator {
 	private String outputDir;
 	private String testPackageName;
 	private List<Class<? extends Throwable>> bugExceptions = new ArrayList<>();
-	private double minCovRatioPerMethod; // Value between 0.0 and 1.0
+	private double[] minCovRatioPerMethod; // Values between 0.0 and 1.0. Indices represent method call depth.
 	private double minCovRatioPerSucceededTestCase; // Value between 0.0 and 1.0
 	private double minCovRatioPerFailedTestCase; // Value between 0.0 and 1.0
 	private int minTestCasesPerMethod; //
@@ -56,6 +56,7 @@ public class JUnitGenerator {
 	private double doubleAssertPrecision; // Used in double assertives.
 	private ExceptionsStrategy exceptionsStrategy;
 	private ValueGeneratorRegistry valueGenerators = new ValueGeneratorRegistry();
+	private CodeInfo codeInfo;
 	private String result;
 
 	public JUnitGenerator() {
@@ -70,8 +71,8 @@ public class JUnitGenerator {
 		doubleAssertPrecision = 0.00000001;
 		minCovRatioPerFailedTestCase = 0.01;
 		minCovRatioPerSucceededTestCase = 0.01;
-		minCovRatioPerMethod = 0.999;
-		minTestCasesPerMethod = 5;
+		minCovRatioPerMethod = new double[] { 0.999, 0.9, 0.5 };
+		minTestCasesPerMethod = 3;
 	}
 
 	private void loadDefaultBugExceptions() {
@@ -138,6 +139,7 @@ public class JUnitGenerator {
 
 	public void execute() {
 		validateParameters();
+		codeInfo = new CodeInfo();
 		List<CompilationUnit> testClasses = new ArrayList<>();
 		if (!targetClasses.isEmpty()) {
 			for (Class<?> clazz : targetClasses) {
@@ -203,9 +205,11 @@ public class JUnitGenerator {
 
 	private CompilationUnit generate(Class<?> targetClass, Method method) {
 
+		codeInfo.parseCode(targetClass);
+
 		Map<Method, List<TestCaseData>> cases = new LinkedHashMap<>();
 		if (method != null) {
-			cases.put(method, generateTestCasesValues(targetClass, method));
+			cases.put(method, generateTestCasesValues(method));
 		} else {
 			// TODO Alterar para obter a ordem original dos métodos na classe
 			Method[] methods = targetClass.getDeclaredMethods();
@@ -221,20 +225,19 @@ public class JUnitGenerator {
 				if (!Modifier.isPublic(m.getModifiers())) {
 					continue;
 				}
-				cases.put(m, generateTestCasesValues(targetClass, m));
+				cases.put(m, generateTestCasesValues(m));
 			}
 		}
 
-		TestCodeGenerator codeGen = new TestCodeGenerator(this);
+		CodeGenerator codeGen = new CodeGenerator(this);
 		codeGen.setTargetClass(targetClass);
 		codeGen.setCases(cases);
 		codeGen.setTestPackageName(testPackageName);
 		codeGen.execute();
-		CompilationUnit unit = codeGen.getResult();
-		return unit;
+		return codeGen.getResult();
 	}
 
-	private List<TestCaseData> generateTestCasesValues(Class<?> targetClass, Method method) {
+	private List<TestCaseData> generateTestCasesValues(Method method) {
 		String msg = "Generating test cases for method '%s.%s'...";
 		Log.info(String.format(msg, method.getDeclaringClass().getSimpleName(), method.getName()));
 		TestCaseGenerator generator = new TestCaseGenerator(this, method);
@@ -287,11 +290,11 @@ public class JUnitGenerator {
 		this.bugExceptions.add(bugException);
 	}
 
-	public double getMinCovRatioPerMethod() {
+	public double[] getMinCovRatioPerMethod() {
 		return minCovRatioPerMethod;
 	}
 
-	public void setMinCovRatioPerMethod(double minCovRatioPerMethod) {
+	public void setMinCovRatioPerMethod(double[] minCovRatioPerMethod) {
 		this.minCovRatioPerMethod = minCovRatioPerMethod;
 	}
 
@@ -349,6 +352,14 @@ public class JUnitGenerator {
 
 	ValueGeneratorRegistry getValueGenerators() {
 		return valueGenerators;
+	}
+	
+	int getMaxCoverageDepth() {
+		return minCovRatioPerMethod.length - 1;
+	}
+	
+	public CodeInfo getCodeInfo() {
+		return codeInfo;
 	}
 
 }

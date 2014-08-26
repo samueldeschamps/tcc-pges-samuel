@@ -17,6 +17,7 @@ import japa.parser.ast.expr.StringLiteralExpr;
 import japa.parser.ast.type.ClassOrInterfaceType;
 import japa.parser.ast.type.PrimitiveType;
 import japa.parser.ast.type.PrimitiveType.Primitive;
+import japa.parser.ast.type.ReferenceType;
 import japa.parser.ast.type.Type;
 
 import java.lang.reflect.Array;
@@ -60,12 +61,11 @@ public class JavaParserAdapter {
 		if (type.equals(double.class)) {
 			return new PrimitiveType(Primitive.Double);
 		}
-		if (!type.isPrimitive() && !type.isArray() && !type.isAnnotation() && !type.isEnum()) {
+		if (!type.isPrimitive() && !type.isArray() && !type.isAnnotation()) {
 			return new ClassOrInterfaceType(type.getSimpleName());
 		}
 		if (type.isArray()) {
-			// FIXME Is this correct?
-			return new ClassOrInterfaceType(type.getComponentType().getSimpleName() + "[]");
+			return new ReferenceType(javaTypeToParserType(type.getComponentType()), 1);
 		}
 		throw new IllegalArgumentException("Type not supported: '" + type + "'.");
 		// TODO Suportar outros tipos

@@ -36,22 +36,6 @@ public class ExceptionsTest {
      * Coverage: 63,64%
      */
     @Test
-    public void testSquareRoot_4() {
-        Exceptions.squareRoot(-3);
-    }
-
-    /**
-     * Coverage: 63,64%
-     */
-    @Test
-    public void testSquareRoot_5() {
-        Exceptions.squareRoot(-10);
-    }
-
-    /**
-     * Coverage: 63,64%
-     */
-    @Test
     public void testSquareRootDeclared_1() {
         try {
             Exceptions.squareRootDeclared(-1);
@@ -77,32 +61,6 @@ public class ExceptionsTest {
     public void testSquareRootDeclared_3() {
         try {
             Exceptions.squareRootDeclared(-2);
-            Assert.fail("An IllegalArgumentException must have been thrown.");
-        } catch (IllegalArgumentException ex) {
-            Assert.assertEquals("A cannot be negative!", ex.getMessage());
-        }
-    }
-
-    /**
-     * Coverage: 63,64%
-     */
-    @Test
-    public void testSquareRootDeclared_4() {
-        try {
-            Exceptions.squareRootDeclared(-3);
-            Assert.fail("An IllegalArgumentException must have been thrown.");
-        } catch (IllegalArgumentException ex) {
-            Assert.assertEquals("A cannot be negative!", ex.getMessage());
-        }
-    }
-
-    /**
-     * Coverage: 63,64%
-     */
-    @Test
-    public void testSquareRootDeclared_5() {
-        try {
-            Exceptions.squareRootDeclared(-10);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
             Assert.assertEquals("A cannot be negative!", ex.getMessage());
@@ -149,30 +107,6 @@ public class ExceptionsTest {
      * Coverage: 100,00%
      */
     @Test
-    public void testThrowDeclaredCheckedException_4() {
-        try {
-            Exceptions.throwDeclaredCheckedException(0, 2);
-            Assert.fail("An IOException must have been thrown.");
-        } catch (IOException ex) {
-        }
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testThrowDeclaredCheckedException_5() {
-        try {
-            Exceptions.throwDeclaredCheckedException(0, -2);
-            Assert.fail("An IOException must have been thrown.");
-        } catch (IOException ex) {
-        }
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
     public void testThrowDeclaredUncheckedException_1() {
         try {
             Exceptions.throwDeclaredUncheckedException(0, 0);
@@ -209,30 +143,6 @@ public class ExceptionsTest {
      * Coverage: 100,00%
      */
     @Test
-    public void testThrowDeclaredUncheckedException_4() {
-        try {
-            Exceptions.throwDeclaredUncheckedException(0, 2);
-            Assert.fail("An IllegalArgumentException must have been thrown.");
-        } catch (IllegalArgumentException ex) {
-        }
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testThrowDeclaredUncheckedException_5() {
-        try {
-            Exceptions.throwDeclaredUncheckedException(0, -2);
-            Assert.fail("An IllegalArgumentException must have been thrown.");
-        } catch (IllegalArgumentException ex) {
-        }
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
     public void testThrowException_1() {
         Exceptions.throwException(0, 0);
     }
@@ -251,21 +161,5 @@ public class ExceptionsTest {
     @Test
     public void testThrowException_3() {
         Exceptions.throwException(0, -1);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testThrowException_4() {
-        Exceptions.throwException(0, 2);
-    }
-
-    /**
-     * Coverage: 100,00%
-     */
-    @Test
-    public void testThrowException_5() {
-        Exceptions.throwException(0, -2);
     }
 }

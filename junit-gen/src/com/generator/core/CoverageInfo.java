@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
@@ -19,15 +21,25 @@ import com.generator.core.util.Util;
 
 public class CoverageInfo {
 
+	// TODO Refactor this hierarchy not to have the same dataStore in all child objects.
 	private final ExecutionDataStore dataStore;
 	private final Method method;
 	private final String signatureDesc;
-	private double coverageRatio = -1.0;
+	private List<CoverageInfo> indirectCoverages;
+	private Counter shallowCounter = null;
 
 	public CoverageInfo(ExecutionDataStore dataStore, Method method) {
 		this.dataStore = dataStore;
 		this.method = method;
 		this.signatureDesc = getSignatureDesc(method);
+		this.indirectCoverages = null;
+	}
+
+	public void addIndirectCoverage(CoverageInfo info) {
+		if (this.indirectCoverages == null) {
+			this.indirectCoverages = new LinkedList<>();
+		}
+		this.indirectCoverages.add(info);
 	}
 
 	private String getSignatureDesc(Method m) {
@@ -87,49 +99,57 @@ public class CoverageInfo {
 		return method.getDeclaringClass();
 	}
 
-	public Method getMethod() {
-		return method;
+	public Counter getShallowCounter() {
+		if (shallowCounter == null) {
+			shallowCounter = calculateCounter();
+		}
+		return shallowCounter;
 	}
 
-	public double getCoverageRatio() {
-		if (coverageRatio == -1.0) {
-			try {
-				coverageRatio = calculateCoverageRatio();
-			} catch (IOException ex) {
-				Log.error("Error calculating coverage ratio for method '" + method.getName() + "'.", ex);
-				coverageRatio = 0.0;
+	public Counter getDeepCounter(int level) {
+		if (level == 0) {
+			return getShallowCounter();
+		}
+		Counter res = new Counter(0L, 0L);
+		if (indirectCoverages != null) {
+			for (CoverageInfo cov : indirectCoverages) {
+				res = res.add(cov.getDeepCounter(level - 1));
 			}
 		}
-		return coverageRatio;
+		return res;
 	}
 
-	private double calculateCoverageRatio() throws IOException {
+	private Counter calculateCounter() {
 		final CoverageBuilder coverageBuilder = new CoverageBuilder();
 		final Analyzer analyzer = new Analyzer(dataStore, coverageBuilder);
 		InputStream byteCode = Util.getClassBytecodeAsStream(getDeclaringClass());
 		try {
-			String targetName = getClassName();
-			analyzer.analyzeClass(byteCode, targetName);
-			targetName = targetName.replace(".", "/");
+			try {
+				String targetName = getClassName();
+				analyzer.analyzeClass(byteCode, targetName);
+				targetName = targetName.replace(".", "/");
 
-			for (IClassCoverage cc : coverageBuilder.getClasses()) {
-				if (targetName.equals(cc.getName())) {
-					for (IMethodCoverage mc : cc.getMethods()) {
-						// TODO Use the JaCoCo StringPool to improve
-						// performance?
-						if (method.getName().equals(mc.getName()) && signatureDesc.equals(mc.getDesc())) {
-							ICounter counter = mc.getInstructionCounter();
-							return counter.getCoveredRatio();
+				for (IClassCoverage cc : coverageBuilder.getClasses()) {
+					if (targetName.equals(cc.getName())) {
+						for (IMethodCoverage mc : cc.getMethods()) {
+							// TODO Use the JaCoCo StringPool to improve
+							// performance?
+							if (method.getName().equals(mc.getName()) && signatureDesc.equals(mc.getDesc())) {
+								ICounter instCounter = mc.getInstructionCounter();
+								return new Counter(instCounter.getCoveredCount(), instCounter.getTotalCount());
+							}
 						}
 					}
 				}
+				String msg = "Could not find coverage ratio for method '%s' with signature '%s'.";
+				Log.error(String.format(msg, method.getName(), signatureDesc));
+			} finally {
+				byteCode.close();
 			}
-			String msg = "Could not find coverage ratio for method '%s' with signature '%s'.";
-			Log.error(String.format(msg, method.getName(), signatureDesc));
-			return 0.0;
-		} finally {
-			byteCode.close();
+		} catch (IOException ex) {
+			Log.error("Error calculating coverage ratio for method '" + method.getName() + "'.", ex);
 		}
+		return null;
 	}
 
 	public static CoverageInfo merge(CoverageInfo... infos) {
@@ -144,7 +164,13 @@ public class CoverageInfo {
 	}
 
 	public CoverageInfo copy() {
-		return new CoverageInfo(dataStore.copy(), method);
+		CoverageInfo copy = new CoverageInfo(dataStore.copy(), method);
+		if (indirectCoverages != null) {
+			for (CoverageInfo info : indirectCoverages) {
+				copy.addIndirectCoverage(info.copy());
+			}
+		}
+		return copy;
 	}
 
 	/**
@@ -165,11 +191,36 @@ public class CoverageInfo {
 		for (ExecutionData thisItem : thisData) {
 			thisItem.merge(otherIt.next());
 		}
+		if ((this.indirectCoverages == null) != (other.indirectCoverages == null)) {
+			Log.error("CoverageInfos with incompatible inner coverage infos.");
+			return;
+		}
+		if (this.indirectCoverages != null) {
+			if (this.indirectCoverages.size() != other.indirectCoverages.size()) {
+				Log.error("CoverageInfos with incompatible inner coverage infos.");
+				return;
+			}
+			for (int i = 0; i < indirectCoverages.size(); ++i) {
+				indirectCoverages.get(i).mergeWith(other.indirectCoverages.get(i));
+			}
+		}
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(getCoverageRatio());
+		Counter counter = getShallowCounter();
+		return String.valueOf(counter.getCovered() + "/" + counter.getTotal());
+	}
+
+	// TODO Improve performance
+	public int compareCoverages(CoverageInfo other, int maxDepth) {
+		for (int i = 0; i <= maxDepth; ++i) {
+			int res = this.getDeepCounter(i).compareTo(other.getDeepCounter(i));
+			if (res != 0) {
+				return res;
+			}
+		}
+		return 0;
 	}
 
 }
