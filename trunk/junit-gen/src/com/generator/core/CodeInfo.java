@@ -1,42 +1,77 @@
 package com.generator.core;
 
+import japa.compiler.CompilationException;
+import japa.compiler.Compiler;
+import japa.parser.ast.CompilationUnit;
+
 import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.generator.core.util.Log;
 import com.generator.core.util.Util;
 
-import japa.compiler.CompilationException;
-import japa.compiler.Main;
-import japa.parser.ast.CompilationUnit;
-
+// TODO Improve performance parsing all files once before starting to generate tests.
 public class CodeInfo {
-	
-	private List<CompilationUnit> units = new ArrayList<>();
+
+	private File[] compileDir;
 	private Map<Method, CallNode> callHierarchies = new LinkedHashMap<>();
-	
+
+	public CodeInfo(File[] compileDir) {
+		this.compileDir = compileDir;
+	}
+
 	public CallNode getCallHierarchy(Method method) {
 		return callHierarchies.get(method);
 	}
-	
+
 	public void parseCode(Class<?> targetClass) {
 		File targetFile = Util.getSourceFile(targetClass);
 		try {
-			// TODO Add Classpath andSourcepath!
-			
-			File[] sourcePath = Main.getBootClasspath();
-			CompilationUnit unit = japa.compiler.Compiler.compile(sourcePath, sourcePath, targetFile, false);
-			units.add(unit);
+			File[] classPath = getJavaClasspath();
+			File[] srcPath = getSourcePath(targetClass);
+
+			// Compiles all the files located in target class' project:
+			Compiler compiler = new Compiler(classPath, srcPath);
+			compiler.compile(getCompileDir(targetClass));
+			CompilationUnit unit = compiler.getUnit(targetFile);
+			if (unit == null) {
+				System.out.println("");
+			}
 			callHierarchies.putAll(MethodCallFinder.getCalledMethods(unit));
 
 		} catch (CompilationException e) {
 			Log.error(String.format("Error parsing class '%s.'", targetClass.getSimpleName()), e);
 		}
-		
 	}
-	
+
+	private File[] getCompileDir(Class<?> targetClass) {
+		if (compileDir == null || compileDir.length == 0) {
+			// If not specified, compiles all the 'src' directory:
+			compileDir = getSourcePath(targetClass);
+		}
+		return compileDir;
+	}
+
+	private File[] getSourcePath(Class<?> targetClass) {
+		return new File[] { new File(Util.getSourceDirLocation(targetClass)) };
+	}
+
+	public static File[] getJavaClasspath() {
+		String javaHome = System.getProperty("java.home");
+		File bootDir = new File(javaHome, "lib");
+		if (!bootDir.exists()) {
+			return null;
+		}
+		return bootDir.listFiles(new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".jar") || name.endsWith(".zip");
+			}
+
+		});
+	}
+
 }

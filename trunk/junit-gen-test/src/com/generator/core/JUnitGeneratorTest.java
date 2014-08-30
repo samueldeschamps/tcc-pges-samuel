@@ -22,6 +22,7 @@ import com.generator.core.res.input.SimpleIntCalculator;
 import com.generator.core.res.input.ValidaCPF;
 import com.generator.core.res.input.ValidaCpfCnpj;
 import com.generator.core.util.FileUtil;
+import com.generator.core.util.Util;
 
 public class JUnitGeneratorTest {
 
@@ -53,6 +54,7 @@ public class JUnitGeneratorTest {
 			gen.addTargetClass(clazz);
 			gen.setOutputDir(tempDirName);
 			gen.setTestPackageName("com.generator.core.res.expected");
+			gen.setCompileDir(new File[] { new File(Util.getSourceDirLocation(clazz) + "/com/generator/core/res/input") });
 			gen.execute();
 
 			String testFileName = clazz.getSimpleName() + "Test.java";

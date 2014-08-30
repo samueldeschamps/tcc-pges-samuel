@@ -17,7 +17,7 @@ public class CombinatorTest {
 	@Test
 	public void testCombine() throws IOException {
 
-		List<List<Object>> categories = new ArrayList<>();
+		List<List<Object>> categories = new ArrayList<List<Object>>();
 		categories.add(Arrays.asList(new Object[] { "-1", "+1" }));
 		categories.add(Arrays.asList(new Object[] { "A", "B", "C" }));
 		categories.add(Arrays.asList(new Object[] { "x", "y", "z" }));
