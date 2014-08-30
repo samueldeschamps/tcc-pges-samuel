@@ -56,6 +56,7 @@ public class JUnitGenerator {
 	private double doubleAssertPrecision; // Used in double assertives.
 	private ExceptionsStrategy exceptionsStrategy;
 	private ValueGeneratorRegistry valueGenerators = new ValueGeneratorRegistry();
+	private File[] compileDir;
 	private CodeInfo codeInfo;
 	private String result;
 
@@ -139,7 +140,7 @@ public class JUnitGenerator {
 
 	public void execute() {
 		validateParameters();
-		codeInfo = new CodeInfo();
+		codeInfo = new CodeInfo(compileDir);
 		List<CompilationUnit> testClasses = new ArrayList<>();
 		if (!targetClasses.isEmpty()) {
 			for (Class<?> clazz : targetClasses) {
@@ -345,7 +346,11 @@ public class JUnitGenerator {
 	public void setExceptionsStrategy(ExceptionsStrategy exceptionsStrategy) {
 		this.exceptionsStrategy = exceptionsStrategy;
 	}
-
+	
+	public void setCompileDir(File[] compileDir) {
+		this.compileDir = compileDir;
+	}
+	
 	public String getResult() {
 		return result;
 	}
@@ -358,7 +363,7 @@ public class JUnitGenerator {
 		return minCovRatioPerMethod.length - 1;
 	}
 	
-	public CodeInfo getCodeInfo() {
+	CodeInfo getCodeInfo() {
 		return codeInfo;
 	}
 
