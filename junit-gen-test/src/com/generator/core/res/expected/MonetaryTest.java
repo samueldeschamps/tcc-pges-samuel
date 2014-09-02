@@ -92,12 +92,15 @@ public class MonetaryTest {
     }
 
     /**
-     * Coverage: 100,00%
+     * Coverage: 0,00%
      */
     @Test
     public void testInstallments2_3() {
-        BigDecimal[] actual = Monetary.installments(new BigDecimal("-1"), 3);
-        BigDecimal[] expected = new BigDecimal[] { new BigDecimal("-0.33"), new BigDecimal("-0.33"), new BigDecimal("-0.34") };
-        Assert.assertArrayEquals(expected, actual);
+        try {
+            Monetary.installments(null, 1000);
+            Assert.fail("An IllegalArgumentException must have been thrown.");
+        } catch (IllegalArgumentException ex) {
+            Assert.assertEquals("Installments cannot be greater than 360!", ex.getMessage());
+        }
     }
 }

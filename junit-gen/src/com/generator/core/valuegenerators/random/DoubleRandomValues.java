@@ -36,17 +36,4 @@ public class DoubleRandomValues implements ValueGenerator<Double> {
 		return ValueGenerationStrategy.RANDOM;
 	}
 
-	public static void main(String[] args) throws InterruptedException {
-
-		DecimalFormat df = new DecimalFormat("############.###############");
-		DoubleRandomValues values = new DoubleRandomValues();
-
-		while (values.hasNext()) {
-			Double value = values.next();
-			// System.out.println(value);
-			System.out.println(df.format(value));
-			Thread.sleep(2000);
-		}
-	}
-
 }
