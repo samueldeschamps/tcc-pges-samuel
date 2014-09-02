@@ -11,7 +11,7 @@ public class ValidaCpfCnpjTest {
      */
     @Test
     public void testIsValidCNPJ_1() {
-        boolean actual = ValidaCpfCnpj.isValidCNPJ("85298800632442");
+        boolean actual = ValidaCpfCnpj.isValidCNPJ("02358361428711");
         Assert.assertEquals(false, actual);
     }
 
@@ -20,7 +20,7 @@ public class ValidaCpfCnpjTest {
      */
     @Test
     public void testIsValidCNPJ_2() {
-        boolean actual = ValidaCpfCnpj.isValidCNPJ("31093565820733");
+        boolean actual = ValidaCpfCnpj.isValidCNPJ("02877910887864");
         Assert.assertEquals(false, actual);
     }
 
@@ -38,7 +38,7 @@ public class ValidaCpfCnpjTest {
      */
     @Test
     public void testIsValidCPF_1() {
-        boolean actual = ValidaCpfCnpj.isValidCPF("59436834751");
+        boolean actual = ValidaCpfCnpj.isValidCPF("00400436388");
         Assert.assertEquals(false, actual);
     }
 
@@ -47,8 +47,8 @@ public class ValidaCpfCnpjTest {
      */
     @Test
     public void testIsValidCPF_2() {
-        boolean actual = ValidaCpfCnpj.isValidCPF("13172148398");
-        Assert.assertEquals(false, actual);
+        boolean actual = ValidaCpfCnpj.isValidCPF("57249755307");
+        Assert.assertEquals(true, actual);
     }
 
     /**
@@ -87,7 +87,7 @@ public class ValidaCpfCnpjTest {
      */
     @Test
     public void testIsValidCPForCNPJ_3() {
-        boolean actual = ValidaCpfCnpj.isValidCPForCNPJ("14056442208", 0);
+        boolean actual = ValidaCpfCnpj.isValidCPForCNPJ("13172148398", 0);
         Assert.assertEquals(false, actual);
     }
 

@@ -4,10 +4,15 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.generator.core.util.Log;
 import com.generator.core.validators.CoverageValidator;
+import com.generator.core.validators.ExceptionValidator;
+import com.generator.core.validators.ReturnValuesValidator;
 
 public class TestCaseGenerator {
 
@@ -16,7 +21,7 @@ public class TestCaseGenerator {
 	final JUnitGenerator jUnitGenerator;
 	private final Method method;
 	private final CaseExecutor executor;
-	private final List<CoverageValidator> validators;
+	private final List<TestCaseValidator> validators;
 
 	public TestCaseGenerator(JUnitGenerator jUnitGenerator, Method method) {
 		this.jUnitGenerator = jUnitGenerator;
@@ -25,6 +30,8 @@ public class TestCaseGenerator {
 
 		validators = new ArrayList<>();
 		validators.add(new CoverageValidator(jUnitGenerator));
+		validators.add(new ReturnValuesValidator(method, jUnitGenerator));
+		validators.add(new ExceptionValidator());
 	}
 
 	public List<TestCaseData> execute() {
@@ -37,7 +44,7 @@ public class TestCaseGenerator {
 		int minTries = 200;
 		int maxTries = 20000;
 
-		List<TestCaseData> cases = new ArrayList<>();
+		List<TestCaseData> cases = new LinkedList<>();
 		int tries = 0;
 		for (;;) {
 			if (!paramValuesGen.hasNext()) {
@@ -49,7 +56,7 @@ public class TestCaseGenerator {
 			ExecutionResult execResult = executor.executeCoverage(paramValues);
 			if (isTestCaseRelevant(execResult)) {
 				TestCaseData caseData = new TestCaseData(paramValues, execResult);
-				if (tries >= minTries && cases.size() >= minTestCases && isSatisfied(cases)) {
+				if (tries >= minTries && cases.size() >= minTestCases && isSatisfied()) {
 					break;
 				}
 				addCase(cases, caseData);
@@ -61,66 +68,95 @@ public class TestCaseGenerator {
 			}
 			showFeedbackMsg(tries, cases);
 		}
-		sortTestCases(cases);
+		Collections.sort(cases, testCaseComparator);
 		Log.info(String.format("End. Tries: %d. %s", tries, getValidatorsFeedback()));
 		return cases;
 	}
 
-	private void sortTestCases(List<TestCaseData> cases) {
-		Collections.sort(cases, new Comparator<TestCaseData>() {
-
-			@Override
-			public int compare(TestCaseData o1, TestCaseData o2) {
-				for (TestCaseValidator val : validators) {
-					int res = val.compare(o1, o2);
-					if (res != 0) {
-						return res;
-					}
+	private final Comparator<TestCaseData> testCaseComparator = new Comparator<TestCaseData>() {
+		
+		@Override
+		public int compare(TestCaseData o1, TestCaseData o2) {
+			for (TestCaseValidator val : validators) {
+				int res = val.compare(o1, o2);
+				if (res != 0) {
+					return res;
 				}
-				return 0;
 			}
-		});
-	}
-
+			return 0;
+		}
+	};
+	
 	private void addCase(List<TestCaseData> result, TestCaseData caseData) {
 		result.add(caseData);
 
-		List<List<TestCaseData>> redundants = new ArrayList<>();
+		List<List<TestCaseData>> redundantLists = new ArrayList<>();
+		Set<TestCaseData> redundants = new LinkedHashSet<>();
 		for (TestCaseValidator validator : validators) {
-			redundants.add(validator.include(caseData));
+			List<TestCaseData> leftover = validator.include(caseData);
+			redundantLists.add(leftover);
+			redundants.addAll(leftover);
 		}
-
+		
 		// Remove redundant test cases.
 		// A test case is considered redundant only if all validators considered
 		// it redundant.
-		if (!redundants.isEmpty()) {
-			List<TestCaseData> reallyRedundants = redundants.get(0);
-			for (int i = 1; i < redundants.size(); ++i) {
-				reallyRedundants.retainAll(redundants.get(i));
+		if (!redundantLists.isEmpty()) {
+			// Remove cases that are redundant for all validators:
+			List<TestCaseData> reallyRedundants = new ArrayList<>(redundantLists.get(0));
+			for (int i = 1; i < redundantLists.size(); ++i) {
+				reallyRedundants.retainAll(redundantLists.get(i));
 			}
-			if (!reallyRedundants.isEmpty()) {
-				int minCases = jUnitGenerator.getMinTestCasesPerMethod();
-				if (result.size() > minCases) {
-					removeLast(result, reallyRedundants, result.size() - minCases);
+			int minCases = jUnitGenerator.getMinTestCasesPerMethod();
+			if (!reallyRedundants.isEmpty() && result.size() > minCases) {
+				int qtdToRemove = result.size() - minCases;
+				for (int i = reallyRedundants.size() - 1; i >= 0 && qtdToRemove > 0; --i, --qtdToRemove) {
+					TestCaseData testCase = reallyRedundants.get(i);
+					result.remove(testCase);
+					redundants.remove(testCase);
+					removeAtAll(testCase);
+				}
+			}
+
+			// Remove cases that can be redundant for all validators:
+			if (result.size() > minCases) {
+				Object[] array = redundants.toArray();
+				for (int i = array.length - 1; i >= 0; --i) {
+					TestCaseData testCase = (TestCaseData) array[i];
+					if (canBeRemovedAtAll(testCase, redundantLists)) {
+						result.remove(testCase);
+						removeAtAll(testCase);
+					}
+					if (result.size() <= minCases) {
+						break;
+					}
 				}
 			}
 		}
 	}
 
-	private void removeLast(List<TestCaseData> result, List<TestCaseData> redundants, int count) {
-		for (int i = redundants.size() - 1; i >= 0 && count > 0; --i, --count) {
-			TestCaseData testCase = redundants.get(i);
-			result.remove(testCase);
-			for (TestCaseValidator val : validators) {
-				if (!val.remove(testCase)) {
-					Log.error("Remove returned false! Validator: " + val.getClass().getSimpleName());
-				}
+	private void removeAtAll(TestCaseData testCase) {
+		for (TestCaseValidator val : validators) {
+			val.remove(testCase);
+		}
+	}
+
+	private boolean canBeRemovedAtAll(TestCaseData testCase, List<List<TestCaseData>> redundantLists) {
+		for (int i = 0; i < validators.size(); ++i) {
+			TestCaseValidator val = validators.get(i);
+			if (redundantLists.get(i).contains(testCase)) {
+				// This validator has already told this case was redundant.
+				continue;
+			}
+			if (!val.canBeRemoved(testCase)) {
+				return false;
 			}
 		}
+		return true;
 	}
 
 	// Returns true only when all validators are satisfied.
-	private boolean isSatisfied(List<TestCaseData> result) {
+	private boolean isSatisfied() {
 		for (TestCaseValidator validator : validators) {
 			if (!validator.isSatisfied()) {
 				return false;

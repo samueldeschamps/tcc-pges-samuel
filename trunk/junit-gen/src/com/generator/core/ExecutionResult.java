@@ -65,10 +65,6 @@ public class ExecutionResult {
 		return coverageInfo;
 	}
 
-	public boolean hasCoverageInfo() {
-		return coverageInfo != null;
-	}
-
 	public double getShallowCoverageRatio() {
 		return coverageInfo.getShallowCounter().getRatio();
 	}
