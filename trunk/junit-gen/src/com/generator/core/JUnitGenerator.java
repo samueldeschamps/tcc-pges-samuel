@@ -359,7 +359,7 @@ public class JUnitGenerator {
 		return valueGenerators;
 	}
 	
-	int getMaxCoverageDepth() {
+	public int getMaxCoverageDepth() {
 		return minCovRatioPerMethod.length - 1;
 	}
 	

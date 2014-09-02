@@ -54,15 +54,4 @@ public class FixedArrayValuesGenerator<T> implements ValueGenerator<T[]> {
 		return ValueGenerationStrategy.BRUTE_FORCE;
 	}
 
-	// public static void main(String[] args) {
-	//
-	// ValueGeneratorRegistry registry = new ValueGeneratorRegistry();
-	// registry.register(int.class, IntegerCommonValues.class);
-	// FixedArrayValuesGenerator<Integer> gen = new
-	// FixedArrayValuesGenerator<Integer>(registry, int[].class, 2);
-	// while (gen.hasNext()) {
-	// System.out.println(Arrays.toString(gen.next()));
-	// }
-	// }
-
 }

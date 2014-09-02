@@ -16,21 +16,21 @@ public class ValidaCPFTest {
     }
 
     /**
-     * Coverage: 7,84%
-     */
-    @Test
-    public void testFormatarCPF_2() {
-        String actual = ValidaCPF.formatarCPF(null);
-        Assert.assertEquals(null, actual);
-    }
-
-    /**
      * Coverage: 96,08%
      */
     @Test
-    public void testFormatarCPF_3() {
+    public void testFormatarCPF_2() {
         String actual = ValidaCPF.formatarCPF("14056442208");
         Assert.assertEquals("140.564.422-08", actual);
+    }
+
+    /**
+     * Coverage: 7,84%
+     */
+    @Test
+    public void testFormatarCPF_3() {
+        String actual = ValidaCPF.formatarCPF(null);
+        Assert.assertEquals(null, actual);
     }
 
     /**

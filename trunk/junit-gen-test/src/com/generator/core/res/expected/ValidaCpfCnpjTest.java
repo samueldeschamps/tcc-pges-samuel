@@ -16,20 +16,20 @@ public class ValidaCpfCnpjTest {
     }
 
     /**
-     * Coverage: 16,33%
+     * Coverage: 95,92%
      */
     @Test
     public void testIsValidCNPJ_2() {
-        boolean actual = ValidaCpfCnpj.isValidCNPJ("");
+        boolean actual = ValidaCpfCnpj.isValidCNPJ("31093565820733");
         Assert.assertEquals(false, actual);
     }
 
     /**
-     * Coverage: 95,92%
+     * Coverage: 16,33%
      */
     @Test
     public void testIsValidCNPJ_3() {
-        boolean actual = ValidaCpfCnpj.isValidCNPJ("31093565820733");
+        boolean actual = ValidaCpfCnpj.isValidCNPJ("");
         Assert.assertEquals(false, actual);
     }
 
@@ -43,20 +43,20 @@ public class ValidaCpfCnpjTest {
     }
 
     /**
-     * Coverage: 16,33%
+     * Coverage: 95,92%
      */
     @Test
     public void testIsValidCPF_2() {
-        boolean actual = ValidaCpfCnpj.isValidCPF("");
+        boolean actual = ValidaCpfCnpj.isValidCPF("13172148398");
         Assert.assertEquals(false, actual);
     }
 
     /**
-     * Coverage: 95,92%
+     * Coverage: 16,33%
      */
     @Test
     public void testIsValidCPF_3() {
-        boolean actual = ValidaCpfCnpj.isValidCPF("13172148398");
+        boolean actual = ValidaCpfCnpj.isValidCPF("");
         Assert.assertEquals(false, actual);
     }
 

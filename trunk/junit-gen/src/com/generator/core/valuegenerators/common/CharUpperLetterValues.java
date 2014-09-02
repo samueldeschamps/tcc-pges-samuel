@@ -25,8 +25,4 @@ public class CharUpperLetterValues extends CachedValueGenerator<Character> {
 		return ValueGenerationStrategy.COMMON_VALUES;
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(Arrays.toString(initValues()));
-	}
-
 }

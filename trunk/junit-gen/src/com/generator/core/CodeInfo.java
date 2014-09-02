@@ -37,9 +37,6 @@ public class CodeInfo {
 			Compiler compiler = new Compiler(classPath, srcPath);
 			compiler.compile(getCompileDir(targetClass));
 			CompilationUnit unit = compiler.getUnit(targetFile);
-			if (unit == null) {
-				System.out.println("");
-			}
 			callHierarchies.putAll(MethodCallFinder.getCalledMethods(unit));
 
 		} catch (CompilationException e) {

@@ -90,25 +90,25 @@ public class ArrayOperationsTest {
     }
 
     /**
-     * Coverage: 25,00%
+     * Coverage: 82,14%
      */
     @Test
     public void testMax_2() {
+        int actual = ArrayOperations.max(new int[] { 1 });
+        Assert.assertEquals(1, actual);
+    }
+
+    /**
+     * Coverage: 25,00%
+     */
+    @Test
+    public void testMax_3() {
         try {
             ArrayOperations.max(null);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
             Assert.assertEquals("Values cannot be null!", ex.getMessage());
         }
-    }
-
-    /**
-     * Coverage: 82,14%
-     */
-    @Test
-    public void testMax_3() {
-        int actual = ArrayOperations.max(new int[] { 1 });
-        Assert.assertEquals(1, actual);
     }
 
     /**

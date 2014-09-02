@@ -16,20 +16,20 @@ public class ExceptionsTest {
     }
 
     /**
-     * Coverage: 54,55%
-     */
-    @Test
-    public void testSquareRoot_2() {
-        double actual = Exceptions.squareRoot(0);
-        Assert.assertEquals(0.0, actual, 1.0E-8);
-    }
-
-    /**
      * Coverage: 63,64%
      */
     @Test
-    public void testSquareRoot_3() {
+    public void testSquareRoot_2() {
         Exceptions.squareRoot(-2);
+    }
+
+    /**
+     * Coverage: 54,55%
+     */
+    @Test
+    public void testSquareRoot_3() {
+        double actual = Exceptions.squareRoot(0);
+        Assert.assertEquals(0.0, actual, 1.0E-8);
     }
 
     /**
@@ -46,25 +46,25 @@ public class ExceptionsTest {
     }
 
     /**
-     * Coverage: 54,55%
-     */
-    @Test
-    public void testSquareRootDeclared_2() {
-        double actual = Exceptions.squareRootDeclared(0);
-        Assert.assertEquals(0.0, actual, 1.0E-8);
-    }
-
-    /**
      * Coverage: 63,64%
      */
     @Test
-    public void testSquareRootDeclared_3() {
+    public void testSquareRootDeclared_2() {
         try {
             Exceptions.squareRootDeclared(-2);
             Assert.fail("An IllegalArgumentException must have been thrown.");
         } catch (IllegalArgumentException ex) {
             Assert.assertEquals("A cannot be negative!", ex.getMessage());
         }
+    }
+
+    /**
+     * Coverage: 54,55%
+     */
+    @Test
+    public void testSquareRootDeclared_3() {
+        double actual = Exceptions.squareRootDeclared(0);
+        Assert.assertEquals(0.0, actual, 1.0E-8);
     }
 
     /**
