@@ -18,15 +18,7 @@ public class TestCaseComparator implements Comparator<TestCaseData> {
 	public int compare(TestCaseData o1, TestCaseData o2) {
 		ExecutionResult r1 = o1.getResult();
 		ExecutionResult r2 = o2.getResult();
-		int res = Boolean.compare(!r1.hasCoverageInfo(), !r2.hasCoverageInfo());
-		if (res != 0) {
-			return res;
-		}
-		res = r2.getCoverageInfo().compareCoverages(r1.getCoverageInfo(), maxCoverageDepth);
-		if (res != 0) {
-			return res;
-		}
-		res = Boolean.compare(r1.failed(), r2.failed());
+		int res = r2.getCoverageInfo().compareCoverages(r1.getCoverageInfo(), maxCoverageDepth);
 		if (res != 0) {
 			return res;
 		}

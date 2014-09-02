@@ -58,10 +58,16 @@ public class CoverageValidator implements TestCaseValidator {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean canBeRemoved(TestCaseData testCase) {
+		// TODO Implement!
+		return false;
+	}
 
 	@Override
-	public boolean remove(TestCaseData testCase) {
-		return cases.remove(testCase);
+	public void remove(TestCaseData testCase) {
+		cases.remove(testCase);
 	}
 
 	@Override

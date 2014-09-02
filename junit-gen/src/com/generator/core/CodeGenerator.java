@@ -138,10 +138,8 @@ public class CodeGenerator {
 						addExceptionAssertion(block, call, result);
 					}
 				}
-				if (result.hasCoverageInfo()) {
-					String text = String.format("Coverage: %.2f%%", result.getShallowCoverageRatio() * 100);
-					testMethod.setJavaDoc(new JavadocComment(formatJavadoc(text)));
-				}
+				String text = String.format("Coverage: %.2f%%", result.getShallowCoverageRatio() * 100);
+				testMethod.setJavaDoc(new JavadocComment(formatJavadoc(text)));
 			}
 		}
 	}
