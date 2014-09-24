@@ -36,11 +36,25 @@ public class ReturnValuesValidator implements TestCaseValidator {
 		HashSet<Object> res = new HashSet<>();
 
 		Class<?> type = method.getReturnType();
+
 		if (type.equals(boolean.class)) {
 			res.add(false);
 			res.add(true);
+			
+		} else if (type.equals(Boolean.class)) {
+			res.add(NULL);
+			res.add(false);
+			res.add(true);
+			
+		} else if (type.isEnum()) {
+			res.add(NULL);
+			Object[] consts = type.getEnumConstants();
+			for (Object obj : consts) {
+				res.add(obj);
+			}
 		}
 
+		// TODO Create a registry for these guys.
 		// TODO Support more types.
 
 		return res;

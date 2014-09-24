@@ -149,6 +149,9 @@ public class MethodCallFinder {
 		}
 
 		private Type[] getTypes(List<Parameter> params) {
+			if (params == null) {
+				return new Type[0];
+			}
 			Type[] res = new Type[params.size()];
 			for (int i = 0; i < params.size(); ++i) {
 				Parameter param = params.get(i);

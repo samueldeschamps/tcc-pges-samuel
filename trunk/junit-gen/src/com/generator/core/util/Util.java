@@ -88,7 +88,7 @@ public class Util {
 		return result;
 	}
 
-	public static String upFirstChar(String str) {
+	public static String capitalize(String str) {
 		if (str == null || str.isEmpty()) {
 			return str;
 		}

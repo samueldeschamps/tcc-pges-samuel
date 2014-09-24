@@ -17,6 +17,7 @@ public class StringRandomValues extends ParallelValueGeneratorComposite<String> 
 		res.add(new StringNumericRandomValues());
 		res.add(new StringAlphabeticLowerRandomValues());
 		res.add(new StringAlphabeticUpperRandomValues());
+		res.add(new StringAlphabeticCapitalizedRandomValues());
 		res.add(new StringAleatoryRandomValues());
 		return res;
 	}
