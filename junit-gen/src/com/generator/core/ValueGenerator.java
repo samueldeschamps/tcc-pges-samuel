@@ -1,11 +1,11 @@
 package com.generator.core;
 
 public interface ValueGenerator<T> {
-	
-	public boolean hasNext();
-	
-	public T next();
-	
-	public ValueGenerationStrategy getStrategy();
-	
+
+	public abstract boolean hasNext();
+
+	public abstract T next();
+
+	public abstract ValueGenerationStrategy getStrategy();
+
 }

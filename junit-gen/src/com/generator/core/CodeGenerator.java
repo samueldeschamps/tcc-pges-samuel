@@ -104,7 +104,7 @@ public class CodeGenerator {
 			overloadCount.put(method.getName(), ++overCount);
 			int counter = 1;
 			for (TestCaseData caseData : methodCases) {
-				String uniqueName = Util.upFirstChar(method.getName());
+				String uniqueName = Util.capitalize(method.getName());
 				if (overCount > 1) {
 					uniqueName = uniqueName + overCount;
 				}

@@ -37,7 +37,7 @@ public class TestCaseGenerator {
 	public List<TestCaseData> execute() {
 
 		ValueGeneratorRegistry registry = jUnitGenerator.getValueGenerators();
-		ParamValuesGenerator paramValuesGen = new ParamValuesGenerator(registry, method.getParameterTypes());
+		ParamValuesGenerator paramValuesGen = new ParamValuesGenerator(registry, method);
 		int minTestCases = jUnitGenerator.getMinTestCasesPerMethod();
 
 		// TODO Turn this guys into parameters:
