@@ -29,7 +29,7 @@ import com.generator.core.valuegenerators.symbolic.IntSymbolicValueGenerator;
 
 public class JUnitGeneratorTest {
 
-	private static final boolean REGENERATE = true;
+	private static final boolean REGENERATE = false;
 
 	@Rule
 	public TemporaryFolder tempDir = new TemporaryFolder();

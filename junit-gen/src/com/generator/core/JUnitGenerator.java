@@ -207,6 +207,7 @@ public class JUnitGenerator {
 	private CompilationUnit generate(Class<?> targetClass, Method method) {
 
 		codeInfo.parseCode(targetClass);
+		Context.get().setCodeInfo(codeInfo);
 
 		Map<Method, List<TestCaseData>> cases = new LinkedHashMap<>();
 		if (method != null) {

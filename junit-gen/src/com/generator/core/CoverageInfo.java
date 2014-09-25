@@ -31,7 +31,7 @@ public class CoverageInfo {
 	public CoverageInfo(ExecutionDataStore dataStore, Method method) {
 		this.dataStore = dataStore;
 		this.method = method;
-		this.signatureDesc = getSignatureDesc(method);
+		this.signatureDesc = Util.getSignatureDesc(method);
 		this.indirectCoverages = null;
 	}
 
@@ -40,51 +40,6 @@ public class CoverageInfo {
 			this.indirectCoverages = new LinkedList<>();
 		}
 		this.indirectCoverages.add(info);
-	}
-
-	private String getSignatureDesc(Method m) {
-		StringBuilder res = new StringBuilder();
-		res.append("(");
-		for (Class<?> param : m.getParameterTypes()) {
-			res.append(getTypeDesc(param));
-		}
-		res.append(")");
-		res.append(getTypeDesc(m.getReturnType()));
-		return res.toString();
-	}
-
-	private String getTypeDesc(Class<?> type) {
-		if (type == boolean.class) {
-			return "Z";
-		}
-		if (type == byte.class) {
-			return "B";
-		}
-		if (type == short.class) {
-			return "S";
-		}
-		if (type == char.class) {
-			return "C";
-		}
-		if (type == int.class) {
-			return "I";
-		}
-		if (type == long.class) {
-			return "J";
-		}
-		if (type == float.class) {
-			return "F";
-		}
-		if (type == Double.TYPE) {
-			return "D";
-		}
-		if (type.isArray()) {
-			return "[" + getTypeDesc(type.getComponentType());
-		}
-		if (type == Void.TYPE) {
-			return "V";
-		}
-		return "L" + type.getName().replace(".", "/") + ";";
 	}
 
 	public ExecutionDataStore getDataStore() {
