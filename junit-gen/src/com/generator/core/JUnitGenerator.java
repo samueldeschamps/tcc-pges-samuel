@@ -226,6 +226,10 @@ public class JUnitGenerator {
 				if (!Modifier.isPublic(m.getModifiers())) {
 					continue;
 				}
+				if (!Modifier.isStatic(m.getModifiers())) {
+					Log.info("Method '" + m + "' ignored (not static).");
+					continue;
+				}
 				cases.put(m, generateTestCasesValues(m));
 			}
 		}
@@ -346,11 +350,11 @@ public class JUnitGenerator {
 	public void setExceptionsStrategy(ExceptionsStrategy exceptionsStrategy) {
 		this.exceptionsStrategy = exceptionsStrategy;
 	}
-	
+
 	public void setCompileDir(File[] compileDir) {
 		this.compileDir = compileDir;
 	}
-	
+
 	public String getResult() {
 		return result;
 	}
@@ -358,11 +362,11 @@ public class JUnitGenerator {
 	ValueGeneratorRegistry getValueGenerators() {
 		return valueGenerators;
 	}
-	
+
 	public int getMaxCoverageDepth() {
 		return minCovRatioPerMethod.length - 1;
 	}
-	
+
 	CodeInfo getCodeInfo() {
 		return codeInfo;
 	}
