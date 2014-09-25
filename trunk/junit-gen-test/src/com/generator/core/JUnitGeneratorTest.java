@@ -16,6 +16,8 @@ import com.generator.core.RandomProvider;
 import com.generator.core.res.input.ArrayOperations;
 import com.generator.core.res.input.Enumerations;
 import com.generator.core.res.input.Exceptions;
+import com.generator.core.res.input.IntOperationsDefault;
+import com.generator.core.res.input.IntOperationsSymbolic;
 import com.generator.core.res.input.Monetary;
 import com.generator.core.res.input.PrimitiveOperations;
 import com.generator.core.res.input.SimpleIntCalculator;
@@ -23,6 +25,7 @@ import com.generator.core.res.input.ValidaCPF;
 import com.generator.core.res.input.ValidaCpfCnpj;
 import com.generator.core.util.FileUtil;
 import com.generator.core.util.Util;
+import com.generator.core.valuegenerators.symbolic.IntSymbolicValueGenerator;
 
 public class JUnitGeneratorTest {
 
@@ -49,42 +52,51 @@ public class JUnitGeneratorTest {
 	private void testGeneration(Class<?> clazz) {
 		try {
 			String tempDirName = tempDir.getRoot().getCanonicalPath();
-
-			JUnitGenerator gen = new JUnitGenerator();
-			gen.addTargetClass(clazz);
-			gen.setOutputDir(tempDirName);
-			gen.setTestPackageName("com.generator.core.res.expected");
-			gen.setCompileDir(new File[] { new File(Util.getSourceDirLocation(clazz) + "/com/generator/core/res/input") });
+			JUnitGenerator gen = createGenerator(clazz, tempDirName);
 			gen.execute();
-
 			String testFileName = clazz.getSimpleName() + "Test.java";
-			String actual = FileUtil.fileToText(new File(tempDirName, testFileName));
-			File expectedFile = new File(expectedDir, testFileName);
-			if (!expectedFile.exists()) {
-				if (REGENERATE) {
-					FileUtil.writeTextToFile(expectedFile, actual);
-				} else {
-					Assert.fail("File '" + expectedFile.getAbsolutePath() + "' does not exist.");
-				}
+			compareGeneratedFiles(clazz, testFileName);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private JUnitGenerator createGenerator(Class<?> clazz, String tempDirName) {
+		JUnitGenerator gen = new JUnitGenerator();
+		gen.addTargetClass(clazz);
+		gen.setOutputDir(tempDirName);
+		gen.setTestPackageName("com.generator.core.res.expected");
+		gen.setCompileDir(new File[] { new File(Util.getSourceDirLocation(clazz) + "/com/generator/core/res/input") });
+		return gen;
+	}
+
+	private void compareGeneratedFiles(Class<?> clazz, String expectedFileName) throws IOException, AssertionError {
+		String tempDirName = tempDir.getRoot().getCanonicalPath();
+		String actualFileName = clazz.getSimpleName() + "Test.java";
+		String actual = FileUtil.fileToText(new File(tempDirName, actualFileName));
+		File expectedFile = new File(expectedDir, expectedFileName);
+		if (!expectedFile.exists()) {
+			if (REGENERATE) {
+				FileUtil.writeTextToFile(expectedFile, actual);
 			} else {
-				String expected = FileUtil.fileToText(expectedFile);
-				try {
-					Assert.assertEquals(expected, actual);
-				} catch (AssertionError ex) {
-					if (REGENERATE) {
-						String msg = "Confirm overwrite " + testFileName + "?";
-						if (JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION) {
-							FileUtil.writeTextToFile(expectedFile, actual);
-						} else {
-							throw ex;
-						}
+				Assert.fail("File '" + expectedFile.getAbsolutePath() + "' does not exist.");
+			}
+		} else {
+			String expected = FileUtil.fileToText(expectedFile);
+			try {
+				Assert.assertEquals(expected, actual);
+			} catch (AssertionError ex) {
+				if (REGENERATE) {
+					String msg = "Confirm overwrite " + expectedFileName + "?";
+					if (JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION) {
+						FileUtil.writeTextToFile(expectedFile, actual);
 					} else {
 						throw ex;
 					}
+				} else {
+					throw ex;
 				}
 			}
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
 		}
 	}
 
@@ -126,6 +138,22 @@ public class JUnitGeneratorTest {
 	@Test
 	public void testMonetary() {
 		testGeneration(Monetary.class);
+	}
+
+	@Test
+	public void testIntOperationsSymbolic() throws IOException {
+		Class<?> clazz = IntOperationsSymbolic.class;
+		String tempDirName = tempDir.getRoot().getCanonicalPath();
+		JUnitGenerator gen = createGenerator(clazz, tempDirName);
+		gen.getValueGenerators().unregisterAll();
+		gen.getValueGenerators().register(int.class, IntSymbolicValueGenerator.class);
+		gen.execute();
+		compareGeneratedFiles(clazz, clazz.getSimpleName() + "Test.java");
+	}
+
+	@Test
+	public void testIntOperationsDefault() throws IOException {
+		testGeneration(IntOperationsDefault.class);
 	}
 
 }

@@ -26,6 +26,14 @@ public class ValueGeneratorRegistry {
 		}
 		innerList.add((Class<ValueGenerator<?>>) generator);
 	}
+	
+	public void unregisterAll() {
+		generators.clear();
+	}
+	
+	public void unregisterAllForType(Class<?> clazz) {
+		generators.remove(clazz);
+	}
 
 	@SuppressWarnings("rawtypes")
 	private <T, VG extends ValueGenerator<T>> ValueGenerator<T> createInstance(Class<VG> generator, Class<?> valueClass) {
