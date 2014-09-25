@@ -129,6 +129,7 @@ public class CodeGenerator {
 				ExecutionResult result = caseData.getResult();
 				if (result.succeeded()) {
 					addResultAssertion(method, block, call, result);
+					addThrowsClauseIfNeeded(method, testMethod);
 				} else {
 					boolean whenDeclared = generator.getExceptionsStrategy() == ExceptionsStrategy.ASSERT_WHEN_DECLARED;
 					if (whenDeclared && !result.isExceptionDeclared()) {
@@ -143,6 +144,23 @@ public class CodeGenerator {
 			}
 		}
 	}
+
+	private void addThrowsClauseIfNeeded(Method method, MethodDeclaration testMethod) {
+		Class<?>[] exceptions = method.getExceptionTypes();
+		if (exceptions == null) {
+			return;
+		}
+		for (Class<?> exceptionClass : exceptions) {
+			// Ignore if this exception is unchecked
+			if (RuntimeException.class.isAssignableFrom(exceptionClass)) {
+				continue;
+			}
+			if (Error.class.isAssignableFrom(exceptionClass)) {
+				continue;
+			}
+			testMethod.addThrows(new NameExpr(exceptionClass.getSimpleName()));
+			addImportIfNecessary(exceptionClass);
+		}	}
 
 	// TODO Do the identing in JavaParser dump methods.
 	private String formatJavadoc(String text) {
