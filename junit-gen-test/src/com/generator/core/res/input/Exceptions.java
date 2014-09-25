@@ -1,5 +1,6 @@
 package com.generator.core.res.input;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Exceptions {
@@ -28,6 +29,21 @@ public class Exceptions {
 			throw new IllegalArgumentException("A cannot be negative!");
 		}
 		return Math.sqrt(a);
+	}
+	
+	public static int divide(int a, int b) throws Exception {
+		if (b == 0) {
+			throw new Exception("Division by zero.");
+		}
+		return a / b;
+	}
+	
+	// Just to use a different exception and see if its imported
+	public static int divide2(int a, int b) throws FileNotFoundException {
+		if (b == 0) {
+			throw new FileNotFoundException("Division by zero.");
+		}
+		return a / b;
 	}
 	
 }

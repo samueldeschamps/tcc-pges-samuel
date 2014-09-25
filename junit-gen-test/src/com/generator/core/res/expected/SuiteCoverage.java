@@ -14,7 +14,8 @@ ExceptionsTest.class, //
 		EnumerationsTest.class, //
 		ArrayOperationsTest.class, //
 		MonetaryTest.class, //
-})
+		IntOperationsDefaultTest.class, //
+		IntOperationsSymbolicTest.class })
 public class SuiteCoverage {
 
 }

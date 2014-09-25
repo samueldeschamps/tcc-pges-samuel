@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/JavaParser"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jacoco.core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JapaCompiler"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SymbolicExecutionPrototype"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -52,7 +52,7 @@ public class Util {
 			return null;
 		}
 	}
-	
+
 	public static File getSourceFile(Class<?> clazz) {
 		String srcDir = getSourceDirLocation(clazz);
 		if (!srcDir.endsWith("/")) {
@@ -60,6 +60,12 @@ public class Util {
 		}
 		String javaFilePath = clazz.getName().replace('.', '/') + ".java";
 		return new File(srcDir + javaFilePath);
+	}
+
+	public static String getBytecodeFilePath(Class<?> clazz) {
+		final String resource = '/' + clazz.getName().replace('.', '/') + ".class";
+		final String path = clazz.getResource(resource).getPath();
+		return path;
 	}
 
 	public static String getSourceDirLocation(Class<?> clazz) {

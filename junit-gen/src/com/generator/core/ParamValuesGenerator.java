@@ -8,9 +8,13 @@ public class ParamValuesGenerator {
 	private ValueSetGenerator inner;
 
 	public ParamValuesGenerator(ValueGeneratorRegistry registry, Method method) {
+		
+		Context.get().setCurrMethod(method);
+		
 		Class<?>[] paramTypes = method.getParameterTypes();
 		ValueGenerator<?>[] generators = new ValueGenerator<?>[paramTypes.length];
 		for (int i = 0; i < paramTypes.length; ++i) {
+			Context.get().setCurrParamIdx(i);
 			generators[i] = registry.getComposite(paramTypes[i]);
 		}
 		inner = new ValueSetGenerator(generators);

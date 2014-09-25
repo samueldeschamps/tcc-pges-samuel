@@ -3,9 +3,80 @@ package com.generator.core.res.expected;
 import org.junit.Assert;
 import org.junit.Test;
 import com.generator.core.res.input.Exceptions;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ExceptionsTest {
+
+    /**
+     * Coverage: 63,64%
+     */
+    @Test
+    public void testDivide_1() {
+        try {
+            Exceptions.divide(0, 0);
+            Assert.fail("An Exception must have been thrown.");
+        } catch (Exception ex) {
+            Assert.assertEquals("Division by zero.", ex.getMessage());
+        }
+    }
+
+    /**
+     * Coverage: 63,64%
+     */
+    @Test
+    public void testDivide_2() {
+        try {
+            Exceptions.divide(1, 0);
+            Assert.fail("An Exception must have been thrown.");
+        } catch (Exception ex) {
+            Assert.assertEquals("Division by zero.", ex.getMessage());
+        }
+    }
+
+    /**
+     * Coverage: 54,55%
+     */
+    @Test
+    public void testDivide_3() throws Exception {
+        int actual = Exceptions.divide(0, 1);
+        Assert.assertEquals(0, actual);
+    }
+
+    /**
+     * Coverage: 63,64%
+     */
+    @Test
+    public void testDivide2_1() {
+        try {
+            Exceptions.divide2(0, 0);
+            Assert.fail("A FileNotFoundException must have been thrown.");
+        } catch (FileNotFoundException ex) {
+            Assert.assertEquals("Division by zero.", ex.getMessage());
+        }
+    }
+
+    /**
+     * Coverage: 63,64%
+     */
+    @Test
+    public void testDivide2_2() {
+        try {
+            Exceptions.divide2(1, 0);
+            Assert.fail("A FileNotFoundException must have been thrown.");
+        } catch (FileNotFoundException ex) {
+            Assert.assertEquals("Division by zero.", ex.getMessage());
+        }
+    }
+
+    /**
+     * Coverage: 54,55%
+     */
+    @Test
+    public void testDivide2_3() throws FileNotFoundException {
+        int actual = Exceptions.divide2(0, 1);
+        Assert.assertEquals(0, actual);
+    }
 
     /**
      * Coverage: 63,64%
