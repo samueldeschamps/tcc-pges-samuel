@@ -1,7 +1,9 @@
 package com.generator.core.valuegenerators.symbolic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import profiling.constraint.analysis.Constraint;
@@ -26,29 +28,33 @@ public class IntSymbolicValueGenerator extends MethodContextValueGenerator<Integ
 
 	public IntSymbolicValueGenerator() {
 		super();
-		List<Integer[]> allValues = searchCornerValues();
+		// TODO Otimizar desempenho disparando a busca somente uma vez para a
+		// classe inteira!
+		List<Map<String, Integer>> allValues = searchCornerValues();
 		filterByThisParameter(allValues);
 	}
 
-	private void filterByThisParameter(List<Integer[]> allValues) {
-		int paramIdx = getParamIdx();
-		for (Integer[] tuple : allValues) {
-			if (paramIdx >= tuple.length) {
-				Log.warning("Searching a param index " + paramIdx + " in a " + tuple.length + " length tuple.");
+	private void filterByThisParameter(List<Map<String, Integer>> allValues) {
+		String paramName = getParamName();
+		for (Map<String, Integer> tuple : allValues) {
+			Integer value = tuple.get(paramName);
+			if (value == null) {
+				Log.warning("Didn't generate value for parameter '" + paramName + "'.");
 				continue;
 			}
-			values.add(tuple[paramIdx]);
+			values.add(value);
 		}
 	}
 
-	// FIXME Os valores retornados podem não estar na ordem de declaração dos
-	// parâmetros!
-	private List<Integer[]> searchCornerValues() {
+	private List<Map<String, Integer>> searchCornerValues() {
 		String file = Util.getBytecodeFilePath(getMethod().getDeclaringClass());
 		ByteCodeAnalyser analyser = new ByteCodeAnalyser(file);
 
-		List<Integer[]> result = new ArrayList<>();
+		List<Map<String, Integer>> result = new ArrayList<>();
 		for (CFG cfg : analyser.getCFGs()) {
+			if (!isThisMethod(cfg)) {
+				continue;
+			}
 			PathGenerator pathGen = new PathGenerator();
 			ConstraintSequenceGenerator seqGen = new ConstraintSequenceGenerator();
 			Vector<Path> paths = pathGen.generateAllPaths(cfg, 2);
@@ -60,21 +66,31 @@ public class IntSymbolicValueGenerator extends MethodContextValueGenerator<Integ
 					if (solution != null) {
 						Vector<InputData> inputs = solution.getInputData();
 						if (inputs.size() > 0) {
-							Integer[] resItem = new Integer[inputs.size()];
-							for (int i = 0; i < resItem.length; ++i) {
+							Map<String, Integer> map = new HashMap<>();
+//							System.out.print("[");
+							for (int i = 0; i < inputs.size(); ++i) {
 								InputData input = inputs.get(i);
-								resItem[i] = Integer.valueOf(input.getValue());
-								// System.out.println(input.getVariable() + ": "
-								// +
-								// input.getValue());
+								map.put(input.getVariable(), Integer.valueOf(input.getValue()));
+//								System.out.print(input.getVariable() + ": " + input.getValue() + ",   ");
 							}
-							result.add(resItem);
+//							System.out.println("]");
+							result.add(map);
 						}
 					}
 				}
 			}
 		}
 		return result;
+	}
+
+	private boolean isThisMethod(CFG cfg) {
+		if (!getMethod().getName().equals(cfg.getMethodName())) {
+			return false;
+		}
+		if (!Util.getSignatureDesc(getMethod()).equals(cfg.getMethodSignature())) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

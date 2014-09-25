@@ -8,6 +8,7 @@ public class Context {
 
 	private Method currMethod;
 	private int currParamIdx;
+	private CodeInfo codeInfo;
 
 	public static synchronized Context get() {
 		if (instance == null) {
@@ -33,6 +34,14 @@ public class Context {
 
 	public void setCurrParamIdx(int currParamIdx) {
 		this.currParamIdx = currParamIdx;
+	}
+
+	public CodeInfo getCodeInfo() {
+		return codeInfo;
+	}
+
+	public void setCodeInfo(CodeInfo codeInfo) {
+		this.codeInfo = codeInfo;
 	}
 
 }
