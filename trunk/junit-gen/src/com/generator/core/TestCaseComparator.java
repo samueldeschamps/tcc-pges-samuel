@@ -18,7 +18,14 @@ public class TestCaseComparator implements Comparator<TestCaseData> {
 	public int compare(TestCaseData o1, TestCaseData o2) {
 		ExecutionResult r1 = o1.getResult();
 		ExecutionResult r2 = o2.getResult();
-		int res = r2.getCoverageInfo().compareCoverages(r1.getCoverageInfo(), maxCoverageDepth);
+		int res = Boolean.compare(r1.isInfiniteLoop(), r2.isInfiniteLoop());
+		if (res != 0) {
+			return res;
+		}
+		if (r1.isInfiniteLoop() && r1.isInfiniteLoop()) {
+			return 0;
+		}
+		res = r2.getCoverageInfo().compareCoverages(r1.getCoverageInfo(), maxCoverageDepth);
 		if (res != 0) {
 			return res;
 		}

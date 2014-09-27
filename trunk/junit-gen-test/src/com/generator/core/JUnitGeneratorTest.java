@@ -11,11 +11,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.generator.core.JUnitGenerator;
-import com.generator.core.RandomProvider;
 import com.generator.core.res.input.ArrayOperations;
 import com.generator.core.res.input.Enumerations;
 import com.generator.core.res.input.Exceptions;
+import com.generator.core.res.input.InfiniteLoops;
 import com.generator.core.res.input.IntOperationsDefault;
 import com.generator.core.res.input.IntOperationsSymbolic;
 import com.generator.core.res.input.Monetary;
@@ -152,8 +151,13 @@ public class JUnitGeneratorTest {
 	}
 
 	@Test
-	public void testIntOperationsDefault() throws IOException {
+	public void testIntOperationsDefault() {
 		testGeneration(IntOperationsDefault.class);
+	}
+	
+	@Test
+	public void testInfiniteLoops() {
+		testGeneration(InfiniteLoops.class);
 	}
 
 }

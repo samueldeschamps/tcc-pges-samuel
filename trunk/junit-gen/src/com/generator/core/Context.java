@@ -9,6 +9,7 @@ public class Context {
 	private Method currMethod;
 	private int currParamIdx;
 	private CodeInfo codeInfo;
+	private JUnitGenerator generator;
 
 	public static synchronized Context get() {
 		if (instance == null) {
@@ -42,6 +43,14 @@ public class Context {
 
 	public void setCodeInfo(CodeInfo codeInfo) {
 		this.codeInfo = codeInfo;
+	}
+
+	public JUnitGenerator getGenerator() {
+		return generator;
+	}
+
+	public void setGenerator(JUnitGenerator generator) {
+		this.generator = generator;
 	}
 
 }

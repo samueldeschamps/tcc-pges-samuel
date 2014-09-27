@@ -130,6 +130,11 @@ public class CodeGenerator {
 				if (result.succeeded()) {
 					addResultAssertion(method, block, call, result);
 					addThrowsClauseIfNeeded(method, testMethod);
+				} else if (result.isInfiniteLoop()) {
+					ASTHelper.addStmt(block, call);
+					String text = String.format("FIXME: Infinite loop detected! (Took more than %d seconds)",
+							generator.getInfiniteLoopTimeout());
+					testMethod.setJavaDoc(new JavadocComment(formatJavadoc(text)));
 				} else {
 					boolean whenDeclared = generator.getExceptionsStrategy() == ExceptionsStrategy.ASSERT_WHEN_DECLARED;
 					if (whenDeclared && !result.isExceptionDeclared()) {
@@ -139,8 +144,10 @@ public class CodeGenerator {
 						addExceptionAssertion(block, call, result);
 					}
 				}
-				String text = String.format("Coverage: %.2f%%", result.getShallowCoverageRatio() * 100);
-				testMethod.setJavaDoc(new JavadocComment(formatJavadoc(text)));
+				if (!result.isInfiniteLoop()) {
+					String text = String.format("Coverage: %.2f%%", result.getShallowCoverageRatio() * 100);
+					testMethod.setJavaDoc(new JavadocComment(formatJavadoc(text)));
+				}
 			}
 		}
 	}
@@ -160,7 +167,8 @@ public class CodeGenerator {
 			}
 			testMethod.addThrows(new NameExpr(exceptionClass.getSimpleName()));
 			addImportIfNecessary(exceptionClass);
-		}	}
+		}
+	}
 
 	// TODO Do the identing in JavaParser dump methods.
 	private String formatJavadoc(String text) {
