@@ -18,7 +18,7 @@ public class ExceptionValidator implements TestCaseValidator {
 	@Override
 	public List<TestCaseData> include(TestCaseData testCase) {
 		ExecutionResult testResult = testCase.getResult();
-		if (testResult.succeeded()) {
+		if (!testResult.failed()) {
 			return Collections.singletonList(testCase);
 		}
 		addCase(testCase);
@@ -37,7 +37,7 @@ public class ExceptionValidator implements TestCaseValidator {
 
 	@Override
 	public boolean canBeRemoved(TestCaseData testCase) {
-		if (testCase.getResult().succeeded()) {
+		if (!testCase.getResult().failed()) {
 			return true;
 		}
 		ExKey key = ExKey.fromTestCase(testCase);

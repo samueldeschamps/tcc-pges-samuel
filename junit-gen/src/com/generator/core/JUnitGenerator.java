@@ -20,6 +20,10 @@ import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 
 import com.generator.core.util.Log;
+import com.generator.core.validators.CoverageValidator;
+import com.generator.core.validators.ExceptionValidator;
+import com.generator.core.validators.InfiniteLoopValidator;
+import com.generator.core.validators.ReturnValuesValidator;
 import com.generator.core.valuegenerators.common.BigDecimalCommonValues;
 import com.generator.core.valuegenerators.common.BigIntegerCommonValues;
 import com.generator.core.valuegenerators.common.ByteCommonValues;
@@ -52,10 +56,11 @@ public class JUnitGenerator {
 	private double minCovRatioPerSucceededTestCase; // Value between 0.0 and 1.0
 	private double minCovRatioPerFailedTestCase; // Value between 0.0 and 1.0
 	private int minTestCasesPerMethod; //
-	private int eternalLoopTimeout; // Value in seconds.
+	private int infiniteLoopTimeout; // Value in seconds.
 	private double doubleAssertPrecision; // Used in double assertives.
 	private ExceptionsStrategy exceptionsStrategy;
 	private ValueGeneratorRegistry valueGenerators = new ValueGeneratorRegistry();
+	private List<Class<? extends TestCaseValidator>> caseValidators = new ArrayList<>();
 	private File[] compileDir;
 	private CodeInfo codeInfo;
 	private String result;
@@ -67,6 +72,7 @@ public class JUnitGenerator {
 	private void loadDefaultConfig() {
 		loadDefaultBugExceptions();
 		loadDefaultParamGenerators();
+		loadDefaultCaseValidators();
 
 		exceptionsStrategy = ExceptionsStrategy.ASSERT_WHEN_DECLARED;
 		doubleAssertPrecision = 0.00000001;
@@ -74,6 +80,15 @@ public class JUnitGenerator {
 		minCovRatioPerSucceededTestCase = 0.01;
 		minCovRatioPerMethod = new double[] { 0.999, 0.9, 0.5 };
 		minTestCasesPerMethod = 3;
+		infiniteLoopTimeout = 3;
+	}
+
+	private void loadDefaultCaseValidators() {
+		caseValidators.add(CoverageValidator.class);
+		caseValidators.add(ReturnValuesValidator.class);
+		caseValidators.add(ExceptionValidator.class);
+		caseValidators.add(InfiniteLoopValidator.class);
+		// TODO Include more validators.
 	}
 
 	private void loadDefaultBugExceptions() {
@@ -207,6 +222,7 @@ public class JUnitGenerator {
 	private CompilationUnit generate(Class<?> targetClass, Method method) {
 
 		codeInfo.parseCode(targetClass);
+		Context.get().setGenerator(this);
 		Context.get().setCodeInfo(codeInfo);
 
 		Map<Method, List<TestCaseData>> cases = new LinkedHashMap<>();
@@ -328,12 +344,12 @@ public class JUnitGenerator {
 		this.minTestCasesPerMethod = minTestCasesPerMethod;
 	}
 
-	public int getEternalLoopTimeout() {
-		return eternalLoopTimeout;
+	public int getInfiniteLoopTimeout() {
+		return infiniteLoopTimeout;
 	}
 
-	public void setEternalLoopTimeout(int eternalLoopTimetout) {
-		this.eternalLoopTimeout = eternalLoopTimetout;
+	public void setInfiniteLoopTimeout(int infiniteLoopTimeout) {
+		this.infiniteLoopTimeout = infiniteLoopTimeout;
 	}
 
 	public double getDoubleAssertPrecision() {
@@ -360,8 +376,12 @@ public class JUnitGenerator {
 		return result;
 	}
 
-	ValueGeneratorRegistry getValueGenerators() {
+	public ValueGeneratorRegistry getValueGenerators() {
 		return valueGenerators;
+	}
+
+	public List<Class<? extends TestCaseValidator>> getCaseValidators() {
+		return caseValidators;
 	}
 
 	public int getMaxCoverageDepth() {

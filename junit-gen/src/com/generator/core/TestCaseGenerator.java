@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.generator.core.util.Log;
-import com.generator.core.validators.CoverageValidator;
-import com.generator.core.validators.ExceptionValidator;
-import com.generator.core.validators.ReturnValuesValidator;
 
 public class TestCaseGenerator {
 
@@ -21,21 +18,24 @@ public class TestCaseGenerator {
 	final JUnitGenerator jUnitGenerator;
 	private final Method method;
 	private final CaseExecutor executor;
-	private final List<TestCaseValidator> validators;
+	private final List<TestCaseValidator> validators = new ArrayList<>();
 
 	public TestCaseGenerator(JUnitGenerator jUnitGenerator, Method method) {
 		this.jUnitGenerator = jUnitGenerator;
 		this.method = method;
 		this.executor = new CaseExecutor(jUnitGenerator, method);
-
-		validators = new ArrayList<>();
-		validators.add(new CoverageValidator(jUnitGenerator));
-		validators.add(new ReturnValuesValidator(method, jUnitGenerator));
-		validators.add(new ExceptionValidator());
 	}
 
 	public List<TestCaseData> execute() {
 
+		Context.get().setCurrMethod(method);
+		for (Class<? extends TestCaseValidator> clazz : jUnitGenerator.getCaseValidators()) {
+			try {
+				validators.add(clazz.newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {
+				Log.error("Error creating instance of class " + clazz.getSimpleName(), e);
+			}
+		}
 		ValueGeneratorRegistry registry = jUnitGenerator.getValueGenerators();
 		ParamValuesGenerator paramValuesGen = new ParamValuesGenerator(registry, method);
 		int minTestCases = jUnitGenerator.getMinTestCasesPerMethod();
@@ -54,6 +54,12 @@ public class TestCaseGenerator {
 			}
 			List<Object> paramValues = paramValuesGen.next();
 			ExecutionResult execResult = executor.executeCoverage(paramValues);
+			if (execResult.isInfiniteLoop()) {
+				// Call GC and try again, only for guarantee
+				System.gc();
+				System.gc();
+				execResult = executor.executeCoverage(paramValues);
+			}
 			if (isTestCaseRelevant(execResult)) {
 				TestCaseData caseData = new TestCaseData(paramValues, execResult);
 				if (tries >= minTries && cases.size() >= minTestCases && isSatisfied()) {
@@ -74,7 +80,7 @@ public class TestCaseGenerator {
 	}
 
 	private final Comparator<TestCaseData> testCaseComparator = new Comparator<TestCaseData>() {
-		
+
 		@Override
 		public int compare(TestCaseData o1, TestCaseData o2) {
 			for (TestCaseValidator val : validators) {
@@ -86,7 +92,7 @@ public class TestCaseGenerator {
 			return 0;
 		}
 	};
-	
+
 	private void addCase(List<TestCaseData> result, TestCaseData caseData) {
 		result.add(caseData);
 
@@ -97,7 +103,7 @@ public class TestCaseGenerator {
 			redundantLists.add(leftover);
 			redundants.addAll(leftover);
 		}
-		
+
 		// Remove redundant test cases.
 		// A test case is considered redundant only if all validators considered
 		// it redundant.

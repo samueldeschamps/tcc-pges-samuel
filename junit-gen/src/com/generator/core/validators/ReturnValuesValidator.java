@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.generator.core.Context;
 import com.generator.core.ExecutionResult;
-import com.generator.core.JUnitGenerator;
 import com.generator.core.TestCaseData;
 import com.generator.core.TestCaseValidator;
 
@@ -19,15 +19,13 @@ public class ReturnValuesValidator implements TestCaseValidator {
 	private static final Object NULL = new Object();
 
 	private final Method method;
-	private final JUnitGenerator generator;
 
 	private final Set<Object> expectedReturns;
 	private final Set<Object> missingReturns = new HashSet<>();
 	private final Map<Object, Set<TestCaseData>> casesByReturn = new HashMap<>();
 
-	public ReturnValuesValidator(Method method, JUnitGenerator generator) {
-		this.method = method;
-		this.generator = generator;
+	public ReturnValuesValidator() {
+		this.method = Context.get().getCurrMethod();
 		this.expectedReturns = getPossibleReturnValues();
 		this.missingReturns.addAll(this.expectedReturns);
 	}

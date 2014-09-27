@@ -25,6 +25,7 @@ public class CaseExecutor {
 	private final Method method;
 	private final CallNode callHierarchy;
 	private final Set<Class<?>> usedClasses = new LinkedHashSet<>();
+	private final JUnitGenerator generator;
 
 	public CaseExecutor(JUnitGenerator jUnitGenerator, Method method) {
 		this.method = method;
@@ -32,6 +33,7 @@ public class CaseExecutor {
 		if (callHierarchy != null) {
 			addInvolvedClasses(callHierarchy);
 		}
+		this.generator = jUnitGenerator;
 	}
 
 	private void addInvolvedClasses(CallNode node) {
@@ -43,28 +45,55 @@ public class CaseExecutor {
 		}
 	}
 
-	public ExecutionResult execute(List<Object> params) {
-		return invokeMethod(method, params);
+	public ExecutionResult executeCoverage(List<Object> params) {
+		ExecutorThread executor = new ExecutorThread(params);
+		Thread thread = new Thread(executor);
+		thread.start();
+		try {
+			thread.join(generator.getInfiniteLoopTimeout() * 1000);
+			if (thread.isAlive()) {
+				return new ExecutionResult(true);
+			}
+			return executor.getResult();
+		} catch (InterruptedException e) {
+			Log.error("InterruptedException", e);
+			return new ExecutionResult(true);
+		}
 	}
 
-	public ExecutionResult executeCoverage(List<Object> params) {
-		try {
-			return invokeCoverage(params);
-		} catch (Exception ex) {
-			Log.error("Error collecting coverage.", ex);
-			return null;
+	class ExecutorThread implements Runnable {
+
+		private List<Object> params;
+		private ExecutionResult result;
+
+		public ExecutorThread(List<Object> params) {
+			this.params = params;
+		}
+
+		@Override
+		public void run() {
+			try {
+				result = invokeCoverage(params);
+			} catch (Exception e) {
+				Log.error("Error collecting coverage.", e);
+				result = null;
+			}
+		}
+
+		public ExecutionResult getResult() {
+			return result;
 		}
 	}
 
 	// TODO Improve code quality
 	private ExecutionResult invokeCoverage(List<Object> params) throws IOException, Exception, ClassNotFoundException {
-		
+
 		final InputStream[] byteCodeInputs = new InputStream[usedClasses.size()];
 		int i = 0;
 		for (Class<?> clazz : usedClasses) {
 			byteCodeInputs[i++] = Util.getClassBytecodeAsStream(clazz);
 		}
-		
+
 		final IRuntime runtime = new LoggerRuntime();
 		final byte[][] instrumenteds = new byte[usedClasses.size()][];
 		int j = 0;
@@ -72,7 +101,7 @@ public class CaseExecutor {
 			instrumenteds[j] = new Instrumenter(runtime).instrument(byteCodeInputs[j], clazz.getName());
 			j++;
 		}
-		
+
 		final RuntimeData data = new RuntimeData();
 		runtime.startup(data);
 		try {
@@ -83,7 +112,7 @@ public class CaseExecutor {
 				k++;
 			}
 			final Class<?> instrumentedClass = memoryClassLoader.loadClass(method.getDeclaringClass().getName());
-			
+
 			Method covMethod = getCoverageMethod(instrumentedClass);
 			if (covMethod == null) {
 				return null;
@@ -95,7 +124,7 @@ public class CaseExecutor {
 			final ExecutionDataStore executionData = new ExecutionDataStore();
 			final SessionInfoStore sessionInfos = new SessionInfoStore();
 			data.collect(executionData, sessionInfos, false);
-			
+
 			return new ExecutionResult(result, mountCoverageInfo(executionData, callHierarchy));
 		} finally {
 			runtime.shutdown();

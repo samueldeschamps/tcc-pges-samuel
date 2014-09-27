@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
+import com.generator.core.Context;
 import com.generator.core.CoverageInfo;
 import com.generator.core.ExecutionResult;
 import com.generator.core.JUnitGenerator;
@@ -19,8 +20,8 @@ public class CoverageValidator implements TestCaseValidator {
 	private final TestCaseComparator comparator;
 	private CoverageInfo totalCov = null;
 
-	public CoverageValidator(JUnitGenerator generator) {
-		this.generator = generator;
+	public CoverageValidator() {
+		this.generator = Context.get().getGenerator();
 		this.comparator = new TestCaseComparator(generator.getMaxCoverageDepth());
 		this.cases = new TreeSet<>(comparator);
 	}
@@ -30,15 +31,23 @@ public class CoverageValidator implements TestCaseValidator {
 		int maxCovDepth = generator.getMaxCoverageDepth();
 
 		cases.add(testCase);
+		
+		List<TestCaseData> redundants = new ArrayList<>();
+		if (testCase.getResult().isInfiniteLoop()) {
+			redundants.add(testCase);
+			return redundants;
+		}
 
 		Iterator<TestCaseData> iterator = cases.iterator();
 		TestCaseData firstCase = iterator.next();
 		CoverageInfo newTotalCov = firstCase.getResult().getCoverageInfo().copy();
 
-		List<TestCaseData> redundants = new ArrayList<>();
 		while (iterator.hasNext()) {
 			TestCaseData currCase = iterator.next();
 			ExecutionResult execRes = currCase.getResult();
+			if (currCase.getResult().isInfiniteLoop()) {
+				continue;
+			}
 			CoverageInfo after = CoverageInfo.merge(execRes.getCoverageInfo(), newTotalCov);
 			if (!coversSomethingMore(after, newTotalCov, maxCovDepth)) {
 				redundants.add(currCase);

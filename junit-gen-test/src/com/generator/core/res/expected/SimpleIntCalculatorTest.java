@@ -52,12 +52,11 @@ public class SimpleIntCalculatorTest {
     }
 
     /**
-     * Coverage: 88,24%
+     * FIXME: Infinite loop detected! (Took more than 3 seconds)
      */
     @Test
     public void testIsPrime_3() {
-        boolean actual = SimpleIntCalculator.isPrime(39620447);
-        Assert.assertEquals(false, actual);
+        SimpleIntCalculator.isPrime(2147483647);
     }
 
     /**
