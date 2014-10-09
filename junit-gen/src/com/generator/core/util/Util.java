@@ -7,8 +7,12 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Util {
 
@@ -182,6 +186,24 @@ public class Util {
 			return "V";
 		}
 		return "L" + type.getName().replace(".", "/") + ";";
+	}
+
+	public static <K, V> void putListItem(Map<K, List<V>> map, K key, V value) {
+		List<V> list = map.get(key);
+		if (list == null) {
+			list = new ArrayList<>();
+			map.put(key, list);
+		}
+		list.add(value);
+	}
+
+	public static <K, V> void putSetItem(Map<K, Set<V>> map, K key, V value) {
+		Set<V> set = map.get(key);
+		if (set == null) {
+			set = new LinkedHashSet<>();
+			map.put(key, set);
+		}
+		set.add(value);
 	}
 
 }
