@@ -46,13 +46,19 @@ public class TestCaseGenerator {
 
 		List<TestCaseData> cases = new LinkedList<>();
 		int tries = 0;
+		boolean parameterlessMethod = isParameterlessMethod();
 		for (;;) {
-			if (!paramValuesGen.hasNext()) {
-				Log.warning(String.format("Reached limit of inputs for method '%s' (%d inputs).", method.getName(),
-						tries));
-				break;
+			List<Object> paramValues;
+			if (parameterlessMethod) {
+				paramValues = new ArrayList<>();
+			} else {
+				if (!paramValuesGen.hasNext()) {
+					Log.warning(String.format("Reached limit of inputs for method '%s' (%d inputs).", method.getName(),
+							tries));
+					break;
+				}
+				paramValues = paramValuesGen.next();
 			}
-			List<Object> paramValues = paramValuesGen.next();
 			ExecutionResult execResult = executor.executeCoverage(paramValues);
 			if (execResult.isInfiniteLoop()) {
 				// Call GC and try again, only for guarantee
@@ -73,10 +79,18 @@ public class TestCaseGenerator {
 				break;
 			}
 			showFeedbackMsg(tries, cases);
+			if (parameterlessMethod) {
+				break;
+			}
 		}
 		Collections.sort(cases, testCaseComparator);
 		Log.info(String.format("End. Tries: %d. %s", tries, getValidatorsFeedback()));
 		return cases;
+	}
+
+	private boolean isParameterlessMethod() {
+		Class<?>[] paramTypes = method.getParameterTypes();
+		return paramTypes == null || paramTypes.length == 0;
 	}
 
 	private final Comparator<TestCaseData> testCaseComparator = new Comparator<TestCaseData>() {

@@ -44,6 +44,7 @@ import com.generator.core.valuegenerators.random.BigIntegerRandomValues;
 import com.generator.core.valuegenerators.random.DoubleRandomValues;
 import com.generator.core.valuegenerators.random.IntegerRandomValues;
 import com.generator.core.valuegenerators.random.StringRandomValues;
+import com.generator.core.valuegenerators.symbolic.StringLiteralsValueGenerator;
 
 public class JUnitGenerator {
 
@@ -108,6 +109,7 @@ public class JUnitGenerator {
 		valueGenerators.register(Enum.class, EnumFullValues.class);
 
 		valueGenerators.register(String.class, StringCommonValues.class);
+		valueGenerators.register(String.class, StringLiteralsValueGenerator.class);
 		valueGenerators.register(String.class, StringRandomValues.class);
 
 		valueGenerators.register(BigDecimal.class, BigDecimalCommonValues.class);

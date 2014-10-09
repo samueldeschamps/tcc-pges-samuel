@@ -19,22 +19,24 @@ import symbolic.execution.data.generation.Solution;
 import com.generator.core.ValueGenerationStrategy;
 import com.generator.core.util.Log;
 import com.generator.core.util.Util;
+import com.generator.core.valuegenerators.CachedValueGenerator;
 import com.generator.core.valuegenerators.MethodContextValueGenerator;
 
 public class IntSymbolicValueGenerator extends MethodContextValueGenerator<Integer> {
 
-	private List<Integer> values = new ArrayList<>();
-	private int idx = 0;
+	private CachedValueGenerator<Integer> cache;
 
 	public IntSymbolicValueGenerator() {
 		super();
 		// TODO Otimizar desempenho disparando a busca somente uma vez para a
 		// classe inteira!
 		List<Map<String, Integer>> allValues = searchCornerValues();
-		filterByThisParameter(allValues);
+		List<Integer> intValues = filterByThisParameter(allValues);
+		cache = new CachedValueGenerator<>(intValues.toArray(new Integer[intValues.size()]));
 	}
 
-	private void filterByThisParameter(List<Map<String, Integer>> allValues) {
+	private List<Integer> filterByThisParameter(List<Map<String, Integer>> allValues) {
+		List<Integer> result = new ArrayList<>();
 		String paramName = getParamName();
 		for (Map<String, Integer> tuple : allValues) {
 			Integer value = tuple.get(paramName);
@@ -42,8 +44,9 @@ public class IntSymbolicValueGenerator extends MethodContextValueGenerator<Integ
 				Log.warning("Didn't generate value for parameter '" + paramName + "'.");
 				continue;
 			}
-			values.add(value);
+			result.add(value);
 		}
+		return result;
 	}
 
 	private List<Map<String, Integer>> searchCornerValues() {
@@ -67,13 +70,14 @@ public class IntSymbolicValueGenerator extends MethodContextValueGenerator<Integ
 						Vector<InputData> inputs = solution.getInputData();
 						if (inputs.size() > 0) {
 							Map<String, Integer> map = new HashMap<>();
-//							System.out.print("[");
+							// System.out.print("[");
 							for (int i = 0; i < inputs.size(); ++i) {
 								InputData input = inputs.get(i);
 								map.put(input.getVariable(), Integer.valueOf(input.getValue()));
-//								System.out.print(input.getVariable() + ": " + input.getValue() + ",   ");
+								// System.out.print(input.getVariable() + ": " +
+								// input.getValue() + ",   ");
 							}
-//							System.out.println("]");
+							// System.out.println("]");
 							result.add(map);
 						}
 					}
@@ -95,12 +99,12 @@ public class IntSymbolicValueGenerator extends MethodContextValueGenerator<Integ
 
 	@Override
 	public boolean hasNext() {
-		return idx < values.size();
+		return cache.hasNext();
 	}
 
 	@Override
 	public Integer next() {
-		return values.get(idx++);
+		return cache.next();
 	}
 
 	@Override
