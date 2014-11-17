@@ -139,6 +139,7 @@ public class CodeGenerator {
 					boolean whenDeclared = generator.getExceptionsStrategy() == ExceptionsStrategy.ASSERT_WHEN_DECLARED;
 					if (whenDeclared && !result.isExceptionDeclared()) {
 						// Add only a method call to force throw the exception:
+						testMethod.setJavaDoc(new JavadocComment(formatJavadoc("FIXME: Bug detected!")));
 						ASTHelper.addStmt(block, call);
 					} else {
 						addExceptionAssertion(block, call, result);
