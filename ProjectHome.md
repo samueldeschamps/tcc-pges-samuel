@@ -1,0 +1,1 @@
+O trabalho consiste em um gerador de testes unitários automatizados de regressão em Java.
